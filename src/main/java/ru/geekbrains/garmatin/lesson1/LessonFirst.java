@@ -1,4 +1,4 @@
-package ru.geekbrains.garmatin;
+package ru.geekbrains.garmatin.lesson1;
 
 public class LessonFirst {
     public static void main(String[] args) {

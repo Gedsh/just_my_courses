@@ -1,4 +1,4 @@
-package ru.geekbrains.garmatin;
+package ru.geekbrains.garmatin.lesson4;
 
 import javafx.util.Pair;
 

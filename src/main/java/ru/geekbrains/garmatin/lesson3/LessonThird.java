@@ -1,4 +1,4 @@
-package ru.geekbrains.garmatin;
+package ru.geekbrains.garmatin.lesson3;
 
 import java.util.Random;
 import java.util.Scanner;
