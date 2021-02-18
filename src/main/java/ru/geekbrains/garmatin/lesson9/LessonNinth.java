@@ -46,7 +46,7 @@ public class LessonNinth {
         }
     }
 
-    private static int strArrayToIntSumm(String[][] strArray) throws MyArraySizeException, MyArrayDataException {
+    private static int strArrayToIntSumm(String[][] strArray) {
         if (strArray.length != REQUIRED_ARR_SIZE || strArray[0].length != REQUIRED_ARR_SIZE) {
             throw new MyArraySizeException();
         }
