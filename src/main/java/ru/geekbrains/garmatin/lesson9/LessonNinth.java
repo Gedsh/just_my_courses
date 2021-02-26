@@ -5,19 +5,26 @@ public class LessonNinth {
 
     public static void main(String[] args) {
         String[][] arr1 = {
+                {"1", "2", "3", "4"},
+                {"5", "6", "7", "8"},
+                {"9", "10", "11", "12"},
+                {"13", "14", "15"}
+        };
+
+        String[][] arr2 = {
                 {"1", "2", "3"},
                 {"3", "4", "5"},
                 {"6", "7", "8"}
         };
 
-        String[][] arr2 = {
+        String[][] arr3 = {
                 {"1", "2", "3", "4"},
                 {"5", "6", "7", "8"},
                 {"9", "10a", "11", "12"},
                 {"13", "14", "15", "16"}
         };
 
-        String[][] arr3 = {
+        String[][] arr4 = {
                 {"1", "2", "3", "4"},
                 {"5", "6", "7", "8"},
                 {"9", "10", "11", "12"},
@@ -44,10 +51,19 @@ public class LessonNinth {
         } catch (MyArraySizeException | MyArrayDataException e) {
             System.err.println(e.getMessage());
         }
+
+        try {
+            int summ4 = strArrayToIntSumm(arr4);
+            System.out.println("Сумма: " + summ4);
+        } catch (MyArraySizeException | MyArrayDataException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private static int strArrayToIntSumm(String[][] strArray) {
-        if (strArray.length != REQUIRED_ARR_SIZE || strArray[0].length != REQUIRED_ARR_SIZE) {
+        if (isArrayNotSquare(strArray)
+                || strArray.length != REQUIRED_ARR_SIZE
+                || strArray[0].length != REQUIRED_ARR_SIZE) {
             throw new MyArraySizeException();
         }
 
@@ -65,5 +81,15 @@ public class LessonNinth {
         }
 
         return summ;
+    }
+
+    private static boolean isArrayNotSquare(String[][] arr) {
+        int length = arr.length;
+        for (String[] row : arr) {
+            if (row.length != length) {
+                return true;
+            }
+        }
+        return false;
     }
 }
