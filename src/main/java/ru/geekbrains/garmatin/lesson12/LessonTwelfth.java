@@ -42,13 +42,9 @@ public class LessonTwelfth {
         System.arraycopy(arr, 0, halfOneArr, 0, HALF);
         System.arraycopy(arr, HALF, halfTwoArr, 0, HALF);
 
-        Thread thread1 = new Thread(() -> {
-            calculator1.calculate(halfOneArr, 0);
-        });
+        Thread thread1 = new Thread(() -> calculator1.calculate(halfOneArr, 0));
 
-        Thread thread2 = new Thread(() -> {
-            calculator2.calculate(halfTwoArr, HALF);
-        });
+        Thread thread2 = new Thread(() -> calculator2.calculate(halfTwoArr, HALF));
 
         thread1.start();
         thread2.start();
