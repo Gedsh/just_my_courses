@@ -1,5 +1,6 @@
 package pan.alexander.simpleweather.domain
 
+import android.content.Context
 import pan.alexander.simpleweather.domain.entities.CurrentWeather
 
 interface CurrentWeatherRepository {
@@ -10,5 +11,5 @@ interface CurrentWeatherRepository {
     fun deleteWeatherFromDB(weather: CurrentWeather)
     fun deleteAllWeatherFromDB()
 
-    fun loadCurrentWeatherData()
+    fun loadCurrentWeatherData(context: Context)
 }

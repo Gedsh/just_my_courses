@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface CurrentWeatherApiService {
     @GET("/data/2.5/weather?")
-    fun getFilmsWithRating(
+    fun getWeatherForCity(
         @Query("q") cityName: String,
         @Query("appid") apiKey: String
     ): Call<CurrentWeatherData>

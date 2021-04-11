@@ -1,5 +1,6 @@
 package pan.alexander.simpleweather.data
 
+import android.content.Context
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -38,12 +39,12 @@ class CurrentWeatherRepositoryImpl @Inject constructor(): CurrentWeatherReposito
         dao.deleteAllRows()
     }
 
-    override fun loadCurrentWeatherData() {
+    override fun loadCurrentWeatherData(context: Context) {
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val loadCurrentWeatherRequest = OneTimeWorkRequest.Builder(UpdateDBWorker::class.java)
             .setConstraints(constraints)
             .addTag("loadCurrentWeather")
             .build()
-        WorkManager.getInstance().enqueue(loadCurrentWeatherRequest)
+        WorkManager.getInstance(context).enqueue(loadCurrentWeatherRequest)
     }
 }

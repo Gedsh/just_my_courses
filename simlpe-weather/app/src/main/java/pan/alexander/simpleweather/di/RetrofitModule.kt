@@ -2,7 +2,6 @@ package pan.alexander.simpleweather.di
 
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
 import pan.alexander.simpleweather.App
 import pan.alexander.simpleweather.data.web.CurrentWeatherApiService
 import retrofit2.Retrofit
@@ -15,19 +14,17 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesRetrofitApi(retrofit: Retrofit) : CurrentWeatherApiService {
+    fun provideServiceApi(retrofit: Retrofit) : CurrentWeatherApiService {
         return retrofit.create(CurrentWeatherApiService::class.java)
     }
 
     @Provides
     @Singleton
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
         rxJava2CallAdapterFactory: RxJava2CallAdapterFactory,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .client(okHttpClient)
             .baseUrl(App.BASE_URL)
             .addCallAdapterFactory(rxJava2CallAdapterFactory)
             .addConverterFactory(gsonConverterFactory)

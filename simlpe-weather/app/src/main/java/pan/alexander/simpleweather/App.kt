@@ -1,10 +1,7 @@
 package pan.alexander.simpleweather
 
 import android.app.Application
-import pan.alexander.simpleweather.di.AppContextModule
-import pan.alexander.simpleweather.di.MainComponent
-import pan.alexander.simpleweather.di.RetrofitModule
-import pan.alexander.simpleweather.di.RoomModule
+import pan.alexander.simpleweather.di.*
 
 class App : Application() {
 
@@ -13,7 +10,7 @@ class App : Application() {
         const val BASE_URL = "https://api.openweathermap.org/"
     }
 
-    lateinit var daggerComponent: MainComponent
+    lateinit var daggerComponent: ApplicationComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -24,7 +21,7 @@ class App : Application() {
     }
 
     private fun initDaggerComponent() {
-        daggerComponent = DaggerMainComponent
+        daggerComponent = DaggerApplicationComponent
             .builder()
             .appContextModule(AppContextModule(instance))
             .roomModule(RoomModule(instance))
