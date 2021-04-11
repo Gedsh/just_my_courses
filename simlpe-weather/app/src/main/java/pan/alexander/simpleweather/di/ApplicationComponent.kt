@@ -1,8 +1,6 @@
 package pan.alexander.simpleweather.di
 
 import android.app.Application
-import android.content.Context
-import dagger.BindsInstance
 import dagger.Component
 import pan.alexander.simpleweather.data.CurrentWeatherRepositoryImpl
 import pan.alexander.simpleweather.data.database.AppDatabase
