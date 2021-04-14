@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import com.google.gson.Gson
 import pan.alexander.simpleweather.domain.entities.CurrentWeather
 
-@Database(version = 1, entities = [CurrentWeather::class])
+@Database(version = 2, entities = [CurrentWeather::class])
 @TypeConverters(MyConverters::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun currentWeatherDao(): CurrentWeatherDao
