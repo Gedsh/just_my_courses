@@ -1,15 +1,13 @@
 package pan.alexander.simpleweather.domain
 
-import pan.alexander.simpleweather.App
+import androidx.lifecycle.LiveData
 import pan.alexander.simpleweather.domain.entities.CurrentWeather
 import javax.inject.Inject
 
 class MainInteractor @Inject constructor(
     private val currentWeatherRepository: CurrentWeatherRepository
 ) {
-    private val context = App.instance.applicationContext
-
-    fun getCurrentWeather(): CurrentWeather {
+    fun getCurrentWeather(): LiveData<List<CurrentWeather>> {
         return currentWeatherRepository.getCurrentWeatherFromDB()
     }
 }

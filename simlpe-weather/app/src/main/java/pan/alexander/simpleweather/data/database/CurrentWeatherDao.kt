@@ -1,5 +1,6 @@
 package pan.alexander.simpleweather.data.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import pan.alexander.simpleweather.domain.entities.CurrentWeather
 
@@ -7,10 +8,10 @@ import pan.alexander.simpleweather.domain.entities.CurrentWeather
 interface CurrentWeatherDao {
 
     @Query("SELECT * FROM CurrentWeather")
-    fun getAllSavedWeather(): List<CurrentWeather>
+    fun getAllSavedWeather(): LiveData<List<CurrentWeather>>
 
     @Query("SELECT * FROM CurrentWeather ORDER BY ID DESC LIMIT 1")
-    fun getLatestSavedWeather(): CurrentWeather
+    fun getLatestSavedWeather(): LiveData<List<CurrentWeather>>
 
     @Query("DELETE FROM CurrentWeather")
     fun deleteAllRows()

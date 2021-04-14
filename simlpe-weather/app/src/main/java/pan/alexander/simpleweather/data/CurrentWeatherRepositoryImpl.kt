@@ -1,6 +1,7 @@
 package pan.alexander.simpleweather.data
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -15,11 +16,11 @@ class CurrentWeatherRepositoryImpl @Inject constructor(): CurrentWeatherReposito
 
     private val dao = App.instance.daggerComponent.getCurrentWeatherDao()
 
-    override fun getAllWeatherFromDB(): List<CurrentWeather> {
+    override fun getAllWeatherFromDB(): LiveData<List<CurrentWeather>> {
        return dao.getAllSavedWeather()
     }
 
-    override fun getCurrentWeatherFromDB(): CurrentWeather {
+    override fun getCurrentWeatherFromDB(): LiveData<List<CurrentWeather>> {
         return dao.getLatestSavedWeather()
     }
 
