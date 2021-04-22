@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_dark"
+        android:text="Hello World!" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="2"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:textColor="@android:color/holo_red_dark" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonSquare"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="Button" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchWithMargin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Switch" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checkboxBoldText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CheckBox"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatToggleButton
+        android:id="@+id/toggleButtonWithForeground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:foreground="@drawable/abc_vector_test"
+        android:text="ToggleButton" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
