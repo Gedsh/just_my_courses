@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="calculator_input_text_size">36sp</dimen>
+    <dimen name="calculator_input_padding">8dp</dimen>
+    <dimen name="calculator_input_min_height">150dp</dimen>
+    <dimen name="calculator_intermediate_result_text_size">32sp</dimen>
+    <dimen name="calculator_intermediate_result_padding">8dp</dimen>
+    <dimen name="calculator_digit_button_text_size">36sp</dimen>
+    <dimen name="calculator_expression_button_text_size">36sp</dimen>
+    <dimen name="calculator_text_button_text_size">23sp</dimen>
+    <dimen name="calculator_outer_margins">4dp</dimen>
+    <dimen name="calculator_button_margins">4dp</dimen>
+
+</resources>
