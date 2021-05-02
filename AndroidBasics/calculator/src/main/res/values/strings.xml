@@ -9,7 +9,7 @@
     <string name="buttonSevenText">7</string>
     <string name="buttonEightText">8</string>
     <string name="buttonNineText">9</string>
-    <string name="buttonDivideText" formatted="true">&#247;</string>
+    <string name="buttonDivideText">&#247;</string>
     <string name="buttonSQRTText">&#8730;</string>
     <string name="buttonFourText">4</string>
     <string name="buttonFiveText">5</string>
@@ -26,4 +26,5 @@
     <string name="buttonPercentText">%</string>
     <string name="buttonPlusText">+</string>
     <string name="buttonEqualsText">=</string>
+    <string name="toastNotImplemented">Not yet implemented</string>
 </resources>
