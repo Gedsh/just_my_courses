@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/main_background">
 
     <androidx.appcompat.widget.AppCompatEditText
@@ -14,13 +15,14 @@
         android:layout_marginEnd="@dimen/calculator_outer_margins"
         android:background="@drawable/input_text_border"
         android:ellipsize="none"
-        android:inputType="text"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:maxLines="3"
         android:minHeight="@dimen/calculator_input_min_height"
         android:padding="@dimen/calculator_input_padding"
-        android:text="(1+2)*3"
+        android:textColor="@color/white"
         android:textSize="@dimen/calculator_input_text_size"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        tools:text="2*3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,10 +35,10 @@
         android:layout_marginTop="@dimen/calculator_button_margins"
         android:background="@drawable/input_text_border"
         android:padding="@dimen/calculator_intermediate_result_padding"
-        android:text="9"
         android:textSize="@dimen/calculator_intermediate_result_text_size"
         android:textStyle="bold"
         android:textColor="@color/white"
+        tools:text="6"
         app:layout_constraintEnd_toEndOf="@id/editTextUserInput"
         app:layout_constraintStart_toStartOf="@+id/editTextUserInput"
         app:layout_constraintTop_toBottomOf="@+id/editTextUserInput" />
