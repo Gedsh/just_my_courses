@@ -10,5 +10,4 @@
     <dimen name="calculator_text_button_text_size">23sp</dimen>
     <dimen name="calculator_outer_margins">4dp</dimen>
     <dimen name="calculator_button_margins">4dp</dimen>
-
 </resources>
