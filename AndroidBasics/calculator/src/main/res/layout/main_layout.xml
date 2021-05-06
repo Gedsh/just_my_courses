@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/calculator_outer_margins"
         android:layout_marginTop="@dimen/calculator_outer_margins"
         android:layout_marginEnd="@dimen/calculator_outer_margins"
-        app:cardCornerRadius="@dimen/card_corners_radius"
+        app:cardCornerRadius="@dimen/calculator_card_corners_radius"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/calculator_button_margins"
-        app:cardCornerRadius="@dimen/card_corners_radius"
+        app:cardCornerRadius="@dimen/calculator_card_corners_radius"
         app:layout_constraintEnd_toEndOf="@id/cardTextUserInput"
         app:layout_constraintStart_toStartOf="@+id/cardTextUserInput"
         app:layout_constraintTop_toBottomOf="@+id/cardTextUserInput">

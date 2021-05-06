@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="calculator_input_text_size">28sp</dimen>
-    <dimen name="calculator_intermediate_result_text_size">24sp</dimen>
+    <dimen name="calculator_input_text_size">32sp</dimen>
+    <dimen name="calculator_intermediate_result_text_size">28sp</dimen>
     <dimen name="calculator_input_min_height">75dp</dimen>
     <dimen name="calculator_digit_button_text_size">36sp</dimen>
     <dimen name="calculator_expression_button_text_size">36sp</dimen>
     <dimen name="calculator_text_button_text_size">23sp</dimen>
+    <integer name="calculator_input_text_max_lines">1</integer>
 </resources>
