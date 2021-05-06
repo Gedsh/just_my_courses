@@ -6,36 +6,51 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_background">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/editTextUserInput"
-        style="@style/UserInputEditTextStyle"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTextUserInput"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/calculator_outer_margins"
         android:layout_marginTop="@dimen/calculator_outer_margins"
         android:layout_marginEnd="@dimen/calculator_outer_margins"
-        android:maxLines="3"
-        android:minHeight="@dimen/calculator_input_min_height"
-        android:padding="@dimen/calculator_input_padding"
-        android:textSize="@dimen/calculator_input_text_size"
+        app:cardCornerRadius="@dimen/card_corners_radius"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="2*3" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textIntermediateResult"
-        style="@style/IntermediateResultTextViewStyle"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editTextUserInput"
+            style="@style/UserInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:maxLines="@integer/calculator_input_text_max_lines"
+            android:minHeight="@dimen/calculator_input_min_height"
+            android:padding="@dimen/calculator_input_padding"
+            android:textSize="@dimen/calculator_input_text_size"
+            tools:text="2*3" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardIntermediateResult"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/calculator_button_margins"
-        android:padding="@dimen/calculator_intermediate_result_padding"
-        android:textSize="@dimen/calculator_intermediate_result_text_size"
-        app:layout_constraintEnd_toEndOf="@id/editTextUserInput"
-        app:layout_constraintStart_toStartOf="@+id/editTextUserInput"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUserInput"
-        tools:text="6" />
+        app:cardCornerRadius="@dimen/card_corners_radius"
+        app:layout_constraintEnd_toEndOf="@id/cardTextUserInput"
+        app:layout_constraintStart_toStartOf="@+id/cardTextUserInput"
+        app:layout_constraintTop_toBottomOf="@+id/cardTextUserInput">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textIntermediateResult"
+            style="@style/IntermediateResultTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/calculator_intermediate_result_padding"
+            android:textSize="@dimen/calculator_intermediate_result_text_size"
+            tools:text="6" />
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonHistory"
@@ -49,8 +64,8 @@
         android:textSize="@dimen/calculator_text_button_text_size"
         app:layout_constraintBottom_toTopOf="@id/buttonSeven"
         app:layout_constraintEnd_toStartOf="@id/buttonBracketsOpen"
-        app:layout_constraintStart_toStartOf="@+id/textIntermediateResult"
-        app:layout_constraintTop_toBottomOf="@+id/textIntermediateResult" />
+        app:layout_constraintStart_toStartOf="@+id/cardIntermediateResult"
+        app:layout_constraintTop_toBottomOf="@+id/cardIntermediateResult" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonBracketsOpen"
@@ -99,7 +114,7 @@
         android:text="@string/buttonBackspaceText"
         android:textSize="@dimen/calculator_expression_button_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/buttonClear"
-        app:layout_constraintEnd_toEndOf="@id/textIntermediateResult"
+        app:layout_constraintEnd_toEndOf="@id/cardIntermediateResult"
         app:layout_constraintStart_toEndOf="@+id/buttonClear"
         app:layout_constraintTop_toTopOf="@+id/buttonClear" />
 
