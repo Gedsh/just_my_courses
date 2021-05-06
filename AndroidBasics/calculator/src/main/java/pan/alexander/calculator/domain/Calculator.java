@@ -32,7 +32,7 @@ public class Calculator {
         String result = "";
         try {
             Expression expression = new Expression(expressionLine);
-            result = expression.eval(true).toString();
+            result = expression.eval(false).toString();
         } catch (Exception e) {
             Log.w(LOG_TAG, "Calculator exception " + e.getMessage());
         }
