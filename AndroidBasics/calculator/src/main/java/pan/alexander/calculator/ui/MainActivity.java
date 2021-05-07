@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         observeDataChanges();
 
+        checkIncomingIntent();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -109,6 +111,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Observer<String> resultObserver = result ->
                 binding.textIntermediateResult.setText(result);
         mainViewModel.getDisplayedResult().observe(this, resultObserver);
+    }
+
+    private void checkIncomingIntent() {
+        Intent intent = getIntent();
+        if (intent == null) {
+            return;
+        }
+
+        CharSequence incomingExpression = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            incomingExpression = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+        }
+
+        if (incomingExpression != null && !incomingExpression.toString().isEmpty()) {
+            mainViewModel.updateDisplayedExpression(incomingExpression.toString());
+        }
     }
 
     @Override

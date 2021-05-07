@@ -77,10 +77,18 @@ public class MainViewModel extends ViewModel {
     private void loadSavedData() {
         CalculatorData calculatorData = calculatorDataSavedStateHandle.get(SAVED_DATA);
 
+        if (expressionSubjectRx.getValue() != null && !expressionSubjectRx.getValue().isEmpty()) {
+            return;
+        }
+
         if (calculatorData == null) {
             disposables.add(loadDataObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(savedData -> expressionSubjectRx.onNext(savedData)));
+                    .subscribe(savedData -> {
+                        if (expressionSubjectRx.getValue().isEmpty()) {
+                            expressionSubjectRx.onNext(savedData);
+                        }
+                    }));
         } else {
             expressionSubjectRx.onNext(calculatorData.getScreenData());
         }
@@ -132,6 +140,10 @@ public class MainViewModel extends ViewModel {
             default:
                 Log.e(LOG_TAG, "MainViewModel handleButtonPressed unknown button " + symbol);
         }
+    }
+
+    public void updateDisplayedExpression(String expression) {
+        expressionSubjectRx.onNext(expression);
     }
 
     private void updateDisplayedExpression(String symbol, int position) {
