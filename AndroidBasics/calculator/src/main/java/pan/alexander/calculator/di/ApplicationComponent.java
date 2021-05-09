@@ -1,17 +1,18 @@
-package pan.alexander.calculator.di;;
+package pan.alexander.calculator.di;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
-import pan.alexander.calculator.data.RepositoryDao;
+import pan.alexander.calculator.data.settings.SettingsRepositoryDao;
+import pan.alexander.calculator.data.database.HistoryDao;
 import pan.alexander.calculator.domain.Calculator;
 import pan.alexander.calculator.domain.MainInteractor;
 
 @Singleton
-@Component(modules = {DataModule.class, RepositoryModule.class})
+@Component(modules = {SettingsModule.class, RepositoryModule.class, RoomModule.class})
 public interface ApplicationComponent {
-    RepositoryDao getRepositoryDao();
+    HistoryDao getHistoryDao();
+    SettingsRepositoryDao getSettingsRepositoryDao();
     MainInteractor getMainInteractor();
     Calculator getCalculator();
 }
-

@@ -28,4 +28,11 @@
     <string name="buttonEqualsText">=</string>
     <string name="toastNotImplemented">Not yet implemented</string>
     <string name="activityLabelCalculateExpression">Calculate</string>
+    <string name="preferenceCategoryDayNightModeText">Day - Night mode</string>
+    <string name="preferenceDayNightModeText">Select theme</string>
+    <string name="preferenceDayModeText">Day mode</string>
+    <string name="preferenceNightModeText">Night mode</string>
+    <string name="preferenceSystemDefaultModeText">System default</string>
+    <string name="historyActionBarTitle">History</string>
+    <string name="settingsActionBarTitle">Settings</string>
 </resources>

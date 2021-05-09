@@ -2,9 +2,22 @@ plugins {
     id 'com.android.application'
 }
 
+def keystorePropertiesFile = file("/usr/local/KStore/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        releasesign {
+            storeFile file("/usr/local/KStore/pan_alexander.jks")
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyBAlias']
+            keyPassword keystoreProperties['keyBPassword']
+        }
+    }
 
     defaultConfig {
         applicationId "pan.alexander.calculator"
@@ -12,13 +25,15 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.releasesign
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,11 +54,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "com.google.dagger:dagger:$dagger_version"
+    implementation 'androidx.preference:preference:1.1.1'
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_extension_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
     implementation 'com.udojava:EvalEx:2.5'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

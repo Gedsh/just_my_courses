@@ -244,7 +244,7 @@
         app:layout_constraintTop_toTopOf="@+id/buttonMinus" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonAux"
+        android:id="@+id/buttonSettings"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -348,8 +348,8 @@
         android:text="@string/buttonEqualsText"
         android:textSize="@dimen/calculator_expression_button_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/buttonPowered"
-        app:layout_constraintEnd_toEndOf="@+id/buttonAux"
-        app:layout_constraintStart_toStartOf="@+id/buttonAux"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSettings"
+        app:layout_constraintStart_toStartOf="@+id/buttonSettings"
         app:layout_constraintTop_toTopOf="@+id/buttonPowered" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

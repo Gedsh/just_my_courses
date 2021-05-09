@@ -1,6 +1,7 @@
 package pan.alexander.calculator.ui;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,10 +16,15 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import pan.alexander.calculator.App;
 import pan.alexander.calculator.R;
 import pan.alexander.calculator.databinding.MainLayoutBinding;
+import pan.alexander.calculator.domain.MainInteractor;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
+import pan.alexander.calculator.util.Utils;
 import pan.alexander.calculator.viewmodel.MainViewModel;
+
+import static pan.alexander.calculator.util.Preference.VIEW_MODE_PREFERENCE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setViewMode();
+
         super.onCreate(savedInstanceState);
 
         binding = MainLayoutBinding.inflate(getLayoutInflater());
@@ -42,7 +51,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         observeDataChanges();
 
-        checkIncomingIntent();
+        checkIncomingIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        checkIncomingIntent(intent);
+    }
+
+    private void setViewMode() {
+
+        MainInteractor mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+
+        String viewModeValue = mainInteractor.getStringPreference(VIEW_MODE_PREFERENCE);
+
+        Utils.setViewMode(viewModeValue);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -90,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.buttonBracketsOpen.setOnClickListener(this);
         binding.buttonBracketsClose.setOnClickListener(this);
         binding.buttonHistory.setOnClickListener(this);
-        binding.buttonAux.setOnClickListener(this);
+        binding.buttonSettings.setOnClickListener(this);
     }
 
     private void observeDataChanges() {
@@ -113,8 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mainViewModel.getDisplayedResult().observe(this, resultObserver);
     }
 
-    private void checkIncomingIntent() {
-        Intent intent = getIntent();
+    private void checkIncomingIntent(Intent intent) {
         if (intent == null) {
             return;
         }
@@ -126,6 +150,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (incomingExpression != null && !incomingExpression.toString().isEmpty()) {
             mainViewModel.updateDisplayedExpression(incomingExpression.toString());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        hideActionBar();
+    }
+
+    private void hideActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
         }
     }
 
@@ -218,9 +256,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE, cursorPosition);
         } else if (id == R.id.buttonHistory) {
-            toastNotImplemented();
-        } else if (id == R.id.buttonAux) {
-            toastNotImplemented();
+            Intent intent = new Intent(this, HistoryActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.buttonSettings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         } else {
             toastNotImplemented();
         }

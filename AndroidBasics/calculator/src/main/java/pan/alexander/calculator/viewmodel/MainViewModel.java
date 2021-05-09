@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import pan.alexander.calculator.App;
 import pan.alexander.calculator.domain.MainInteractor;
-import pan.alexander.calculator.domain.entities.CalculatorData;
+import pan.alexander.calculator.domain.entities.HistoryData;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
 
 import static pan.alexander.calculator.App.LOG_TAG;
@@ -27,8 +27,13 @@ public class MainViewModel extends ViewModel {
 
     private final SavedStateHandle calculatorDataSavedStateHandle;
 
-    private final Observable<String> loadDataObservable = Observable.fromCallable(() ->
-            mainInteractor.getSavedData().getScreenData());
+    private final Observable<String> loadDataObservable = Observable.fromCallable(() -> {
+        HistoryData historyData = mainInteractor.getLastHistory();
+        if (!historyData.getExpression().isEmpty()) {
+            mainInteractor.deleteHistoryEntry(historyData).subscribe();
+        }
+        return historyData.getExpression();
+    });
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -75,13 +80,13 @@ public class MainViewModel extends ViewModel {
     }
 
     private void loadSavedData() {
-        CalculatorData calculatorData = calculatorDataSavedStateHandle.get(SAVED_DATA);
+        HistoryData historyData = calculatorDataSavedStateHandle.get(SAVED_DATA);
 
         if (expressionSubjectRx.getValue() != null && !expressionSubjectRx.getValue().isEmpty()) {
             return;
         }
 
-        if (calculatorData == null) {
+        if (historyData == null) {
             disposables.add(loadDataObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(savedData -> {
@@ -90,18 +95,20 @@ public class MainViewModel extends ViewModel {
                         }
                     }));
         } else {
-            expressionSubjectRx.onNext(calculatorData.getScreenData());
+            expressionSubjectRx.onNext(historyData.getExpression());
         }
 
     }
 
     public void setCalculatorData() {
         String screenData = "";
-        if (expressionSubjectRx != null) {
+        String resultData = "";
+        if (expressionSubjectRx != null && displayedResult != null) {
             screenData = expressionSubjectRx.getValue() != null ? expressionSubjectRx.getValue() : "";
+            resultData = displayedResult.getValue() != null ? displayedResult.getValue() : "";
         }
 
-        calculatorDataSavedStateHandle.set(SAVED_DATA, new CalculatorData(screenData));
+        calculatorDataSavedStateHandle.set(SAVED_DATA, new HistoryData(screenData, resultData, System.currentTimeMillis()));
     }
 
     public void handleButtonPressed(String symbol, int position) {
@@ -189,20 +196,28 @@ public class MainViewModel extends ViewModel {
     private void handleEqualsPressed() {
         String resultText = displayedResult.getValue();
         if (resultText != null) {
+            saveHistory();
             expressionSubjectRx.onNext(resultText);
+        }
+    }
+
+    private void saveHistory() {
+        String expression = displayedExpression.getValue();
+        String result = displayedResult.getValue();
+
+        if (expression != null && result != null) {
+            mainInteractor.saveHistory(new HistoryData(expression, result, System.currentTimeMillis()));
         }
     }
 
     @Override
     protected void onCleared() {
 
-        String expression = expressionSubjectRx.getValue();
-
-        if (expression != null) {
-            mainInteractor.saveData(new CalculatorData(expression));
-        }
+        saveHistory();
 
         disposables.dispose();
+
+        mainInteractor.disposeDisposables();
 
         super.onCleared();
     }
