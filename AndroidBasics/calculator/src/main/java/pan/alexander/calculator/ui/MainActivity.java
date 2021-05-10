@@ -24,7 +24,7 @@ import pan.alexander.calculator.util.ButtonToSymbolMapping;
 import pan.alexander.calculator.util.Utils;
 import pan.alexander.calculator.viewmodel.MainViewModel;
 
-import static pan.alexander.calculator.util.Preference.VIEW_MODE_PREFERENCE;
+import static pan.alexander.calculator.util.AppConstants.VIEW_MODE_PREFERENCE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

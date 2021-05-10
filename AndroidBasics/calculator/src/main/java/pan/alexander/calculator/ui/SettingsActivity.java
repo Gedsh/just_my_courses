@@ -14,7 +14,7 @@ import pan.alexander.calculator.R;
 import pan.alexander.calculator.domain.MainInteractor;
 import pan.alexander.calculator.util.Utils;
 
-import static pan.alexander.calculator.util.Preference.VIEW_MODE_PREFERENCE;
+import static pan.alexander.calculator.util.AppConstants.VIEW_MODE_PREFERENCE;
 
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
