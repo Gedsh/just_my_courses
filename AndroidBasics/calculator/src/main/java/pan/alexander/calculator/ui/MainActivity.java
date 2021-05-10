@@ -132,73 +132,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (id == R.id.buttonOne) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonOne, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ONE, cursorPosition);
         } else if (id == R.id.buttonTwo) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonTwo, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_TWO, cursorPosition);
         } else if (id == R.id.buttonThree) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonThree, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_THREE, cursorPosition);
         } else if (id == R.id.buttonFour) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonFour, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FOUR, cursorPosition);
         } else if (id == R.id.buttonFive) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonFive, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FIVE, cursorPosition);
         } else if (id == R.id.buttonSix) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonSix, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SIX, cursorPosition);
         } else if (id == R.id.buttonSeven) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonSeven, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SEVEN, cursorPosition);
         } else if (id == R.id.buttonEight) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonEight, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EIGHT, cursorPosition);
         } else if (id == R.id.buttonNine) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonNine, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_NINE, cursorPosition);
         } else if (id == R.id.buttonZero) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonZero, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ZERO, cursorPosition);
         } else if (id == R.id.buttonDivide) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonDivide, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_DIVIDE, cursorPosition);
         } else if (id == R.id.buttonMultiply) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonMultiply, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MULTIPLY, cursorPosition);
         } else if (id == R.id.buttonMinus) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonMinus, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MINUS, cursorPosition);
         } else if (id == R.id.buttonPlus) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonPlus, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PLUS, cursorPosition);
         } else if (id == R.id.buttonPercent) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonPercent, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PERCENT, cursorPosition);
         } else if (id == R.id.buttonSQRT) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible, ButtonToSymbolMapping.buttonSQRT.length());
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonSQRT, cursorPosition);
+            shiftCursorForwardIfCursorVisible(cursorIsVisible, ButtonToSymbolMapping.BUTTON_SQRT.length());
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SQRT, cursorPosition);
         } else if (id == R.id.buttonPowered) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonPowered, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POWERED, cursorPosition);
         } else if (id == R.id.buttonEquals) {
             resetCursorPositionIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonEquals, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EQUALS, cursorPosition);
         } else if (id == R.id.buttonPoint) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonPoint, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POINT, cursorPosition);
         } else if (id == R.id.buttonClear) {
             resetCursorPositionIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonClear, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_CLEAR, cursorPosition);
         } else if (id == R.id.buttonBackspace) {
             shiftCursorBackwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonBackspace, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE, cursorPosition);
         } else if (id == R.id.buttonBracketsOpen) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonBracketsOpen, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN, cursorPosition);
         } else if (id == R.id.buttonBracketsClose) {
             shiftCursorForwardIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.buttonBracketsClose, cursorPosition);
+            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE, cursorPosition);
         } else if (id == R.id.buttonHistory) {
             toastNotImplemented();
         } else if (id == R.id.buttonAux) {

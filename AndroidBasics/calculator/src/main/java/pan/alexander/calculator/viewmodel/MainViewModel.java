@@ -98,35 +98,35 @@ public class MainViewModel extends ViewModel {
 
     public void handleButtonPressed(String symbol, int position) {
         switch (symbol) {
-            case ButtonToSymbolMapping.buttonOne:
-            case ButtonToSymbolMapping.buttonTwo:
-            case ButtonToSymbolMapping.buttonThree:
-            case ButtonToSymbolMapping.buttonFour:
-            case ButtonToSymbolMapping.buttonFive:
-            case ButtonToSymbolMapping.buttonSix:
-            case ButtonToSymbolMapping.buttonSeven:
-            case ButtonToSymbolMapping.buttonEight:
-            case ButtonToSymbolMapping.buttonNine:
-            case ButtonToSymbolMapping.buttonZero:
-            case ButtonToSymbolMapping.buttonDivide:
-            case ButtonToSymbolMapping.buttonMultiply:
-            case ButtonToSymbolMapping.buttonMinus:
-            case ButtonToSymbolMapping.buttonPlus:
-            case ButtonToSymbolMapping.buttonPercent:
-            case ButtonToSymbolMapping.buttonSQRT:
-            case ButtonToSymbolMapping.buttonPowered:
-            case ButtonToSymbolMapping.buttonPoint:
-            case ButtonToSymbolMapping.buttonBracketsOpen:
-            case ButtonToSymbolMapping.buttonBracketsClose:
+            case ButtonToSymbolMapping.BUTTON_ONE:
+            case ButtonToSymbolMapping.BUTTON_TWO:
+            case ButtonToSymbolMapping.BUTTON_THREE:
+            case ButtonToSymbolMapping.BUTTON_FOUR:
+            case ButtonToSymbolMapping.BUTTON_FIVE:
+            case ButtonToSymbolMapping.BUTTON_SIX:
+            case ButtonToSymbolMapping.BUTTON_SEVEN:
+            case ButtonToSymbolMapping.BUTTON_EIGHT:
+            case ButtonToSymbolMapping.BUTTON_NINE:
+            case ButtonToSymbolMapping.BUTTON_ZERO:
+            case ButtonToSymbolMapping.BUTTON_DIVIDE:
+            case ButtonToSymbolMapping.BUTTON_MULTIPLY:
+            case ButtonToSymbolMapping.BUTTON_MINUS:
+            case ButtonToSymbolMapping.BUTTON_PLUS:
+            case ButtonToSymbolMapping.BUTTON_PERCENT:
+            case ButtonToSymbolMapping.BUTTON_SQRT:
+            case ButtonToSymbolMapping.BUTTON_POWERED:
+            case ButtonToSymbolMapping.BUTTON_POINT:
+            case ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN:
+            case ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE:
                 updateDisplayedExpression(symbol, position);
                 break;
-            case ButtonToSymbolMapping.buttonEquals:
+            case ButtonToSymbolMapping.BUTTON_EQUALS:
                 handleEqualsPressed();
                 break;
-            case ButtonToSymbolMapping.buttonBackspace:
+            case ButtonToSymbolMapping.BUTTON_BACKSPACE:
                 handleBackspacePressed(position);
                 break;
-            case ButtonToSymbolMapping.buttonClear:
+            case ButtonToSymbolMapping.BUTTON_CLEAR:
                 clearDisplayedExpression();
                 break;
             default:
