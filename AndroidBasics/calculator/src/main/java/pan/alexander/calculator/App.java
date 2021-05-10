@@ -2,6 +2,8 @@ package pan.alexander.calculator;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 
 import pan.alexander.calculator.di.ApplicationComponent;
@@ -11,11 +13,19 @@ import pan.alexander.calculator.di.RoomModule;
 import pan.alexander.calculator.di.SettingsModule;
 
 public class App extends Application {
+
+    static {
+        System.setProperty("rx2.purge-enabled", "false");
+        System.setProperty("rx2.purge-period-seconds", "60");
+        System.setProperty("rx2.computation-threads", "1");
+    }
+
     public final static String LOG_TAG = "alexander.calculator";
     private static App instance;
 
     private ApplicationComponent daggerComponent;
     private SharedPreferences sharedPreferences;
+    private Handler handler;
 
     @Override
     public void onCreate() {
@@ -27,6 +37,7 @@ public class App extends Application {
         if (daggerComponent == null) {
             initSharedPreferences();
             initDaggerComponents();
+            initGlobalHandler();
         }
     }
 
@@ -43,6 +54,13 @@ public class App extends Application {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
+    private void initGlobalHandler() {
+        Looper looper = Looper.getMainLooper();
+        if (looper != null) {
+            handler = new Handler(looper);
+        }
+    }
+
     public static App getInstance() {
         return instance;
     }
@@ -53,5 +71,9 @@ public class App extends Application {
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
+    }
+
+    public Handler getHandler() {
+        return handler;
     }
 }

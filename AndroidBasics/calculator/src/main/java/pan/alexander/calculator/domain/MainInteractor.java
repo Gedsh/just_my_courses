@@ -1,5 +1,6 @@
 package pan.alexander.calculator.domain;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,24 +13,28 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import pan.alexander.calculator.App;
 import pan.alexander.calculator.domain.entities.HistoryData;
 
 import static pan.alexander.calculator.App.LOG_TAG;
+import static pan.alexander.calculator.util.AppConstants.DELAY_BEFORE_CLEAR_DISPOSABLES;
+import static pan.alexander.calculator.util.AppConstants.MAX_HISTORY_ENTRIES;
 
 public class MainInteractor {
-    private final static int MAX_HISTORY_ENTRIES = 10;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private final HistoryRepository historyRepository;
     private final SettingsRepository settingsRepository;
     private final Calculator calculator;
+    private final Handler globalHandler;
 
     @Inject
     public MainInteractor(HistoryRepository historyRepository, SettingsRepository settingsRepository, Calculator calculator) {
         this.historyRepository = historyRepository;
         this.settingsRepository = settingsRepository;
         this.calculator = calculator;
+        this.globalHandler = App.getInstance().getHandler();
     }
 
     public String calculateExpression(String expression) {
@@ -74,7 +79,9 @@ public class MainInteractor {
         return historyRepository.deleteHistory(historyData);
     }
 
-    public void disposeDisposables() {
-        disposables.dispose();
+    public void clearDisposablesDelayed() {
+        if (globalHandler != null) {
+            globalHandler.postDelayed(disposables::clear, DELAY_BEFORE_CLEAR_DISPOSABLES);
+        }
     }
 }

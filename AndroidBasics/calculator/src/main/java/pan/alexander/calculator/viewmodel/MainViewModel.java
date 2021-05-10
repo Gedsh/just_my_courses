@@ -1,5 +1,6 @@
 package pan.alexander.calculator.viewmodel;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -19,21 +20,15 @@ import pan.alexander.calculator.domain.entities.HistoryData;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
 
 import static pan.alexander.calculator.App.LOG_TAG;
+import static pan.alexander.calculator.util.AppConstants.DELAY_BEFORE_STOP_RX_SCHEDULERS;
 
 public class MainViewModel extends ViewModel {
     private static final String SAVED_DATA = "SAVED_DATA";
 
-    private final MainInteractor mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+    private final MainInteractor mainInteractor;
+    private Observable<String> loadDataObservable;
 
     private final SavedStateHandle calculatorDataSavedStateHandle;
-
-    private final Observable<String> loadDataObservable = Observable.fromCallable(() -> {
-        HistoryData historyData = mainInteractor.getLastHistory();
-        if (!historyData.getExpression().isEmpty()) {
-            mainInteractor.deleteHistoryEntry(historyData).subscribe();
-        }
-        return historyData.getExpression();
-    });
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -41,10 +36,36 @@ public class MainViewModel extends ViewModel {
 
     private MutableLiveData<String> displayedExpression;
     private MutableLiveData<String> displayedResult;
+    private final Handler globalHandler;
 
 
     public MainViewModel(SavedStateHandle savedStateHandle) {
         this.calculatorDataSavedStateHandle = savedStateHandle;
+        this.mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+        this.globalHandler = App.getInstance().getHandler();
+        stopPreviousGlobalHandlerTasks();
+        startRxSchedulers();
+        initLoadDataObservable();
+    }
+
+    private void stopPreviousGlobalHandlerTasks() {
+        if (globalHandler != null) {
+            globalHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private void startRxSchedulers() {
+        Schedulers.start();
+    }
+
+    private void initLoadDataObservable() {
+        loadDataObservable = Observable.fromCallable(() -> {
+            HistoryData historyData = mainInteractor.getLastHistory();
+            if (!historyData.getExpression().isEmpty()) {
+                mainInteractor.deleteHistoryEntry(historyData).subscribe();
+            }
+            return historyData.getExpression();
+        });
     }
 
     public LiveData<String> getDisplayedExpression() {
@@ -210,14 +231,22 @@ public class MainViewModel extends ViewModel {
         }
     }
 
+    public void stopRxSchedulersDelayed() {
+        if (globalHandler != null) {
+            globalHandler.postDelayed(Schedulers::shutdown, DELAY_BEFORE_STOP_RX_SCHEDULERS);
+        }
+    }
+
     @Override
     protected void onCleared() {
 
         saveHistory();
 
-        disposables.dispose();
+        disposables.clear();
 
-        mainInteractor.disposeDisposables();
+        stopRxSchedulersDelayed();
+
+        mainInteractor.clearDisposablesDelayed();
 
         super.onCleared();
     }
