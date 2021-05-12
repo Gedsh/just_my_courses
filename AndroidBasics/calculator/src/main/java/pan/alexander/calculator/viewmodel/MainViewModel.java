@@ -17,26 +17,27 @@ import io.reactivex.subjects.BehaviorSubject;
 import pan.alexander.calculator.App;
 import pan.alexander.calculator.domain.MainInteractor;
 import pan.alexander.calculator.domain.entities.HistoryData;
+import pan.alexander.calculator.domain.entities.UserInputState;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
 
 import static pan.alexander.calculator.App.LOG_TAG;
+import static pan.alexander.calculator.util.AppConstants.DEFAULT_USER_INPUT_CURSOR_POSITION;
 import static pan.alexander.calculator.util.AppConstants.DELAY_BEFORE_STOP_RX_SCHEDULERS;
 
 public class MainViewModel extends ViewModel {
-    private static final String SAVED_DATA = "SAVED_DATA";
-
-    private final MainInteractor mainInteractor;
-    private Observable<String> loadDataObservable;
-
-    private final SavedStateHandle calculatorDataSavedStateHandle;
+    private static final String SAVED_STATE_HANDLE = "SAVED_STATE_HANDLE";
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private BehaviorSubject<String> expressionSubjectRx;
-
-    private MutableLiveData<String> displayedExpression;
-    private MutableLiveData<String> displayedResult;
+    private final MainInteractor mainInteractor;
+    private final SavedStateHandle calculatorDataSavedStateHandle;
     private final Handler globalHandler;
+
+    private BehaviorSubject<UserInputState> inputStateSubject;
+    private Observable<String> loadDataObservable;
+    private MutableLiveData<UserInputState> displayedExpression;
+    private MutableLiveData<String> displayedResult;
+
 
 
     public MainViewModel(SavedStateHandle savedStateHandle) {
@@ -68,12 +69,12 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    public LiveData<String> getDisplayedExpression() {
+    public LiveData<UserInputState> getDisplayedExpression() {
         if (displayedExpression == null) {
             displayedExpression = new MutableLiveData<>();
         }
 
-        if (expressionSubjectRx == null) {
+        if (inputStateSubject == null) {
             initExpressionObservable();
             loadSavedData();
         }
@@ -82,13 +83,14 @@ public class MainViewModel extends ViewModel {
     }
 
     private void initExpressionObservable() {
-        expressionSubjectRx = BehaviorSubject.createDefault("");
-        disposables.add(expressionSubjectRx.toFlowable(BackpressureStrategy.LATEST)
-                .subscribe(expression -> displayedExpression.setValue(expression)));
+        inputStateSubject = BehaviorSubject
+                .createDefault(new UserInputState());
+        disposables.add(inputStateSubject.toFlowable(BackpressureStrategy.LATEST)
+                .subscribe(inputState -> displayedExpression.setValue(inputState)));
 
-        disposables.add(expressionSubjectRx.toFlowable(BackpressureStrategy.LATEST)
+        disposables.add(inputStateSubject.toFlowable(BackpressureStrategy.LATEST)
                 .observeOn(Schedulers.computation())
-                .map(mainInteractor::calculateExpression)
+                .map(userInputState -> mainInteractor.calculateExpression(userInputState.getExpression()))
                 .filter(computationResult -> !computationResult.isEmpty())
                 .subscribe(computationResult -> displayedResult.postValue(computationResult)));
     }
@@ -101,9 +103,10 @@ public class MainViewModel extends ViewModel {
     }
 
     private void loadSavedData() {
-        HistoryData historyData = calculatorDataSavedStateHandle.get(SAVED_DATA);
+        HistoryData historyData = calculatorDataSavedStateHandle.get(SAVED_STATE_HANDLE);
 
-        if (expressionSubjectRx.getValue() != null && !expressionSubjectRx.getValue().isEmpty()) {
+        if (inputStateSubject.getValue() != null
+                && !inputStateSubject.getValue().getExpression().isEmpty()) {
             return;
         }
 
@@ -111,25 +114,31 @@ public class MainViewModel extends ViewModel {
             disposables.add(loadDataObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(savedData -> {
-                        if (expressionSubjectRx.getValue().isEmpty()) {
-                            expressionSubjectRx.onNext(savedData);
+                        if (inputStateSubject.getValue().getExpression().isEmpty()) {
+                            UserInputState inputState = new UserInputState(savedData,
+                                    DEFAULT_USER_INPUT_CURSOR_POSITION);
+                            inputStateSubject.onNext(inputState);
                         }
                     }));
         } else {
-            expressionSubjectRx.onNext(historyData.getExpression());
+            UserInputState inputState = new UserInputState(historyData.getExpression(),
+                    DEFAULT_USER_INPUT_CURSOR_POSITION);
+            inputStateSubject.onNext(inputState);
         }
 
     }
 
-    public void setCalculatorData() {
+    public void saveCalculatorDataToSavedStateHandle() {
         String screenData = "";
         String resultData = "";
-        if (expressionSubjectRx != null && displayedResult != null) {
-            screenData = expressionSubjectRx.getValue() != null ? expressionSubjectRx.getValue() : "";
+        if (inputStateSubject != null && displayedResult != null) {
+            screenData = inputStateSubject.getValue() != null ? inputStateSubject.getValue().getExpression() : "";
             resultData = displayedResult.getValue() != null ? displayedResult.getValue() : "";
         }
 
-        calculatorDataSavedStateHandle.set(SAVED_DATA, new HistoryData(screenData, resultData, System.currentTimeMillis()));
+        HistoryData historyData = new HistoryData(screenData, resultData, System.currentTimeMillis());
+
+        calculatorDataSavedStateHandle.set(SAVED_STATE_HANDLE, historyData);
     }
 
     public void handleButtonPressed(String symbol, int position) {
@@ -171,46 +180,60 @@ public class MainViewModel extends ViewModel {
     }
 
     public void updateDisplayedExpression(String expression) {
-        expressionSubjectRx.onNext(expression);
+        UserInputState inputState = new UserInputState(expression,
+                DEFAULT_USER_INPUT_CURSOR_POSITION);
+        inputStateSubject.onNext(inputState);
     }
 
     private void updateDisplayedExpression(String symbol, int position) {
-        String currentExpression = expressionSubjectRx.getValue();
+        UserInputState currentInputState = inputStateSubject.getValue();
 
-        if (currentExpression == null) {
-            currentExpression = "";
+        if (currentInputState == null) {
+            currentInputState = new UserInputState();
         }
 
-        if (position < 0 || position > currentExpression.length()) {
-            expressionSubjectRx.onNext(currentExpression + symbol);
+        UserInputState inputState;
+        if (position < 0 || position > currentInputState.getExpression().length()) {
+            inputState = new UserInputState(currentInputState.getExpression() + symbol,
+                    DEFAULT_USER_INPUT_CURSOR_POSITION);
         } else {
-            String expressionPartOne = currentExpression.substring(0, position);
-            String expressionPartTwo = currentExpression.substring(position);
-            expressionSubjectRx.onNext(expressionPartOne + symbol + expressionPartTwo);
+            String expression = currentInputState.getExpression();
+            String expressionPartOne = expression.substring(0, position);
+            String expressionPartTwo = expression.substring(position);
+            inputState = new UserInputState(expressionPartOne + symbol + expressionPartTwo,
+                    position + symbol.length());
         }
+        inputStateSubject.onNext(inputState);
     }
 
     private void clearDisplayedExpression() {
-        expressionSubjectRx.onNext("");
+        inputStateSubject.onNext(new UserInputState());
         displayedResult.setValue("");
     }
 
     private void handleBackspacePressed(int position) {
-        String currentExpression = expressionSubjectRx.getValue();
+        UserInputState inputState = inputStateSubject.getValue();
 
-        if (currentExpression != null && !currentExpression.isEmpty()) {
+        if (inputState == null) {
+            return;
+        }
 
-            if (position > 0 && currentExpression.length() > 1) {
-                String expressionPartOne = currentExpression.substring(0, position - 1);
-                String expressionPartTwo = currentExpression.substring(position);
-                currentExpression = expressionPartOne + expressionPartTwo;
-                expressionSubjectRx.onNext(currentExpression);
-            } else if (position != 0 && currentExpression.length() > 1) {
-                currentExpression = currentExpression.substring(0, currentExpression.length() - 1);
-                expressionSubjectRx.onNext(currentExpression);
-            } else if (position != 0) {
-                clearDisplayedExpression();
-            }
+        String expression = inputState.getExpression();
+
+        if (expression.isEmpty() || position > expression.length()) {
+            return;
+        }
+
+        if (position > 0 && expression.length() > 1) {
+            String expressionPartOne = expression.substring(0, position - 1);
+            String expressionPartTwo = expression.substring(position);
+            inputState = new UserInputState(expressionPartOne + expressionPartTwo, --position);
+            inputStateSubject.onNext(inputState);
+        } else if (position != 0 && expression.length() > 1) {
+            inputState = new UserInputState(expression.substring(0, expression.length() - 1), --position);
+            inputStateSubject.onNext(inputState);
+        } else if (position != 0) {
+            clearDisplayedExpression();
         }
     }
 
@@ -218,16 +241,20 @@ public class MainViewModel extends ViewModel {
         String resultText = displayedResult.getValue();
         if (resultText != null) {
             saveHistory();
-            expressionSubjectRx.onNext(resultText);
+            UserInputState inputState = new UserInputState(resultText,
+                    DEFAULT_USER_INPUT_CURSOR_POSITION);
+            inputStateSubject.onNext(inputState);
         }
     }
 
     private void saveHistory() {
-        String expression = displayedExpression.getValue();
+        UserInputState inputState = displayedExpression.getValue();
         String result = displayedResult.getValue();
 
-        if (expression != null && result != null) {
-            mainInteractor.saveHistory(new HistoryData(expression, result, System.currentTimeMillis()));
+        if (inputState != null && result != null) {
+            HistoryData historyData = new HistoryData(inputState.getExpression(), result,
+                    System.currentTimeMillis());
+            mainInteractor.saveHistory(historyData);
         }
     }
 

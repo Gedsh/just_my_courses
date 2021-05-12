@@ -20,17 +20,18 @@ import pan.alexander.calculator.App;
 import pan.alexander.calculator.R;
 import pan.alexander.calculator.databinding.MainLayoutBinding;
 import pan.alexander.calculator.domain.MainInteractor;
+import pan.alexander.calculator.domain.entities.UserInputState;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
 import pan.alexander.calculator.util.Utils;
 import pan.alexander.calculator.viewmodel.MainViewModel;
 
+import static pan.alexander.calculator.util.AppConstants.DEFAULT_USER_INPUT_CURSOR_POSITION;
 import static pan.alexander.calculator.util.AppConstants.VIEW_MODE_PREFERENCE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private MainViewModel mainViewModel;
     private MainLayoutBinding binding;
-    private int savedCursorPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,19 +120,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void observeDataChanges() {
-        final Observer<String> displayedExpressionObserver = displayedExpression -> {
+        final Observer<UserInputState> userInputStateObserver = inputState -> {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                binding.editTextUserInput.setText(Html.fromHtml(displayedExpression, Html.FROM_HTML_MODE_LEGACY));
+                binding.editTextUserInput.setText(Html.fromHtml(inputState.getExpression(), Html.FROM_HTML_MODE_LEGACY));
             } else {
-                binding.editTextUserInput.setText(Html.fromHtml(displayedExpression));
+                binding.editTextUserInput.setText(Html.fromHtml(inputState.getExpression()));
             }
 
-            if (binding.editTextUserInput.isFocused() && savedCursorPosition >= 0) {
-                binding.editTextUserInput.setSelection(savedCursorPosition);
+            int cursorPosition = inputState.getCursorPosition();
+            if (binding.editTextUserInput.isFocused() && cursorPosition >= 0) {
+                binding.editTextUserInput.setSelection(cursorPosition);
             }
         };
-        mainViewModel.getDisplayedExpression().observe(this, displayedExpressionObserver);
+        mainViewModel.getDisplayedExpression().observe(this, userInputStateObserver);
 
         final Observer<String> resultObserver = result ->
                 binding.textIntermediateResult.setText(result);
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
-        mainViewModel.setCalculatorData();
+        mainViewModel.saveCalculatorDataToSavedStateHandle();
 
         super.onSaveInstanceState(outState);
     }
@@ -180,80 +182,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
         boolean cursorIsVisible = binding.editTextUserInput.isFocused();
 
-        int cursorPosition = -1;
+        int cursorPosition = DEFAULT_USER_INPUT_CURSOR_POSITION;
         if (cursorIsVisible) {
             cursorPosition = binding.editTextUserInput.getSelectionStart();
-            savedCursorPosition = cursorPosition;
         }
 
         if (id == R.id.buttonOne) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ONE, cursorPosition);
         } else if (id == R.id.buttonTwo) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_TWO, cursorPosition);
         } else if (id == R.id.buttonThree) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_THREE, cursorPosition);
         } else if (id == R.id.buttonFour) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FOUR, cursorPosition);
         } else if (id == R.id.buttonFive) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FIVE, cursorPosition);
         } else if (id == R.id.buttonSix) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SIX, cursorPosition);
         } else if (id == R.id.buttonSeven) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SEVEN, cursorPosition);
         } else if (id == R.id.buttonEight) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EIGHT, cursorPosition);
         } else if (id == R.id.buttonNine) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_NINE, cursorPosition);
         } else if (id == R.id.buttonZero) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ZERO, cursorPosition);
         } else if (id == R.id.buttonDivide) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_DIVIDE, cursorPosition);
         } else if (id == R.id.buttonMultiply) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MULTIPLY, cursorPosition);
         } else if (id == R.id.buttonMinus) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MINUS, cursorPosition);
         } else if (id == R.id.buttonPlus) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PLUS, cursorPosition);
         } else if (id == R.id.buttonPercent) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PERCENT, cursorPosition);
         } else if (id == R.id.buttonSQRT) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible, ButtonToSymbolMapping.BUTTON_SQRT.length());
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SQRT, cursorPosition);
         } else if (id == R.id.buttonPowered) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POWERED, cursorPosition);
         } else if (id == R.id.buttonEquals) {
             resetCursorPositionIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EQUALS, cursorPosition);
         } else if (id == R.id.buttonPoint) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POINT, cursorPosition);
         } else if (id == R.id.buttonClear) {
             resetCursorPositionIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_CLEAR, cursorPosition);
         } else if (id == R.id.buttonBackspace) {
-            shiftCursorBackwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE, cursorPosition);
         } else if (id == R.id.buttonBracketsOpen) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN, cursorPosition);
         } else if (id == R.id.buttonBracketsClose) {
-            shiftCursorForwardIfCursorVisible(cursorIsVisible);
             mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE, cursorPosition);
         } else if (id == R.id.buttonHistory) {
             Intent intent = new Intent(this, HistoryActivity.class);
@@ -266,28 +246,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void shiftCursorForwardIfCursorVisible(boolean cursorIsVisible) {
-        if (cursorIsVisible) {
-            savedCursorPosition++;
-        }
-    }
-
-    private void shiftCursorForwardIfCursorVisible(boolean cursorIsVisible, int step) {
-        if (cursorIsVisible) {
-            savedCursorPosition += step;
-        }
-    }
-
-    private void shiftCursorBackwardIfCursorVisible(boolean cursorIsVisible) {
-        if (cursorIsVisible) {
-            savedCursorPosition--;
-        }
-    }
-
     private void resetCursorPositionIfCursorVisible(boolean cursorIsVisible) {
         if (cursorIsVisible) {
             binding.editTextUserInput.clearFocus();
-            savedCursorPosition = -1;
         }
     }
 
