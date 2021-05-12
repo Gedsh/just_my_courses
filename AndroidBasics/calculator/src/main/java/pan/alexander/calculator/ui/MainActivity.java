@@ -11,7 +11,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         observeDataChanges();
 
         checkIncomingIntent(getIntent());
+
+        addInputTextChangedListenerForPasteHandling();
     }
 
     @Override
@@ -117,6 +121,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.buttonBracketsClose.setOnClickListener(this);
         binding.buttonHistory.setOnClickListener(this);
         binding.buttonSettings.setOnClickListener(this);
+    }
+
+    private void addInputTextChangedListenerForPasteHandling() {
+        binding.editTextUserInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                boolean cursorIsVisible = binding.editTextUserInput.isFocused();
+
+                if (cursorIsVisible) {
+                    int cursorPosition = binding.editTextUserInput.getSelectionStart();
+                    mainViewModel.handleInputTextChanged(s.toString(), cursorPosition);
+                }
+            }
+        });
     }
 
     private void observeDataChanges() {

@@ -247,6 +247,23 @@ public class MainViewModel extends ViewModel {
         }
     }
 
+    public void handleInputTextChanged(String expression, int position) {
+        UserInputState currentUserInput = inputStateSubject.getValue();
+
+        if (currentUserInput == null) {
+            return;
+        }
+
+        if (!currentUserInput.getExpression().equals(expression)) {
+            if (expression.isEmpty()) {
+                clearDisplayedExpression();
+            } else {
+                UserInputState inputState = new UserInputState(expression, position);
+                inputStateSubject.onNext(inputState);
+            }
+        }
+    }
+
     private void saveHistory() {
         UserInputState inputState = displayedExpression.getValue();
         String result = displayedResult.getValue();
