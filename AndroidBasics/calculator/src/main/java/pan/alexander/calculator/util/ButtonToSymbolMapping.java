@@ -11,12 +11,12 @@ public interface ButtonToSymbolMapping {
     String BUTTON_EIGHT = "8";
     String BUTTON_NINE = "9";
     String BUTTON_ZERO = "0";
-    String BUTTON_DIVIDE = "/";
-    String BUTTON_MULTIPLY = "*";
+    String BUTTON_DIVIDE = "&#247;";
+    String BUTTON_MULTIPLY = "&#215;";
     String BUTTON_MINUS = "-";
     String BUTTON_PLUS = "+";
     String BUTTON_PERCENT = "%";
-    String BUTTON_SQRT = "SQRT(";
+    String BUTTON_SQRT = "&#8730;(";
     String BUTTON_POWERED = "^";
     String BUTTON_EQUALS = "=";
     String BUTTON_POINT = ".";

@@ -1,8 +1,29 @@
 package pan.alexander.calculator.util;
 
+import android.text.Html;
+import android.text.Spanned;
+
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class Utils {
+    @SuppressWarnings("deprecation")
+    public static String spannedStringFromHtml(String text) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString();
+        } else {
+            return Html.fromHtml(text).toString();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned spannedFromHtml(String text) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(text);
+        }
+    }
+
     public static void setViewMode(String viewModeValue) {
 
         switch (viewModeValue) {

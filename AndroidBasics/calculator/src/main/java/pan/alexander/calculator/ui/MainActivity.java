@@ -11,29 +11,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
-import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import pan.alexander.calculator.App;
 import pan.alexander.calculator.R;
 import pan.alexander.calculator.databinding.MainLayoutBinding;
 import pan.alexander.calculator.domain.MainInteractor;
-import pan.alexander.calculator.domain.entities.UserInputState;
 import pan.alexander.calculator.util.ButtonToSymbolMapping;
 import pan.alexander.calculator.util.Utils;
 import pan.alexander.calculator.viewmodel.MainViewModel;
 
-import static pan.alexander.calculator.util.AppConstants.DEFAULT_USER_INPUT_CURSOR_POSITION;
+import static android.view.ViewConfiguration.getLongPressTimeout;
+import static pan.alexander.calculator.util.AppConstants.INTERVAL_BACKSPACE_LONG_PRESSING;
 import static pan.alexander.calculator.util.AppConstants.VIEW_MODE_PREFERENCE;
+import static pan.alexander.calculator.util.Utils.spannedFromHtml;
+import static pan.alexander.calculator.util.Utils.spannedStringFromHtml;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
     private MainViewModel mainViewModel;
     private MainLayoutBinding binding;
+    private Handler touchHandlerBackspace;
+    private Runnable touchActionBackspace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideSoftKeyboard();
 
         setOnClickListeners();
+
+        initOnTouchListener();
 
         observeDataChanges();
 
@@ -123,6 +135,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.buttonSettings.setOnClickListener(this);
     }
 
+    private void initOnTouchListener() {
+        binding.buttonBackspace.setOnTouchListener(this);
+
+        touchActionBackspace = new Runnable() {
+            @Override public void run() {
+                if (isCursorVisible()) {
+                    binding.editTextUserInput.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                } else {
+                    handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE);
+                }
+
+                touchHandlerBackspace.postDelayed(this, INTERVAL_BACKSPACE_LONG_PRESSING);
+            }
+        };
+    }
+
     private void addInputTextChangedListenerForPasteHandling() {
         binding.editTextUserInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -138,32 +166,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boolean cursorIsVisible = binding.editTextUserInput.isFocused();
 
                 if (cursorIsVisible) {
-                    int cursorPosition = binding.editTextUserInput.getSelectionStart();
-                    mainViewModel.handleInputTextChanged(s.toString(), cursorPosition);
+                    mainViewModel.handleInputTextChanged(s.toString());
                 }
             }
         });
     }
 
     private void observeDataChanges() {
-        final Observer<UserInputState> userInputStateObserver = inputState -> {
+        final Observer<String> expressionObserver = expression -> {
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                binding.editTextUserInput.setText(Html.fromHtml(inputState.getExpression(), Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                binding.editTextUserInput.setText(Html.fromHtml(inputState.getExpression()));
+            if (isCursorVisible()) {
+                return;
             }
 
-            int cursorPosition = inputState.getCursorPosition();
-            if (binding.editTextUserInput.isFocused() && cursorPosition >= 0) {
-                binding.editTextUserInput.setSelection(cursorPosition);
-            }
+            setUserInputText(expression);
         };
-        mainViewModel.getDisplayedExpression().observe(this, userInputStateObserver);
+        mainViewModel.getDisplayedExpression().observe(this, expressionObserver);
 
         final Observer<String> resultObserver = result ->
                 binding.textIntermediateResult.setText(result);
         mainViewModel.getDisplayedResult().observe(this, resultObserver);
+    }
+
+    private void setUserInputText(String text) {
+        EditText editTextUserInput = binding.editTextUserInput;
+        Spanned spannedText = spannedFromHtml(text);
+        editTextUserInput.setText(spannedStringFromHtml(text));
+        editTextUserInput.setSelection(spannedText.length());
+    }
+
+    private void insertUserInputText(String text) {
+        EditText editTextUserInput = binding.editTextUserInput;
+        int cursorPosition = editTextUserInput.getSelectionStart();
+        Spanned spannedText = spannedFromHtml(text);
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editTextUserInput.getText());
+        spannableStringBuilder.insert(cursorPosition, spannedText);
+        editTextUserInput.setText(spannableStringBuilder);
+        editTextUserInput.setSelection(cursorPosition + spannedText.length());
     }
 
     private void checkIncomingIntent(Intent intent) {
@@ -177,7 +216,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (incomingExpression != null && !incomingExpression.toString().isEmpty()) {
-            mainViewModel.updateDisplayedExpression(incomingExpression.toString());
+            if (isCursorVisible()) {
+                binding.editTextUserInput.setText(incomingExpression.toString());
+                binding.editTextUserInput.setSelection(incomingExpression.length());
+            } else {
+                mainViewModel.setDisplayedExpression(incomingExpression.toString());
+            }
         }
     }
 
@@ -206,61 +250,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        boolean cursorIsVisible = binding.editTextUserInput.isFocused();
-
-        int cursorPosition = DEFAULT_USER_INPUT_CURSOR_POSITION;
-        if (cursorIsVisible) {
-            cursorPosition = binding.editTextUserInput.getSelectionStart();
-        }
 
         if (id == R.id.buttonOne) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ONE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_ONE);
         } else if (id == R.id.buttonTwo) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_TWO, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_TWO);
         } else if (id == R.id.buttonThree) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_THREE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_THREE);
         } else if (id == R.id.buttonFour) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FOUR, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_FOUR);
         } else if (id == R.id.buttonFive) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_FIVE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_FIVE);
         } else if (id == R.id.buttonSix) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SIX, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_SIX);
         } else if (id == R.id.buttonSeven) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SEVEN, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_SEVEN);
         } else if (id == R.id.buttonEight) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EIGHT, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_EIGHT);
         } else if (id == R.id.buttonNine) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_NINE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_NINE);
         } else if (id == R.id.buttonZero) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_ZERO, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_ZERO);
         } else if (id == R.id.buttonDivide) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_DIVIDE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_DIVIDE);
         } else if (id == R.id.buttonMultiply) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MULTIPLY, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_MULTIPLY);
         } else if (id == R.id.buttonMinus) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_MINUS, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_MINUS);
         } else if (id == R.id.buttonPlus) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PLUS, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_PLUS);
         } else if (id == R.id.buttonPercent) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_PERCENT, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_PERCENT);
         } else if (id == R.id.buttonSQRT) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_SQRT, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_SQRT);
         } else if (id == R.id.buttonPowered) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POWERED, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_POWERED);
         } else if (id == R.id.buttonEquals) {
-            resetCursorPositionIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_EQUALS, cursorPosition);
+            resetCursorPositionIfCursorVisible();
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_EQUALS);
         } else if (id == R.id.buttonPoint) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_POINT, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_POINT);
         } else if (id == R.id.buttonClear) {
-            resetCursorPositionIfCursorVisible(cursorIsVisible);
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_CLEAR, cursorPosition);
+            resetCursorPositionIfCursorVisible();
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_CLEAR);
         } else if (id == R.id.buttonBackspace) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE, cursorPosition);
+            if (isCursorVisible()) {
+                binding.editTextUserInput.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+            } else {
+                handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE);
+            }
         } else if (id == R.id.buttonBracketsOpen) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN);
         } else if (id == R.id.buttonBracketsClose) {
-            mainViewModel.handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE, cursorPosition);
+            handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE);
         } else if (id == R.id.buttonHistory) {
             Intent intent = new Intent(this, HistoryActivity.class);
             startActivity(intent);
@@ -272,8 +314,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void resetCursorPositionIfCursorVisible(boolean cursorIsVisible) {
-        if (cursorIsVisible) {
+    private void handleButtonPressed(String symbol) {
+        if (isCursorVisible()) {
+            Editable currentDisplayedExpression = binding.editTextUserInput.getText();
+            if (currentDisplayedExpression == null) {
+                setUserInputText(symbol);
+            } else {
+                insertUserInputText(symbol);
+            }
+        } else {
+            mainViewModel.handleButtonPressed(symbol);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (v.getId() != R.id.buttonBackspace) {
+            return false;
+        }
+
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (touchHandlerBackspace != null) {
+                    return true;
+                }
+                Looper looper = Looper.getMainLooper();
+                if (looper != null) {
+                    touchHandlerBackspace = new Handler();
+                    touchHandlerBackspace.postDelayed(touchActionBackspace, getLongPressTimeout());
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (touchHandlerBackspace == null) {
+                    return true;
+                }
+                touchHandlerBackspace.removeCallbacks(touchActionBackspace);
+                touchHandlerBackspace = null;
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (touchHandlerBackspace != null) {
+            touchHandlerBackspace.removeCallbacks(touchActionBackspace);
+        }
+    }
+
+    private boolean isCursorVisible() {
+        return binding.editTextUserInput.isFocused();
+    }
+
+    private void resetCursorPositionIfCursorVisible() {
+        if (isCursorVisible()) {
             binding.editTextUserInput.clearFocus();
         }
     }

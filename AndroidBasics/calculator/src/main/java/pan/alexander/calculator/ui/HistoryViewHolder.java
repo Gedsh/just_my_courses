@@ -12,6 +12,8 @@ import java.util.Date;
 import pan.alexander.calculator.R;
 import pan.alexander.calculator.domain.entities.HistoryData;
 
+import static pan.alexander.calculator.util.Utils.spannedStringFromHtml;
+
 public class HistoryViewHolder extends RecyclerView.ViewHolder {
     private final TextView textViewHistoryExpression;
     private final TextView textViewHistoryResult;
@@ -26,7 +28,7 @@ public class HistoryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(HistoryData historyData) {
-        textViewHistoryExpression.setText(historyData.getExpression());
+        textViewHistoryExpression.setText(spannedStringFromHtml(historyData.getExpression()));
         textViewHistoryResult.setText(historyData.getResult());
         textViewHistoryDate.setText(formatTime(historyData.getTime()));
     }

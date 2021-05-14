@@ -1,7 +1,6 @@
 package pan.alexander.calculator.domain;
 
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -16,7 +15,6 @@ import io.reactivex.schedulers.Schedulers;
 import pan.alexander.calculator.App;
 import pan.alexander.calculator.domain.entities.HistoryData;
 
-import static pan.alexander.calculator.App.LOG_TAG;
 import static pan.alexander.calculator.util.AppConstants.DELAY_BEFORE_CLEAR_DISPOSABLES;
 import static pan.alexander.calculator.util.AppConstants.MAX_HISTORY_ENTRIES;
 
@@ -51,9 +49,7 @@ public class MainInteractor {
         disposables.add(historyRepository.insertHistory(historyData)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(
-                        this::trimHistorySize,
-                        throwable -> Log.e(LOG_TAG, "MainInteractor saveHistory exception " + throwable.getMessage()))
+                .subscribe(this::trimHistorySize)
         );
     }
 
