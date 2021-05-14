@@ -38,6 +38,7 @@ public class MainViewModel extends ViewModel {
     private Observable<String> loadDataObservable;
     private MutableLiveData<String> displayedExpression;
     private MutableLiveData<String> displayedResult;
+    private MutableLiveData<Boolean> successfulCalculation;
 
 
 
@@ -92,8 +93,26 @@ public class MainViewModel extends ViewModel {
         disposables.add(inputExpressionSubject.toFlowable(BackpressureStrategy.LATEST)
                 .observeOn(Schedulers.computation())
                 .map(mainInteractor::calculateExpression)
-                .filter(computationResult -> !computationResult.isEmpty())
-                .subscribe(computationResult -> displayedResult.postValue(computationResult)));
+                .subscribe(this::expressionCalculated));
+    }
+
+    private void expressionCalculated(String computationResult) {
+        if (displayedExpression == null) {
+            return;
+        }
+
+        String expression = displayedExpression.getValue();
+
+        if (expression == null || expression.isEmpty()) {
+            return;
+        }
+
+        if (computationResult.isEmpty()) {
+            successfulCalculation.postValue(false);
+        } else {
+            displayedResult.postValue(computationResult);
+            successfulCalculation.postValue(true);
+        }
     }
 
     public LiveData<String> getDisplayedResult() {
@@ -101,6 +120,13 @@ public class MainViewModel extends ViewModel {
             displayedResult = new MutableLiveData<>();
         }
         return displayedResult;
+    }
+
+    public LiveData<Boolean> getCalculationResultSuccess() {
+        if (successfulCalculation == null) {
+            successfulCalculation = new MutableLiveData<>();
+        }
+        return successfulCalculation;
     }
 
     private void loadSavedData() {
@@ -194,6 +220,7 @@ public class MainViewModel extends ViewModel {
     private void clearDisplayedExpression() {
         inputExpressionSubject.onNext("");
         displayedResult.setValue("");
+        successfulCalculation.setValue(true);
     }
 
     private void handleBackspacePressed() {
@@ -236,8 +263,20 @@ public class MainViewModel extends ViewModel {
     }
 
     private void handleEqualsPressed() {
+
+        if (displayedResult == null || successfulCalculation == null) {
+            return;
+        }
+
         String resultText = displayedResult.getValue();
-        if (resultText != null) {
+
+        Boolean successCalculation = successfulCalculation.getValue();
+
+        if (resultText == null || successCalculation == null) {
+            return;
+        }
+
+        if (successCalculation) {
             saveHistory();
             inputExpressionSubject.onNext(resultText);
         }

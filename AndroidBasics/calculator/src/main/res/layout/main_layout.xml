@@ -50,6 +50,15 @@
             android:padding="@dimen/calculator_intermediate_result_padding"
             android:textSize="@dimen/calculator_intermediate_result_text_size"
             tools:text="6" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewWrongExpression"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="@dimen/calculator_wrong_expression_sign_padding"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ic_wrong_expression" />
     </androidx.cardview.widget.CardView>
 
     <com.google.android.material.button.MaterialButton

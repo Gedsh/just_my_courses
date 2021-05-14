@@ -186,6 +186,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Observer<String> resultObserver = result ->
                 binding.textIntermediateResult.setText(result);
         mainViewModel.getDisplayedResult().observe(this, resultObserver);
+
+        final Observer<Boolean> calculationResultSuccessObserver = success -> {
+            if (success) {
+                binding.imageViewWrongExpression.setVisibility(View.INVISIBLE);
+            } else {
+                binding.imageViewWrongExpression.setVisibility(View.VISIBLE);
+            }
+        };
+        mainViewModel.getCalculationResultSuccess().observe(this, calculationResultSuccessObserver);
     }
 
     private void setUserInputText(String text) {

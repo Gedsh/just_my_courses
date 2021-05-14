@@ -16,5 +16,6 @@
     <dimen name="calculator_history_result_text_size">32sp</dimen>
     <dimen name="calculator_history_date_text_size">18sp</dimen>
     <dimen name="calculator_history_card_padding">8dp</dimen>
+    <dimen name="calculator_wrong_expression_sign_padding">4dp</dimen>
     <integer name="calculator_input_text_max_lines">3</integer>
 </resources>
