@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background">
+    android:background="@drawable/main_background"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardTextUserInput"
@@ -14,6 +16,7 @@
         android:layout_marginTop="@dimen/calculator_outer_margins"
         android:layout_marginEnd="@dimen/calculator_outer_margins"
         app:cardCornerRadius="@dimen/calculator_card_corners_radius"
+        app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -35,8 +38,9 @@
         android:id="@+id/cardIntermediateResult"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/calculator_button_margins"
+        android:layout_marginTop="@dimen/calculator_intermediate_result_top_margin"
         app:cardCornerRadius="@dimen/calculator_card_corners_radius"
+        app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="@+id/cardTextUserInput"
         app:layout_constraintStart_toStartOf="@+id/cardTextUserInput"
         app:layout_constraintTop_toBottomOf="@+id/cardTextUserInput">

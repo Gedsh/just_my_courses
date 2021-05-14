@@ -189,15 +189,6 @@ public class MainViewModel extends ViewModel {
             case ButtonToSymbolMapping.BUTTON_BRACKETS_CLOSE:
                 updateDisplayedExpression(symbol);
                 break;
-            case ButtonToSymbolMapping.BUTTON_EQUALS:
-                handleEqualsPressed();
-                break;
-            case ButtonToSymbolMapping.BUTTON_BACKSPACE:
-                handleBackspacePressed();
-                break;
-            case ButtonToSymbolMapping.BUTTON_CLEAR:
-                clearDisplayedExpression();
-                break;
             default:
                 Log.e(LOG_TAG, "MainViewModel handleButtonPressed unknown button " + symbol);
         }
@@ -217,13 +208,13 @@ public class MainViewModel extends ViewModel {
         inputExpressionSubject.onNext(currentExpression + symbol);
     }
 
-    private void clearDisplayedExpression() {
+    public void clearDisplayedExpression() {
         inputExpressionSubject.onNext("");
         displayedResult.setValue("");
         successfulCalculation.setValue(true);
     }
 
-    private void handleBackspacePressed() {
+    public void handleBackspacePressed() {
         String currentExpression = inputExpressionSubject.getValue();
 
         if (currentExpression == null) {
@@ -262,7 +253,7 @@ public class MainViewModel extends ViewModel {
         return expressionStringBuilder.toString();
     }
 
-    private void handleEqualsPressed() {
+    public void handleEqualsPressed() {
 
         if (displayedResult == null || successfulCalculation == null) {
             return;

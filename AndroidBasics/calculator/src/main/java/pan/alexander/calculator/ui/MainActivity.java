@@ -3,12 +3,14 @@ package pan.alexander.calculator.ui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.PaintCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         hideSoftKeyboard();
 
+        checkAndFixUnicodeSupport();
+
         setOnClickListeners();
 
         initOnTouchListener();
@@ -103,6 +107,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void checkAndFixUnicodeSupport() {
+        if (!PaintCompat.hasGlyph(new Paint(), spannedStringFromHtml("&#9003"))) {
+            binding.buttonBackspace.setText("<");
+        }
+    }
+
     private void setOnClickListeners() {
         binding.buttonOne.setOnClickListener(this);
         binding.buttonTwo.setOnClickListener(this);
@@ -139,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.buttonBackspace.setOnTouchListener(this);
 
         touchActionBackspace = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (isCursorVisible()) {
                     binding.editTextUserInput.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
                 } else {
@@ -173,14 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void observeDataChanges() {
-        final Observer<String> expressionObserver = expression -> {
-
-            if (isCursorVisible()) {
-                return;
-            }
-
-            setUserInputText(expression);
-        };
+        final Observer<String> expressionObserver = this::setUserInputText;
         mainViewModel.getDisplayedExpression().observe(this, expressionObserver);
 
         final Observer<String> resultObserver = result ->
@@ -199,9 +203,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setUserInputText(String text) {
         EditText editTextUserInput = binding.editTextUserInput;
-        Spanned spannedText = spannedFromHtml(text);
-        editTextUserInput.setText(spannedStringFromHtml(text));
-        editTextUserInput.setSelection(spannedText.length());
+        int cursorPosition = editTextUserInput.getSelectionStart();
+        String spannedText = spannedStringFromHtml(text);
+        editTextUserInput.setText(spannedText);
+        if (cursorPosition >= 0 && !spannedText.isEmpty()) {
+            editTextUserInput.setSelection(Math.min(cursorPosition, spannedText.length()));
+        }
     }
 
     private void insertUserInputText(String text) {
@@ -211,7 +218,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(editTextUserInput.getText());
         spannableStringBuilder.insert(cursorPosition, spannedText);
         editTextUserInput.setText(spannableStringBuilder);
-        editTextUserInput.setSelection(cursorPosition + spannedText.length());
+        if (cursorPosition >= 0 && spannableStringBuilder.length() > 0) {
+            int updatedCursorPosition = cursorPosition + spannedText.length();
+            editTextUserInput.setSelection(Math.min(updatedCursorPosition, spannableStringBuilder.length()));
+        }
     }
 
     private void checkIncomingIntent(Intent intent) {
@@ -295,18 +305,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.buttonPowered) {
             handleButtonPressed(ButtonToSymbolMapping.BUTTON_POWERED);
         } else if (id == R.id.buttonEquals) {
+            mainViewModel.handleEqualsPressed();
             resetCursorPositionIfCursorVisible();
-            handleButtonPressed(ButtonToSymbolMapping.BUTTON_EQUALS);
         } else if (id == R.id.buttonPoint) {
             handleButtonPressed(ButtonToSymbolMapping.BUTTON_POINT);
         } else if (id == R.id.buttonClear) {
+            mainViewModel.clearDisplayedExpression();
             resetCursorPositionIfCursorVisible();
-            handleButtonPressed(ButtonToSymbolMapping.BUTTON_CLEAR);
         } else if (id == R.id.buttonBackspace) {
             if (isCursorVisible()) {
                 binding.editTextUserInput.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
             } else {
-                handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE);
+                mainViewModel.handleBackspacePressed();
             }
         } else if (id == R.id.buttonBracketsOpen) {
             handleButtonPressed(ButtonToSymbolMapping.BUTTON_BRACKETS_OPEN);
@@ -343,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
 
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (touchHandlerBackspace != null) {
                     return true;
