@@ -4,55 +4,49 @@ import android.util.Log;
 
 import com.udojava.evalex.Expression;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
 
 import javax.inject.Inject;
 
+import pan.alexander.calculator.util.ExpressionConverter;
+
 import static pan.alexander.calculator.App.LOG_TAG;
-import static pan.alexander.calculator.util.Utils.spannedStringFromHtml;
 
 public class Calculator {
-    private final Map<String, String> symbolToExpressionMap;
 
     @Inject
     public Calculator() {
-        symbolToExpressionMap = new HashMap<>();
-
-        fillHtmlCodeToExpressionMap();
     }
 
+    public String calculateExpression(String expressionLine, int precision) {
 
-    public String calculateExpression(String expressionLine) {
-
-        expressionLine = convertExpressionLineToMathExpression(expressionLine);
-
+        String preparedExpression = "";
         String result = "";
+
         try {
-            Expression expression = new Expression(expressionLine);
-            result = expression.eval(false).toString();
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Calculator exception " + e.getMessage() + " " + expressionLine);
+            preparedExpression = convertExpressionLineToMathExpression(expressionLine);
+            Expression expression = new Expression(preparedExpression).setPrecision(precision);
+            BigDecimal rawResult = expression.eval().stripTrailingZeros();
+            result = rawResult.toPlainString();
+            if (result.length() - 5 /*experimental value*/ > precision) {
+                result = rawResult.toEngineeringString();
+            }
+        } catch (Throwable e) {
+            if (preparedExpression.isEmpty()) {
+                Log.w(LOG_TAG, "Calculator exception: " + e.getMessage() + " " + expressionLine);
+            } else {
+                Log.w(LOG_TAG, "Calculator exception: " + e.getMessage() + " " + preparedExpression);
+            }
         }
 
         return result;
     }
 
-
-    private void fillHtmlCodeToExpressionMap() {
-        symbolToExpressionMap.put("\\%", "/100");
-        symbolToExpressionMap.put("&#8730;", "SQRT");
-        symbolToExpressionMap.put(spannedStringFromHtml("&#8730;"), "SQRT");
-        symbolToExpressionMap.put("&#247;", "/");
-        symbolToExpressionMap.put(spannedStringFromHtml("&#247;"), "/");
-        symbolToExpressionMap.put("&#215;", "*");
-        symbolToExpressionMap.put(spannedStringFromHtml("&#215;"), "*");
-    }
-
     private String convertExpressionLineToMathExpression(String expressionLine) {
-        for (Map.Entry<String, String> entry: symbolToExpressionMap.entrySet()) {
-            expressionLine = expressionLine.replaceAll(entry.getKey(), entry.getValue());
-        }
-        return expressionLine;
+        ExpressionConverter expressionConverter = new ExpressionConverter(expressionLine);
+        expressionConverter.handleExpressionWithPercents()
+                .replaceHtmlCodesWithExpression()
+                .appendBracketsToSQRT();
+        return expressionConverter.getResult();
     }
 }

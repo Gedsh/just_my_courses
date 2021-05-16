@@ -35,8 +35,8 @@ public class MainInteractor {
         this.globalHandler = App.getInstance().getHandler();
     }
 
-    public String calculateExpression(String expression) {
-        return calculator.calculateExpression(expression);
+    public String calculateExpression(String expression, int precision) {
+        return calculator.calculateExpression(expression, precision);
     }
 
     @NonNull

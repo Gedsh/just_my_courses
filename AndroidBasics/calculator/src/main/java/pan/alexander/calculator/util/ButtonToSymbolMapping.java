@@ -16,11 +16,9 @@ public interface ButtonToSymbolMapping {
     String BUTTON_MINUS = "-";
     String BUTTON_PLUS = "+";
     String BUTTON_PERCENT = "%";
-    String BUTTON_SQRT = "&#8730;(";
+    String BUTTON_SQRT = "&#8730;";
     String BUTTON_POWERED = "^";
-    String BUTTON_EQUALS = "=";
     String BUTTON_POINT = ".";
-    String BUTTON_CLEAR = "CLEAR";
     String BUTTON_BACKSPACE = "BACKSPACE";
     String BUTTON_BRACKETS_OPEN = "(";
     String BUTTON_BRACKETS_CLOSE = ")";
