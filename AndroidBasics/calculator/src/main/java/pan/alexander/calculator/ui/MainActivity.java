@@ -22,8 +22,10 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import pan.alexander.calculator.App;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hideSoftKeyboard();
 
         checkAndFixUnicodeSupport();
+
+        calculateEMSToFitInResult();
 
         setOnClickListeners();
 
@@ -111,6 +115,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!PaintCompat.hasGlyph(new Paint(), spannedStringFromHtml("&#9003"))) {
             binding.buttonBackspace.setText("<");
         }
+    }
+
+    private void calculateEMSToFitInResult() {
+        TextView resultTextView = binding.textIntermediateResult;
+        String testString = "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM";
+
+        resultTextView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                resultTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                int totalCharsToFit = resultTextView.getPaint().breakText
+                        (
+                                testString,
+                                0,
+                                testString.length(),
+                                true,
+                                resultTextView.getWidth(),
+                                null
+                        );
+                mainViewModel.setCalculationPrecision(totalCharsToFit);
+            }
+        });
     }
 
     private void setOnClickListeners() {

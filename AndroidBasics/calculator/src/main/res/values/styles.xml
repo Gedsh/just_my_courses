@@ -23,6 +23,8 @@
         <item name="android:background">@drawable/text_field_background</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/on_primary</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="autoSizeTextType">uniform</item>
     </style>
 
     <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">

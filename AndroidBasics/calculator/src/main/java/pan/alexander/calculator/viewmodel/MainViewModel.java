@@ -27,6 +27,7 @@ public class MainViewModel extends ViewModel {
     private static final String SAVED_STATE_HANDLE = "SAVED_STATE_HANDLE";
     private static final String HTML_CODE_START_SYMBOL = "&";
     private static final char HTML_CODE_END_SYMBOL = ";".charAt(0);
+    private static final int DEFAULT_CALCULATION_PRECISION = 10;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -40,7 +41,7 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<String> displayedResult;
     private MutableLiveData<Boolean> successfulCalculation;
 
-
+    private int calculationPrecision = DEFAULT_CALCULATION_PRECISION;
 
     public MainViewModel(SavedStateHandle savedStateHandle) {
         this.calculatorDataSavedStateHandle = savedStateHandle;
@@ -92,7 +93,7 @@ public class MainViewModel extends ViewModel {
 
         disposables.add(inputExpressionSubject.toFlowable(BackpressureStrategy.LATEST)
                 .observeOn(Schedulers.computation())
-                .map(mainInteractor::calculateExpression)
+                .map(expression -> mainInteractor.calculateExpression(expression, calculationPrecision))
                 .subscribe(this::expressionCalculated));
     }
 
@@ -300,6 +301,10 @@ public class MainViewModel extends ViewModel {
                     System.currentTimeMillis());
             mainInteractor.saveHistory(historyData);
         }
+    }
+
+    public void setCalculationPrecision(int calculationPrecision) {
+        this.calculationPrecision = calculationPrecision;
     }
 
     public void stopRxSchedulersDelayed() {

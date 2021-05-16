@@ -49,9 +49,8 @@
             android:id="@+id/textIntermediateResult"
             style="@style/IntermediateResultTextViewStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/calculator_intermediate_result_height"
             android:padding="@dimen/calculator_intermediate_result_padding"
-            android:textSize="@dimen/calculator_intermediate_result_text_size"
             tools:text="6" />
 
         <androidx.appcompat.widget.AppCompatImageView
