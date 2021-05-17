@@ -42,7 +42,7 @@ public class Calculator {
         return result;
     }
 
-    private String convertExpressionLineToMathExpression(String expressionLine) {
+    private String convertExpressionLineToMathExpression(String expressionLine) throws InterruptedException {
         ExpressionConverter expressionConverter = new ExpressionConverter(expressionLine);
         expressionConverter.handleExpressionWithPercents()
                 .replaceHtmlCodesWithExpression()

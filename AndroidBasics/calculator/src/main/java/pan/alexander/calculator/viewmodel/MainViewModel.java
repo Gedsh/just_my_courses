@@ -10,8 +10,11 @@ import androidx.lifecycle.ViewModel;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import pan.alexander.calculator.App;
@@ -88,12 +91,12 @@ public class MainViewModel extends ViewModel {
     private void initExpressionObservable() {
         inputExpressionSubject = BehaviorSubject
                 .createDefault("");
-        disposables.add(inputExpressionSubject.toFlowable(BackpressureStrategy.LATEST)
-                .subscribe(inputState -> displayedExpression.setValue(inputState)));
 
         disposables.add(inputExpressionSubject.toFlowable(BackpressureStrategy.LATEST)
-                .observeOn(Schedulers.computation())
-                .map(expression -> mainInteractor.calculateExpression(expression, calculationPrecision))
+                .doOnNext(expression -> displayedExpression.setValue(expression))
+                .switchMapSingle((Function<String, SingleSource<String>>) expression ->
+                        Single.fromCallable(() -> mainInteractor.calculateExpression(expression, calculationPrecision))
+                                .subscribeOn(Schedulers.io()))
                 .subscribe(this::expressionCalculated));
     }
 

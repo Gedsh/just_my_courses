@@ -27,9 +27,14 @@ public class ExpressionConverter {
         this.expression = expression;
     }
 
-    public ExpressionConverter handleExpressionWithPercents() {
+    public ExpressionConverter handleExpressionWithPercents() throws InterruptedException {
         StringBuilder expressionLineStringBuilder = new StringBuilder(expression);
         while (expressionLineStringBuilder.indexOf("%") >= 0) {
+
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException("ExpressionConverter interrupted");
+            }
+
             Matcher matcherPercent1 = patternPercentComplex.matcher(expressionLineStringBuilder);
             Matcher matcherPercent2 = patternPercentCommon.matcher(expressionLineStringBuilder);
 
@@ -57,8 +62,13 @@ public class ExpressionConverter {
         return line;
     }
 
-    public ExpressionConverter replaceHtmlCodesWithExpression() {
+    public ExpressionConverter replaceHtmlCodesWithExpression() throws InterruptedException {
         for (Map.Entry<String, String> entry : symbolToExpressionMap.entrySet()) {
+
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException("ExpressionConverter interrupted");
+            }
+
             expression = expression.replace(entry.getKey(), entry.getValue());
         }
 
