@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -24,6 +26,7 @@ import pan.alexander.calculator.util.ButtonToSymbolMapping;
 
 import static pan.alexander.calculator.App.LOG_TAG;
 import static pan.alexander.calculator.util.AppConstants.DELAY_BEFORE_STOP_RX_SCHEDULERS;
+import static pan.alexander.calculator.util.AppConstants.CALCULATION_TIMEOUT_SEC;
 import static pan.alexander.calculator.util.Utils.spannedStringFromHtml;
 
 public class MainViewModel extends ViewModel {
@@ -94,10 +97,16 @@ public class MainViewModel extends ViewModel {
 
         disposables.add(inputExpressionSubject.toFlowable(BackpressureStrategy.LATEST)
                 .doOnNext(expression -> displayedExpression.setValue(expression))
-                .switchMapSingle((Function<String, SingleSource<String>>) expression ->
+                .switchMapSingleDelayError((Function<String, SingleSource<String>>) expression ->
                         Single.fromCallable(() -> mainInteractor.calculateExpression(expression, calculationPrecision))
-                                .subscribeOn(Schedulers.io()))
-                .subscribe(this::expressionCalculated));
+                                .subscribeOn(Schedulers.io())
+                                .timeout(CALCULATION_TIMEOUT_SEC, TimeUnit.SECONDS))
+                .subscribe(this::expressionCalculated,
+                        throwable -> {
+                            successfulCalculation.postValue(false);
+                            disposables.clear();
+                            Log.e(LOG_TAG, "Calculation exception " + throwable.getMessage());
+                        }));
     }
 
     private void expressionCalculated(String computationResult) {
