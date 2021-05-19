@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static pan.alexander.calculator.util.ButtonToSymbolMapping.BUTTON_DIVIDE;
+import static pan.alexander.calculator.util.ButtonToSymbolMapping.BUTTON_MULTIPLY;
+import static pan.alexander.calculator.util.ButtonToSymbolMapping.BUTTON_SQRT;
 import static pan.alexander.calculator.util.Utils.spannedStringFromHtml;
 
 public class ExpressionConverter {
@@ -13,12 +16,12 @@ public class ExpressionConverter {
     private static final Pattern patternPercentCommon = Pattern.compile("(\\d+(?:\\.\\d+)?)%");
 
     private static final Map<String, String> symbolToExpressionMap = new HashMap<String, String>() {{
-        put("&#8730;", "SQRT");
-        put(spannedStringFromHtml("&#8730;"), "SQRT");
-        put("&#247;", "/");
-        put(spannedStringFromHtml("&#247;"), "/");
-        put("&#215;", "*");
-        put(spannedStringFromHtml("&#215;"), "*");
+        put(BUTTON_SQRT, "SQRT");
+        put(spannedStringFromHtml(BUTTON_SQRT), "SQRT");
+        put(BUTTON_DIVIDE, "/");
+        put(spannedStringFromHtml(BUTTON_DIVIDE), "/");
+        put(BUTTON_MULTIPLY, "*");
+        put(spannedStringFromHtml(BUTTON_MULTIPLY), "*");
     }};
 
     private String expression;
