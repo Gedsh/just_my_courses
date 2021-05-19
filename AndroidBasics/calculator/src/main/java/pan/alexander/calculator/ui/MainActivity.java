@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkAndFixUnicodeSupport() {
-        if (!PaintCompat.hasGlyph(new Paint(), spannedStringFromHtml("&#9003"))) {
+        if (!PaintCompat.hasGlyph(new Paint(), spannedStringFromHtml(getString(R.string.buttonBackspaceText)))) {
             binding.buttonBackspace.setText("<");
         }
     }

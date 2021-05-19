@@ -8,4 +8,7 @@ public interface AppConstants {
     int INTERVAL_BACKSPACE_LONG_PRESSING = 150;
 
     String VIEW_MODE_PREFERENCE = "viewModePreference";
+    String MODE_NIGHT_FOLLOW_SYSTEM_PREFERENCE_VALUE = "1";
+    String MODE_NIGHT_NO_PREFERENCE_VALUE = "2";
+    String MODE_NIGHT_YES_PREFERENCE_VALUE = "3";
 }
