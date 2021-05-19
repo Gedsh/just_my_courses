@@ -26,7 +26,6 @@
                 android:gravity="start"
                 android:textColor="@color/on_primary"
                 android:textSize="@dimen/calculator_history_date_text_size"
-
                 tools:text="03.05.2021 12:00:00" />
 
             <androidx.appcompat.widget.AppCompatTextView
