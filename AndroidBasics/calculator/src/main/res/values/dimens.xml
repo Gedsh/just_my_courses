@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="calculator_input_text_size">36sp</dimen>
+    <dimen name="calculator_input_padding">8dp</dimen>
+    <dimen name="calculator_input_min_height">150dp</dimen>
+    <dimen name="calculator_intermediate_result_height">60dp</dimen>
+    <dimen name="calculator_intermediate_result_padding">8dp</dimen>
+    <dimen name="calculator_intermediate_result_top_margin">0dp</dimen>
+    <dimen name="calculator_digit_button_text_size">36sp</dimen>
+    <dimen name="calculator_expression_button_text_size">36sp</dimen>
+    <dimen name="calculator_text_button_text_size">23sp</dimen>
+    <dimen name="calculator_outer_margins">4dp</dimen>
+    <dimen name="calculator_button_margins">4dp</dimen>
+    <dimen name="calculator_input_text_border_width">5dp</dimen>
+    <dimen name="calculator_card_corners_radius">0dp</dimen>
+    <dimen name="calculator_history_expression_text_size">24sp</dimen>
+    <dimen name="calculator_history_result_text_size">32sp</dimen>
+    <dimen name="calculator_history_date_text_size">18sp</dimen>
+    <dimen name="calculator_history_card_padding">8dp</dimen>
+    <dimen name="calculator_wrong_expression_sign_padding">4dp</dimen>
+    <integer name="calculator_input_text_max_lines">3</integer>
+</resources>

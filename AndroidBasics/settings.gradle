@@ -1,4 +1,3 @@
 rootProject.name = "AndroidBasics"
-include ':app'
 include ':calculator'
 include ':notes'

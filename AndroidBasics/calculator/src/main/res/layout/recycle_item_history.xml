@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/primary"
+        app:cardCornerRadius="@dimen/calculator_card_corners_radius"
+        app:cardUseCompatPadding="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/calculator_history_card_padding"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewHistoryDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textColor="@color/on_primary"
+                android:textSize="@dimen/calculator_history_date_text_size"
+                tools:text="03.05.2021 12:00:00" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewHistoryResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textColor="@color/on_primary"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/calculator_history_result_text_size"
+                tools:text="15" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewHistoryExpression"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:textColor="@color/on_primary"
+                android:textIsSelectable="true"
+                android:textSize="@dimen/calculator_history_expression_text_size"
+                tools:text="12+3" />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

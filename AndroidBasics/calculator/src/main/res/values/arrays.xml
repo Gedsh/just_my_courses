@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="day_night_mode_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="day_night_mode_entries">
+        <item>@string/preferenceSystemDefaultModeText</item>
+        <item>@string/preferenceDayModeText</item>
+        <item>@string/preferenceNightModeText</item>
+    </string-array>
+</resources>

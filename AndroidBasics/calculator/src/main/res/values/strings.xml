@@ -5,11 +5,11 @@
     <string name="buttonBracketsOpenText">(</string>
     <string name="buttonBracketsCloseText">)</string>
     <string name="buttonClearText">C</string>
-    <string name="buttonBackspaceText">&#5130;</string>
+    <string name="buttonBackspaceText">&#9003;</string>
     <string name="buttonSevenText">7</string>
     <string name="buttonEightText">8</string>
     <string name="buttonNineText">9</string>
-    <string name="buttonDivideText" formatted="true">&#247;</string>
+    <string name="buttonDivideText">&#247;</string>
     <string name="buttonSQRTText">&#8730;</string>
     <string name="buttonFourText">4</string>
     <string name="buttonFiveText">5</string>
@@ -26,4 +26,13 @@
     <string name="buttonPercentText">%</string>
     <string name="buttonPlusText">+</string>
     <string name="buttonEqualsText">=</string>
+    <string name="toastNotImplemented">Not yet implemented</string>
+    <string name="activityLabelCalculateExpression">Calculate</string>
+    <string name="preferenceCategoryDayNightModeText">Day - Night mode</string>
+    <string name="preferenceDayNightModeText">Select theme</string>
+    <string name="preferenceDayModeText">Day mode</string>
+    <string name="preferenceNightModeText">Night mode</string>
+    <string name="preferenceSystemDefaultModeText">System default</string>
+    <string name="historyActionBarTitle">History</string>
+    <string name="settingsActionBarTitle">Settings</string>
 </resources>
