@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (isCursorVisible()) {
                     binding.editTextUserInput.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
                 } else {
-                    handleButtonPressed(ButtonToSymbolMapping.BUTTON_BACKSPACE);
+                    mainViewModel.handleBackspacePressed();
                 }
 
                 touchHandlerBackspace.postDelayed(this, INTERVAL_BACKSPACE_LONG_PRESSING);

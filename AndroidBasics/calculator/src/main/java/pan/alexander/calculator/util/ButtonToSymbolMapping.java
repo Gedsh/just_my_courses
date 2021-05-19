@@ -19,7 +19,6 @@ public interface ButtonToSymbolMapping {
     String BUTTON_SQRT = "&#8730;";
     String BUTTON_POWERED = "^";
     String BUTTON_POINT = ".";
-    String BUTTON_BACKSPACE = "BACKSPACE";
     String BUTTON_BRACKETS_OPEN = "(";
     String BUTTON_BRACKETS_CLOSE = ")";
 }
