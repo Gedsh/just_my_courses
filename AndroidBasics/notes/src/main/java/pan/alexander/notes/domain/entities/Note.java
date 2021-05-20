@@ -1,18 +1,64 @@
 package pan.alexander.notes.domain.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Objects;
 
-public class Note {
+@Entity
+public class Note implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String title;
     private String description;
-    private long date;
+    @NoteType
+    private final int type;
+    private long time;
     private String color;
 
-    public Note(String title, String description, long date, String color) {
+    public Note(@NonNull String title,
+                @NonNull String description,
+                @NoteType int type,
+                long time,
+                @NonNull String color) {
         this.title = title;
         this.description = description;
-        this.date = date;
+        this.type = type;
+        this.time = time;
         this.color = color;
+    }
+
+    protected Note(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        description = in.readString();
+        type = in.readInt();
+        time = in.readLong();
+        color = in.readString();
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -31,12 +77,12 @@ public class Note {
         this.description = description;
     }
 
-    public long getDate() {
-        return date;
+    public long getTime() {
+        return time;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public String getColor() {
@@ -47,18 +93,38 @@ public class Note {
         this.color = color;
     }
 
+    @NoteType
+    public int getType() {
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
-        return date == note.date &&
+        return time == note.time &&
                 title.equals(note.title) &&
                 description.equals(note.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, date);
+        return Objects.hash(title, description, time);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeInt(type);
+        dest.writeLong(time);
+        dest.writeString(color);
     }
 }

@@ -7,15 +7,32 @@
     tools:context=".presentation.fragments.NotesFragment">
 
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textViewTopNoteDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         tools:text="19.05.2021" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewNotes"
+    <androidx.slidingpanelayout.widget.SlidingPaneLayout
+        android:id="@+id/notesSlidingPaneLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotes"
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/selectedNoteDetails"
+            android:layout_width="300dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:name="pan.alexander.notes.presentation.fragments.TextNoteFragment" />
+
+    </androidx.slidingpanelayout.widget.SlidingPaneLayout>
+
+
 </androidx.appcompat.widget.LinearLayoutCompat>

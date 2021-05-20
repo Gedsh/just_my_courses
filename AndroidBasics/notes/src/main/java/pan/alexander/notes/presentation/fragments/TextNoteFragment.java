@@ -12,28 +12,55 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import pan.alexander.notes.R;
+import java.text.DateFormat;
+import java.util.Date;
+
+import pan.alexander.notes.databinding.TextNoteFragmentBinding;
+import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.presentation.viewmodel.TextNoteViewModel;
+
+import static pan.alexander.notes.presentation.fragments.NotesFragment.NOTE_DETAILS_ARGUMENT;
 
 public class TextNoteFragment extends Fragment {
 
     private TextNoteViewModel mViewModel;
-
-    public static TextNoteFragment newInstance() {
-        return new TextNoteFragment();
-    }
+    private TextNoteFragmentBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.text_note_fragment, container, false);
+        binding = TextNoteFragmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(TextNoteViewModel.class);
-        // TODO: Use the ViewModel
+        showNoteDetailsFromArguments();
+    }
+
+    private void showNoteDetailsFromArguments() {
+        Bundle arguments = getArguments();
+
+        if (arguments == null) {
+            return;
+        }
+
+        Note note = arguments.getParcelable(NOTE_DETAILS_ARGUMENT);
+
+        if (note == null) {
+            return;
+        }
+
+        binding.textViewTextNoteDate.setText(formatTime(note.getTime()));
+        binding.editTextNote.setText(note.getDescription());
+    }
+
+    private String formatTime(long time) {
+        Date date = new Date(time);
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+        return dateFormat.format(date);
     }
 
 }
