@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navNotes">
+
+    <fragment
+        android:id="@+id/navNotes"
+        android:name="pan.alexander.notes.presentation.fragments.NotesFragment"
+        android:label="@string/menu_notes"
+        tools:layout="@layout/notes_fragment" />
+
+    <fragment
+        android:id="@+id/navArchive"
+        android:name="pan.alexander.notes.presentation.fragments.ArchiveFragment"
+        android:label="@string/menu_archive"
+        tools:layout="@layout/archive_fragment" />
+
+    <fragment
+        android:id="@+id/navBin"
+        android:name="pan.alexander.notes.presentation.fragments.BinFragment"
+        android:label="@string/menu_bin"
+        tools:layout="@layout/bin_fragment" />
+</navigation>
