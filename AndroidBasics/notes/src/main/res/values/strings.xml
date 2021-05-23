@@ -6,9 +6,38 @@
     <string name="nav_header_title">Just notes</string>
     <string name="nav_header_subtitle">invizible.soft@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
+    <string name="menu_view">View</string>
+    <string name="menu_sync">Sync</string>
     <string name="menu_notes">Notes</string>
     <string name="menu_archive">Archive</string>
-    <string name="menu_bin">Bin</string>
+    <string name="menu_bin">Trash Can</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_color">Color</string>
+    <string name="menu_remind">Remind</string>
+    <string name="menu_unselect">Clear selection</string>
+    <string name="menu_search">Search</string>
+
+    <string name="fab_add_note">Add note</string>
+    <string name="fab_add_text_note">Add text note</string>
+    <string name="fab_add_list_note">Add list note</string>
+
+    <string name="fragment_about_text">This is About fragment</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

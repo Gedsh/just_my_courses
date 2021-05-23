@@ -1,47 +1,53 @@
 package pan.alexander.notes.presentation.recycler;
 
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 
 import pan.alexander.notes.R;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.utils.Utils;
 
-public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    private final NotesAdapter notesAdapter;
     private final TextView textViewNotesItemNoteTitle;
     private final TextView textViewNotesItemNoteDate;
-    private final MutableLiveData<Note> onClickLiveListener;
-    private final List<Note> notes;
+    private final View selectedOverlay;
 
-    public NotesViewHolder(@NonNull View itemView, MutableLiveData<Note> onClickLiveListener, List<Note> notes) {
+    public NotesViewHolder(@NonNull View itemView, NotesAdapter notesAdapter) {
         super(itemView);
 
-        this.onClickLiveListener = onClickLiveListener;
-        this.notes = notes;
+        this.notesAdapter = notesAdapter;
 
-        LinearLayoutCompat linearLayoutItemNote = itemView.findViewById(R.id.linearLayoutItemNote);
-        linearLayoutItemNote.setOnClickListener(this);
+        FrameLayout frameLayoutItemNote = itemView.findViewById(R.id.frameLayoutItemNote);
+        frameLayoutItemNote.setOnClickListener(this);
+        frameLayoutItemNote.setOnLongClickListener(this);
         textViewNotesItemNoteTitle = itemView.findViewById(R.id.textViewNotesItemNoteTitle);
         textViewNotesItemNoteDate = itemView.findViewById(R.id.textViewNotesItemNoteDate);
+        selectedOverlay = itemView.findViewById(R.id.selectedOverlay);
     }
 
-    public void bind(Note note) {
+    public void bind(int position) {
+
+        if (position < 0) {
+            return;
+        }
+
+        Note note = notesAdapter.notes.get(position);
+
         textViewNotesItemNoteTitle.setText(note.getTitle());
-        textViewNotesItemNoteDate.setText(formatTime(note.getTime()));
-    }
+        if (textViewNotesItemNoteDate != null) {
+            textViewNotesItemNoteDate.setText(Utils.formatTime(note.getTime()));
+        }
 
-    private String formatTime(long time) {
-        Date date = new Date(time);
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
-        return dateFormat.format(date);
+        if (notesAdapter.isSelected(position)) {
+            selectedOverlay.setVisibility(View.VISIBLE);
+        } else {
+            selectedOverlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -51,8 +57,28 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
             return;
         }
 
-        if (v.getId() == R.id.linearLayoutItemNote) {
-            onClickLiveListener.setValue(notes.get(getAdapterPosition()));
+        if (v.getId() == R.id.frameLayoutItemNote && notesAdapter.clickListener != null) {
+            notesAdapter.clickListener.onItemClicked(position);
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int position = getAdapterPosition();
+        if (position < 0) {
+            return false;
+        }
+
+        if (v.getId() == R.id.frameLayoutItemNote && notesAdapter.clickListener != null) {
+            notesAdapter.clickListener.onItemLongClicked(position);
+        }
+
+        return false;
+    }
+
+    public interface ClickListener {
+        void onItemClicked(int position);
+
+        void onItemLongClicked(int position);
     }
 }

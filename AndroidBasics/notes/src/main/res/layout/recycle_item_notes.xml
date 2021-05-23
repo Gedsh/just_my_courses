@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools"
-    android:id="@+id/linearLayoutItemNote"
+    android:id="@+id/frameLayoutItemNote"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewNotesItemNoteTitle"
+    <View
+        android:id="@+id/selectedOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/note_item_selected"
+        android:visibility="invisible" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tool:text="Tuesday" />
+        android:orientation="horizontal">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewNotesItemNoteDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        tool:text="19 May" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewNotesItemNoteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:gravity="center_vertical|start"
+            android:singleLine="true"
+            android:textSize="@dimen/recycle_item_note_title_text_size"
+            tool:text="@tools:sample/lorem/random" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewNotesItemNoteDate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|end"
+            android:textSize="@dimen/recycle_item_note_time_text_size"
+            tool:text="20.05.2021 23.52.00" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</FrameLayout>

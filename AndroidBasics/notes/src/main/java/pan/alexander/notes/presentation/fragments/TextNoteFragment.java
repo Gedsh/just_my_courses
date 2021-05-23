@@ -18,6 +18,7 @@ import java.util.Date;
 import pan.alexander.notes.databinding.TextNoteFragmentBinding;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.presentation.viewmodel.TextNoteViewModel;
+import pan.alexander.notes.utils.Utils;
 
 import static pan.alexander.notes.presentation.fragments.NotesFragment.NOTE_DETAILS_ARGUMENT;
 
@@ -53,14 +54,7 @@ public class TextNoteFragment extends Fragment {
             return;
         }
 
-        binding.textViewTextNoteDate.setText(formatTime(note.getTime()));
+        binding.textViewTextNoteDate.setText(Utils.formatTime(note.getTime()));
         binding.editTextNote.setText(note.getDescription());
     }
-
-    private String formatTime(long time) {
-        Date date = new Date(time);
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
-        return dateFormat.format(date);
-    }
-
 }

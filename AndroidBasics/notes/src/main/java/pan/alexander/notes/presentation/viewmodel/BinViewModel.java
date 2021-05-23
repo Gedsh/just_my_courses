@@ -10,7 +10,7 @@ public class BinViewModel extends ViewModel {
 
     public BinViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is bin fragment");
+        mText.setValue("This is trash can fragment");
     }
 
     public LiveData<String> getText() {
