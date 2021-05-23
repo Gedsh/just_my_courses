@@ -22,4 +22,15 @@
         android:name="pan.alexander.notes.presentation.fragments.BinFragment"
         android:label="@string/menu_bin"
         tools:layout="@layout/bin_fragment" />
+
+    <fragment
+        android:id="@+id/navSettings"
+        android:name="pan.alexander.notes.presentation.fragments.SettingsFragment"
+        android:label="@string/menu_settings" />
+
+    <fragment
+        android:id="@+id/navAbout"
+        android:name="pan.alexander.notes.presentation.fragments.AboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/about_fragment" />
 </navigation>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomMenuArchive"
+        android:icon="@drawable/ic_menu_archive"
+        android:title="@string/menu_archive"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bottomMenuDelete"
+        android:icon="@drawable/ic_menu_bin"
+        android:title="@string/menu_delete"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bottomMenuColor"
+        android:icon="@drawable/ic_menu_color"
+        android:title="@string/menu_color"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/bottomMenuRemind"
+        android:icon="@drawable/ic_menu_remind"
+        android:title="@string/menu_remind"
+        app:showAsAction="ifRoom" />
+</menu>
