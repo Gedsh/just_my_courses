@@ -43,6 +43,7 @@ import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
 
 public class NotesFragment extends Fragment implements NotesViewHolder.ClickListener,
+        NotesAdapter.OnTopItemChangedListener,
         ActionModeCallback.ActionModeFinishedListener {
 
     public static final String NOTE_DETAILS_ARGUMENT = "NOTE_DETAILS_ARGUMENT";
@@ -102,8 +103,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
 
         connectSlidingPanelToBackButton();
@@ -117,8 +119,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         initRecycler();
 
         observeNotesChanges();
-
-        observeRecyclerItemBind();
     }
 
     private void connectSlidingPanelToBackButton() {
@@ -207,14 +207,13 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         notesLiveData.observe(getViewLifecycleOwner(), notesObserver);
     }
 
-    private void observeRecyclerItemBind() {
-        Observer<Note> itemBindObserver = this::showShowedNotesDate;
-        LiveData<Note> onBindLiveListener = notesAdapter.getNoteOnBindLiveListener();
-        onBindLiveListener.observe(getViewLifecycleOwner(), itemBindObserver);
+    @Override
+    public void onTopItemChanged(Note note) {
+        showTopNoteDate(note);
     }
 
-    private void showShowedNotesDate(Note note) {
-        binding.textViewDisplayedNotesDate.setText(Utils.formatTime(note.getTime()));
+    private void showTopNoteDate(Note note) {
+        binding.textViewDisplayedNotesDate.setText(Utils.formatTime(note.getTime(), false));
     }
 
     @Override
