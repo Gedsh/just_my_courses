@@ -54,7 +54,7 @@ public class TextNoteFragment extends Fragment {
             return;
         }
 
-        binding.textViewTextNoteDate.setText(Utils.formatTime(note.getTime()));
+        binding.textViewTextNoteDate.setText(Utils.formatTime(note.getTime(), true));
         binding.editTextNote.setText(note.getDescription());
     }
 }

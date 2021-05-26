@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,17 +14,19 @@ import java.util.List;
 
 import pan.alexander.notes.R;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.presentation.fragments.NotesFragment;
 
 public class NotesAdapter extends SelectableAdapter<NotesViewHolder>{
     final List<Note> notes = new ArrayList<>();
-    final MutableLiveData<Note> onBindLiveListener = new MutableLiveData<>();
 
     final NotesViewHolder.ClickListener clickListener;
+    final OnTopItemChangedListener topItemChangedListener;
 
-    public NotesAdapter(SparseBooleanArray selectedItems, NotesViewHolder.ClickListener clickListener) {
+    public NotesAdapter(SparseBooleanArray selectedItems, NotesFragment notesFragment) {
         super(selectedItems);
 
-        this.clickListener = clickListener;
+        this.clickListener = notesFragment;
+        this.topItemChangedListener = notesFragment;
     }
 
     public void refreshNotesList(List<Note> notes) {
@@ -60,7 +60,7 @@ public class NotesAdapter extends SelectableAdapter<NotesViewHolder>{
 
                 int visibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
                 if (visibleItemPosition >= 0) {
-                    onBindLiveListener.setValue(notes.get(visibleItemPosition));
+                    topItemChangedListener.onTopItemChanged(notes.get(visibleItemPosition));
                 }
             }
         });
@@ -80,7 +80,7 @@ public class NotesAdapter extends SelectableAdapter<NotesViewHolder>{
         return notes;
     }
 
-    public LiveData<Note> getNoteOnBindLiveListener() {
-        return onBindLiveListener;
+    public interface OnTopItemChangedListener {
+        void onTopItemChanged(Note note);
     }
 }

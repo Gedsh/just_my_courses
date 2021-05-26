@@ -1,41 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
-    android:id="@+id/frameLayoutItemNote"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/selectedOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/note_item_selected"
-        android:visibility="invisible" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardNotesItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/recycle_item_note_card_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/recycle_item_note_card_content_padding">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewNotesItemNoteTitle"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="marquee"
-            android:gravity="center_vertical|start"
-            android:singleLine="true"
-            android:textSize="@dimen/recycle_item_note_title_text_size"
-            tool:text="@tools:sample/lorem/random" />
+            android:orientation="horizontal">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewNotesItemNoteDate"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|end"
-            android:textSize="@dimen/recycle_item_note_time_text_size"
-            tool:text="20.05.2021 23.52.00" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewNotesItemNoteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical|start"
+                android:singleLine="true"
+                android:textSize="@dimen/recycle_item_note_title_text_size"
+                tool:text="@tools:sample/lorem/random" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewNotesItemNoteDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|end"
+                android:textSize="@dimen/recycle_item_note_time_text_size"
+                tool:text="20.05.2021 23.52.00" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewItemNoteSubmenu"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_submenu" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>
