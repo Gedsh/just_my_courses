@@ -12,25 +12,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <FrameLayout
             android:layout_width="@dimen/notes_list_min_width"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:orientation="vertical">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/textViewDisplayedNotesDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                tools:text="19.05.2021" />
+            android:layout_gravity="start">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewNotes"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewTopNoteDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/notes_fragment_top_time_background_color"
+                android:padding="@dimen/notes_fragment_top_time_content_padding"
+                android:textAlignment="center"
+                android:textSize="@dimen/notes_fragment_top_time_text_size"
+                android:textStyle="bold"
+                tools:text="19.05.2021" />
+
+        </FrameLayout>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/selectedNoteDetails"

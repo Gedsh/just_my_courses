@@ -58,7 +58,7 @@ public class NotesAdapter extends SelectableAdapter<NotesViewHolder>{
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int visibleItemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                int visibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
                 if (visibleItemPosition >= 0) {
                     topItemChangedListener.onTopItemChanged(notes.get(visibleItemPosition));
                 }

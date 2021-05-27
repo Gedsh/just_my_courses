@@ -1,26 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".presentation.fragments.TextNoteFragment">
 
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textViewTextNoteDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/notes_fragment_top_time_content_padding"
         android:textAlignment="center"
-        tools:text="19.05.2021 12:00" />
+        android:textSize="@dimen/notes_fragment_top_time_text_size"
+        android:textStyle="bold" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/editTextNote"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTextNote"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:gravity="start|top"
-        android:inputType="textPersonName"
-        android:textAlignment="textStart"
-        tools:text="My text note" />
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/text_note_content_padding">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/editTextNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:textAlignment="textStart"
+                    tools:text="My text note" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </ScrollView>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

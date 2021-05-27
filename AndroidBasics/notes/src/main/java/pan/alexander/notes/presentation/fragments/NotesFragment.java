@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -191,6 +192,16 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         notesAdapter = new NotesAdapter(selectedNotes, this);
         notesRecycleView.setLayoutManager(new LinearLayoutManager(requireContext()));
         notesRecycleView.setAdapter(notesAdapter);
+
+        TextView textViewTopNoteDate = binding.textViewTopNoteDate;
+        textViewTopNoteDate.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                textViewTopNoteDate.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                notesRecycleView.setPadding(0, textViewTopNoteDate.getHeight(), 0, 0);
+                notesRecycleView.scrollToPosition(0);
+            }
+        });
     }
 
     private void observeNotesChanges() {
@@ -213,7 +224,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     }
 
     private void showTopNoteDate(Note note) {
-        binding.textViewDisplayedNotesDate.setText(Utils.formatTime(note.getTime(), false));
+        binding.textViewTopNoteDate.setText(Utils.formatTime(note.getTime(), false));
     }
 
     @Override
