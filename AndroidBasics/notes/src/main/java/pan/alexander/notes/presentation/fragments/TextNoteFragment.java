@@ -2,6 +2,7 @@ package pan.alexander.notes.presentation.fragments;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,9 +12,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.text.DateFormat;
-import java.util.Date;
 
 import pan.alexander.notes.databinding.TextNoteFragmentBinding;
 import pan.alexander.notes.domain.entities.Note;
@@ -35,8 +33,9 @@ public class TextNoteFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mViewModel = new ViewModelProvider(this).get(TextNoteViewModel.class);
         showNoteDetailsFromArguments();
     }
@@ -56,5 +55,6 @@ public class TextNoteFragment extends Fragment {
 
         binding.textViewTextNoteDate.setText(Utils.formatTime(note.getTime(), true));
         binding.editTextNote.setText(note.getDescription());
+        binding.cardTextNote.setCardBackgroundColor(Color.parseColor(note.getColor()));
     }
 }

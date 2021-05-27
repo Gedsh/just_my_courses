@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        app:cardCornerRadius="@dimen/recycle_item_note_card_corner_radius"
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
         app:contentPadding="@dimen/recycle_item_note_card_content_padding">

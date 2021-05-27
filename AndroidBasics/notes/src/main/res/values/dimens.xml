@@ -5,11 +5,14 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_end_margin">16dp</dimen>
     <dimen name="fab_bottom_margin">0dp</dimen>
+    <dimen name="notes_fragment_top_time_text_size">18sp</dimen>
+    <dimen name="notes_fragment_top_time_content_padding">2dp</dimen>
     <dimen name="recycle_item_note_title_text_size">24sp</dimen>
     <dimen name="recycle_item_note_time_text_size">16sp</dimen>
-    <dimen name="recycle_item_note_card_corner_radius">5dp</dimen>
+    <dimen name="default_card_corner_radius">5dp</dimen>
     <dimen name="recycle_item_note_card_content_padding">8dp</dimen>
     <dimen name="notes_list_min_width">280dp</dimen>
     <dimen name="notes_details_min_width">300dp</dimen>
+    <dimen name="text_note_content_padding">8dp</dimen>
     <dimen name="about_fragment_text_margin">16dp</dimen>
 </resources>
