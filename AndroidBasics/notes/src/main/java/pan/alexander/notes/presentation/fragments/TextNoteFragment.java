@@ -1,5 +1,6 @@
 package pan.alexander.notes.presentation.fragments;
 
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.graphics.Color;
@@ -15,13 +16,17 @@ import android.view.ViewGroup;
 
 import pan.alexander.notes.databinding.TextNoteFragmentBinding;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.TextNoteViewModel;
+import pan.alexander.notes.utils.KeyboardUtils;
 import pan.alexander.notes.utils.Utils;
 
 import static pan.alexander.notes.presentation.fragments.NotesFragment.NOTE_DETAILS_ARGUMENT;
+import static pan.alexander.notes.utils.AppConstants.DEFAULT_ANIMATION_DURATION;
 
 public class TextNoteFragment extends Fragment {
 
+    private MainActivityViewModel mainActivityViewModel;
     private TextNoteViewModel mViewModel;
     private TextNoteFragmentBinding binding;
 
@@ -36,8 +41,12 @@ public class TextNoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         mViewModel = new ViewModelProvider(this).get(TextNoteViewModel.class);
+
         showNoteDetailsFromArguments();
+        observeKeyboardVisibilityChanges();
+        observeBottomNavigationViewShowed();
     }
 
     private void showNoteDetailsFromArguments() {
@@ -54,7 +63,29 @@ public class TextNoteFragment extends Fragment {
         }
 
         binding.textViewTextNoteDate.setText(Utils.formatTime(note.getTime(), true));
-        binding.editTextNote.setText(note.getDescription());
-        binding.cardTextNote.setCardBackgroundColor(Color.parseColor(note.getColor()));
+        binding.editTextNoteTitle.setText(note.getTitle());
+        binding.cardTextNoteTitle.setCardBackgroundColor(Color.parseColor(note.getColor()));
+        binding.editTextNoteDescription.setText(note.getDescription());
+        binding.cardTextNoteDescription.setCardBackgroundColor(Color.parseColor(note.getColor()));
+    }
+
+    private void observeBottomNavigationViewShowed() {
+        mainActivityViewModel.getBottomNavigationViewShowed().observe(getViewLifecycleOwner(),
+                this::setDescriptionCardBottomMargin);
+    }
+
+    private void setDescriptionCardBottomMargin(int appBarHeight) {
+        CardView cardTextNoteDescription = binding.cardTextNoteDescription;
+        cardTextNoteDescription.postDelayed(() -> {
+            ViewGroup.MarginLayoutParams layoutParams =
+                    (ViewGroup.MarginLayoutParams) cardTextNoteDescription.getLayoutParams();
+            layoutParams.setMargins(0, 0, 0, appBarHeight);
+            cardTextNoteDescription.requestLayout();
+        }, appBarHeight != 0 ? DEFAULT_ANIMATION_DURATION : 0);
+    }
+
+    private void observeKeyboardVisibilityChanges() {
+        KeyboardUtils.addKeyboardToggleListener(requireActivity(), isVisible ->
+                mainActivityViewModel.setKeyboardActivated(isVisible));
     }
 }

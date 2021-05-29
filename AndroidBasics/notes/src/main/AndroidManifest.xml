@@ -15,6 +15,7 @@
         tools:ignore="AllowBackup">
         <activity
             android:name=".presentation.activities.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.AndroidBasics.NoActionBar">
             <intent-filter>

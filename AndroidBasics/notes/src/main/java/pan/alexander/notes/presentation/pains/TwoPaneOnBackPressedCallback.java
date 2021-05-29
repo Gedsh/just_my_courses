@@ -39,4 +39,9 @@ public class TwoPaneOnBackPressedCallback extends OnBackPressedCallback
         // Disable intercepting the system back button when the user returns to the list pane.
         setEnabled(false);
     }
+
+    interface PanelSlideListener {
+        void onPanelOpened();
+        void onPanelClosed();
+    }
 }
