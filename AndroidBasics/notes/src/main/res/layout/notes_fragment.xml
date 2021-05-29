@@ -30,7 +30,7 @@
                 android:background="@color/notes_fragment_top_time_background_color"
                 android:padding="@dimen/notes_fragment_top_time_content_padding"
                 android:textAlignment="center"
-                android:textSize="@dimen/notes_fragment_top_time_text_size"
+                android:textSize="@dimen/top_time_text_size"
                 android:textStyle="bold"
                 tools:text="19.05.2021" />
 

@@ -29,7 +29,7 @@
                 android:ellipsize="marquee"
                 android:gravity="center_vertical|start"
                 android:singleLine="true"
-                android:textSize="@dimen/recycle_item_note_title_text_size"
+                android:textSize="@dimen/note_title_text_size"
                 tool:text="@tools:sample/lorem/random" />
 
             <com.google.android.material.textview.MaterialTextView

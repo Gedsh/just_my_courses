@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import pan.alexander.notes.presentation.animation.ViewAnimation;
 import pan.alexander.notes.presentation.pains.TwoPaneOnBackPressedCallback;
 import pan.alexander.notes.presentation.recycler.NotesAdapter;
 import pan.alexander.notes.presentation.recycler.NotesViewHolder;
+import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
 
@@ -49,11 +52,13 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
     public static final String NOTE_DETAILS_ARGUMENT = "NOTE_DETAILS_ARGUMENT";
 
+    private MainActivityViewModel mainActivityViewModel;
     private NotesViewModel notesViewModel;
     private NotesFragmentBinding binding;
     private NotesAdapter notesAdapter;
     private ActionMode actionMode;
     private boolean fabIsRotate;
+    private Menu menu;
 
     @Nullable
     @Override
@@ -66,6 +71,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        this.menu = menu;
         inflater.inflate(R.menu.notes_action_bar_menu, menu);
         initSearch(menu);
     }
@@ -88,6 +94,13 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         });
     }
 
+    private void toggleMenuWhenNoteDetailsDisplayed(boolean showFullMenu) {
+        if (menu != null) {
+            menu.findItem(R.id.mainMenuColor).setVisible(showFullMenu);
+            menu.findItem(R.id.mainMenuView).setVisible(showFullMenu);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -107,7 +120,10 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     public void onViewCreated(@NonNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
+
+        initSlidingPanelSlideListener();
 
         connectSlidingPanelToBackButton();
 
@@ -120,7 +136,55 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         initRecycler();
 
         observeNotesChanges();
+
+        observeKeyboardActivated();
     }
+
+    private void initSlidingPanelSlideListener() {
+        binding.notesSlidingPaneLayout.addPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(@NonNull View panel, float slideOffset) {
+
+            }
+
+            @Override
+            public void onPanelOpened(@NonNull View panel) {
+                showBottomNavigationView();
+                ViewAnimation.fabLayoutHide(binding.fabParentLayout);
+                binding.notesSlidingPaneLayout.requestLayout();
+                toggleMenuWhenNoteDetailsDisplayed(false);
+            }
+
+            @Override
+            public void onPanelClosed(@NonNull View panel) {
+                hideBottomNavigationView(false);
+                ViewAnimation.fabLayoutShow(binding.fabParentLayout);
+                toggleMenuWhenNoteDetailsDisplayed(true);
+            }
+        });
+    }
+
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (!binding.notesSlidingPaneLayout.isOpen()) {
+            return;
+        }
+
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            showBottomNavigationView();
+            ViewAnimation.fabLayoutHide(binding.fabParentLayout);
+            toggleMenuWhenNoteDetailsDisplayed(false);
+        } else {
+            hideBottomNavigationView(false);
+            ViewAnimation.fabLayoutShow(binding.fabParentLayout);
+            toggleMenuWhenNoteDetailsDisplayed(true);
+        }
+        binding.notesSlidingPaneLayout.requestLayout();
+    }
+
 
     private void connectSlidingPanelToBackButton() {
         requireActivity().getOnBackPressedDispatcher().addCallback(
@@ -269,6 +333,10 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         AppCompatActivity appCompatActivity = (AppCompatActivity) requireActivity();
         actionMode = appCompatActivity.startSupportActionMode(new ActionModeCallback(this));
 
+        showBottomNavigationView();
+    }
+
+    private void showBottomNavigationView() {
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
 
         bottomNavigationView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -276,10 +344,20 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             public void onGlobalLayout() {
                 bottomNavigationView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
+                if (isBottomNavigationViewVisible()) {
+                    return;
+                }
+
                 ViewAnimation.bottomNavigationShow(binding.bottomNavigationView);
                 ViewAnimation.fabParentLayoutUp(binding.fabParentLayout, binding.bottomNavigationView.getHeight());
+                binding.recyclerViewNotes.setPadding(0, binding.recyclerViewNotes.getPaddingTop(), 0, binding.bottomNavigationView.getHeight());
+                mainActivityViewModel.setBottomNavigationViewShowed(binding.bottomNavigationView.getHeight());
             }
         });
+    }
+
+    private boolean isBottomNavigationViewVisible() {
+        return binding.bottomNavigationView.getTranslationY() == 0;
     }
 
     private void toggleSelection(int position) {
@@ -305,9 +383,34 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
     @Override
     public void onActionModeFinished() {
-        ViewAnimation.bottomNavigationHide(binding.bottomNavigationView);
-        ViewAnimation.fabParentLayoutDown(binding.fabParentLayout, binding.bottomNavigationView.getHeight());
+        hideBottomNavigationView(false);
         notesAdapter.clearSelection();
         actionMode = null;
+    }
+
+    private void hideBottomNavigationView(boolean hideImmediately) {
+        if (!isBottomNavigationViewVisible()) {
+            return;
+        }
+
+        ViewAnimation.bottomNavigationHide(binding.bottomNavigationView, hideImmediately);
+        ViewAnimation.fabParentLayoutDown(binding.fabParentLayout, binding.bottomNavigationView.getHeight());
+        binding.recyclerViewNotes.setPadding(0, binding.recyclerViewNotes.getPaddingTop(), 0, 0);
+        mainActivityViewModel.setBottomNavigationViewShowed(0);
+    }
+
+    private void observeKeyboardActivated() {
+        mainActivityViewModel.getKeyboardActivated().observe(getViewLifecycleOwner(), activated -> {
+
+            if (!binding.notesSlidingPaneLayout.isOpen()) {
+                return;
+            }
+
+            if (activated) {
+                hideBottomNavigationView(true);
+            } else {
+                showBottomNavigationView();
+            }
+        });
     }
 }

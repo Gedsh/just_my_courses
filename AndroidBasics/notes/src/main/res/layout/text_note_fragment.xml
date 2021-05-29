@@ -13,11 +13,35 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/notes_fragment_top_time_content_padding"
         android:textAlignment="center"
-        android:textSize="@dimen/notes_fragment_top_time_text_size"
-        android:textStyle="bold" />
+        android:textSize="@dimen/top_time_text_size"
+        android:textStyle="bold"
+        tools:text="19.05.2021" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardTextNote"
+        android:id="@+id/cardTextNoteTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/text_note_content_padding">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editTextNoteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="start|top"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="@dimen/note_title_text_size"
+            android:textAlignment="textStart"
+            tools:text="Title" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTextNoteDescription"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="@dimen/default_card_corner_radius"
@@ -35,7 +59,7 @@
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/editTextNote"
+                    android:id="@+id/editTextNoteDescription"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
