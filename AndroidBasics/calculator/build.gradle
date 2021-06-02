@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
 }
 
-def keystorePropertiesFile = file("/usr/local/KStore/keystore.properties")
+def keystorePropertiesFile = file("/home/alexander/.local/KStore/keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -12,7 +12,7 @@ android {
 
     signingConfigs {
         releasesign {
-            storeFile file("/usr/local/KStore/pan_alexander.jks")
+            storeFile file("/home/alexander/.local/KStore/pan_alexander.jks")
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyBAlias']
             keyPassword keystoreProperties['keyBPassword']
@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "com.google.dagger:dagger:$dagger_version"
