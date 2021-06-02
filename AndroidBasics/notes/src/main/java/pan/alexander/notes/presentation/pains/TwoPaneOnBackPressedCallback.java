@@ -40,8 +40,4 @@ public class TwoPaneOnBackPressedCallback extends OnBackPressedCallback
         setEnabled(false);
     }
 
-    interface PanelSlideListener {
-        void onPanelOpened();
-        void onPanelClosed();
-    }
 }

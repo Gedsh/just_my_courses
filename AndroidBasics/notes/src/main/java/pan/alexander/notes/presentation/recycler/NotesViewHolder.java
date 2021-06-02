@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import pan.alexander.notes.R;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.domain.entities.NoteType;
 import pan.alexander.notes.utils.Utils;
 
 public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
@@ -19,6 +20,7 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private final CardView cardView;
     private final TextView textViewNoteTitle;
     private final TextView textViewNoteDate;
+    private final ImageView imageSubmenu;
 
     public NotesViewHolder(@NonNull View itemView, NotesAdapter notesAdapter) {
         super(itemView);
@@ -30,7 +32,7 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
         cardView.setOnLongClickListener(this);
         textViewNoteTitle = itemView.findViewById(R.id.textViewNotesItemNoteTitle);
         textViewNoteDate = itemView.findViewById(R.id.textViewNotesItemNoteDate);
-        ImageView imageSubmenu = itemView.findViewById(R.id.imageViewItemNoteSubmenu);
+        imageSubmenu = itemView.findViewById(R.id.imageViewItemNoteSubmenu);
         imageSubmenu.setOnClickListener(this);
     }
 
@@ -46,6 +48,8 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
         setCardColorStateList(note);
 
+        setNoteTypeDrawable(note);
+
         cardView.setSelected(notesAdapter.isSelected(position));
 
     }
@@ -58,6 +62,18 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private void setCardColorStateList(Note note) {
         int color = Color.parseColor(note.getColor());
         cardView.setCardBackgroundColor(Utils.calculateColorStateList(color));
+    }
+
+    private void setNoteTypeDrawable(Note note) {
+        switch (note.getType()) {
+            case NoteType.TEXT_NOTE:
+            default:
+                imageSubmenu.setImageDrawable(notesAdapter.icTextNote);
+                break;
+            case NoteType.LIST_NOTE:
+                imageSubmenu.setImageDrawable(notesAdapter.icListNote);
+                break;
+        }
     }
 
     @Override

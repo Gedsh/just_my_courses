@@ -15,9 +15,9 @@ public class KeyboardUtils implements ViewTreeObserver.OnGlobalLayoutListener
     private final static int MAGIC_NUMBER = 200;
 
     private SoftKeyboardToggleListener mCallback;
-    private View mRootView;
+    private final View mRootView;
     private Boolean prevValue = null;
-    private float mScreenDensity;
+    private final float mScreenDensity;
     private static final HashMap<SoftKeyboardToggleListener, KeyboardUtils> sListenerMap = new HashMap<>();
 
     public interface SoftKeyboardToggleListener
