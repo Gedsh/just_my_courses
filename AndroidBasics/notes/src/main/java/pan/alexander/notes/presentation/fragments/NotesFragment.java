@@ -37,6 +37,7 @@ import java.util.Locale;
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.NotesFragmentBinding;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.domain.entities.NoteType;
 import pan.alexander.notes.presentation.activities.ActionModeCallback;
 import pan.alexander.notes.presentation.animation.ViewAnimation;
 import pan.alexander.notes.presentation.pains.TwoPaneOnBackPressedCallback;
@@ -45,6 +46,8 @@ import pan.alexander.notes.presentation.recycler.NotesViewHolder;
 import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class NotesFragment extends Fragment implements NotesViewHolder.ClickListener,
         NotesAdapter.OnTopItemChangedListener,
@@ -59,6 +62,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private ActionMode actionMode;
     private boolean fabIsRotate;
     private Menu menu;
+    private TwoPaneOnBackPressedCallback twoPaneOnBackPressedCallback;
 
     @Nullable
     @Override
@@ -173,6 +177,14 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             return;
         }
 
+        if (notesAdapter.getSelectedItemCount() == 0
+                && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding.notesSlidingPaneLayout.openPane();
+            if (twoPaneOnBackPressedCallback != null) {
+                twoPaneOnBackPressedCallback.onPanelOpened(binding.notesSlidingPaneLayout);
+            }
+        }
+
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             showBottomNavigationView();
             ViewAnimation.fabLayoutHide(binding.fabParentLayout);
@@ -187,9 +199,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
 
     private void connectSlidingPanelToBackButton() {
+        twoPaneOnBackPressedCallback = new TwoPaneOnBackPressedCallback(binding.notesSlidingPaneLayout);
         requireActivity().getOnBackPressedDispatcher().addCallback(
-                getViewLifecycleOwner(),
-                new TwoPaneOnBackPressedCallback(binding.notesSlidingPaneLayout));
+                getViewLifecycleOwner(), twoPaneOnBackPressedCallback);
     }
 
     private void initBottomAppBar() {
@@ -296,6 +308,8 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         super.onDestroyView();
 
         binding = null;
+        notesAdapter = null;
+        menu = null;
     }
 
     @Override
@@ -309,15 +323,31 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
     private void showNoteDetails(int position) {
         Bundle arguments = new Bundle();
-        arguments.putParcelable(NOTE_DETAILS_ARGUMENT, notesAdapter.getNotes().get(position));
+        Note note = notesAdapter.getNotes().get(position);
+        arguments.putParcelable(NOTE_DETAILS_ARGUMENT, note);
+
+        Fragment fragment = createFragmentDependOnNoteType(note.getType());
+        fragment.setArguments(arguments);
+
         FragmentTransaction ft = getChildFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.selectedNoteDetails, TextNoteFragment.class, arguments);
+                .replace(R.id.selectedNoteDetails, fragment);
         if (binding.notesSlidingPaneLayout.isOpen()) {
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         }
         ft.commit();
         binding.notesSlidingPaneLayout.open();
+    }
+
+    private Fragment createFragmentDependOnNoteType(@NoteType int noteType) {
+        switch (noteType) {
+            case NoteType.TEXT_NOTE:
+                return new TextNoteFragment();
+            case NoteType.LIST_NOTE:
+                return new TaskNoteFragment();
+            default:
+                throw new IllegalArgumentException("NotesFragment: unable to create fragment for undefined note type");
+        }
     }
 
     @Override
@@ -406,11 +436,21 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
                 return;
             }
 
+            if (!activated) {
+                binding.selectedNoteDetails.requestFocus();
+            }
+
+            if (requireContext().getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+                return;
+            }
+
             if (activated) {
                 hideBottomNavigationView(true);
             } else {
                 showBottomNavigationView();
+
             }
         });
     }
+
 }

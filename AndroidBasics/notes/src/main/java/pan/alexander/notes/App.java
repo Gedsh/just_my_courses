@@ -2,6 +2,8 @@ package pan.alexander.notes;
 
 import android.app.Application;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import pan.alexander.notes.di.ApplicationComponent;
 import pan.alexander.notes.di.DaggerApplicationComponent;
 import pan.alexander.notes.di.RepositoryModule;
@@ -19,6 +21,8 @@ public class App extends Application {
     public void onCreate() {
 
         super.onCreate();
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         instance = this;
 

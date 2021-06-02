@@ -3,18 +3,36 @@ package pan.alexander.notes.data;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import pan.alexander.notes.domain.NotesRepository;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
+import pan.alexander.notes.domain.tasksnote.Task;
 
 public class MockNotesRepositoryImplementation implements NotesRepository {
     private MutableLiveData<List<Note>> notesLiveData;
+
+    private final List<Task> task = new ArrayList<Task>(){{
+        add(new Task("Plan your morning at night.", 0));
+        add(new Task("Set your wake up time.", 1));
+        add(new Task("Choose an alarm you can live with.", 2));
+        add(new Task("Drink a glass of water.", 3));
+        add(new Task("Make your bed.", 4));
+        add(new Task("Get moving.", 5));
+        add(new Task("Stay unplugged.", 6));
+        add(new Task("Sneak in a little me-time.", 7));
+    }};
+
     private final List<Note> notes = new ArrayList<Note>(){{
+        final String tasks = new Gson().toJson(task, new TypeToken<Collection<Task>>(){}.getType());
         for (int i = 0; i < 1000; i += 100) {
-            add(new Note("Monday", "Wake up", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 10000, "#FFFFE57F"));
+            add(new Note("Monday", tasks, NoteType.LIST_NOTE, System.currentTimeMillis() + i * 10000, "#FFFFE57F"));
             add(new Note("Tuesday", "Ready", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 20000, "#d3ff99"));
             add(new Note("Wednesday", "Work", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 30000, "#FFFFE57F"));
             add(new Note("Thursday", "Tired", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 40000, "#d3ff99"));

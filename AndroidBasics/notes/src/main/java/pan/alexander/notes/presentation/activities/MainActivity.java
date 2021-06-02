@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -15,15 +16,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.ActivityMainBinding;
+import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
+import pan.alexander.notes.utils.KeyboardUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private MainActivityViewModel mainActivityViewModel;
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -43,6 +49,22 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = navHostFragment.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        observeKeyboardVisibilityChanges();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        stopObservingKeyboardVisibilityChanges();
     }
 
     @Override
@@ -61,4 +83,14 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    private void observeKeyboardVisibilityChanges() {
+        KeyboardUtils.addKeyboardToggleListener(this, isVisible ->
+                mainActivityViewModel.setKeyboardActivated(isVisible));
+    }
+
+    private void stopObservingKeyboardVisibilityChanges() {
+        KeyboardUtils.removeAllKeyboardToggleListeners();
+    }
+
 }

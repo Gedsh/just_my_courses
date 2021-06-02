@@ -13,12 +13,14 @@
         android:focusable="true"
         app:cardCornerRadius="@dimen/default_card_corner_radius"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="@dimen/recycle_item_note_card_content_padding">
+        app:cardUseCompatPadding="true">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/recycle_item_note_card_content_padding"
+            android:layout_marginTop="@dimen/recycle_item_note_card_content_padding"
+            android:layout_marginBottom="@dimen/recycle_item_note_card_content_padding"
             android:orientation="horizontal">
 
             <com.google.android.material.textview.MaterialTextView
@@ -43,10 +45,12 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageViewItemNoteSubmenu"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/recycle_item_image_width"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_submenu" />
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                tool:srcCompat="@drawable/ic_text_note" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </com.google.android.material.card.MaterialCardView>
 

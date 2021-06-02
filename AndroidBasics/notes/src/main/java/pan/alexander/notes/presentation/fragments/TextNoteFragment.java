@@ -27,7 +27,7 @@ import static pan.alexander.notes.utils.AppConstants.DEFAULT_ANIMATION_DURATION;
 public class TextNoteFragment extends Fragment {
 
     private MainActivityViewModel mainActivityViewModel;
-    private TextNoteViewModel mViewModel;
+    private TextNoteViewModel textNoteViewModel;
     private TextNoteFragmentBinding binding;
 
     @Override
@@ -42,10 +42,9 @@ public class TextNoteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
-        mViewModel = new ViewModelProvider(this).get(TextNoteViewModel.class);
+        textNoteViewModel = new ViewModelProvider(this).get(TextNoteViewModel.class);
 
         showNoteDetailsFromArguments();
-        observeKeyboardVisibilityChanges();
         observeBottomNavigationViewShowed();
     }
 
@@ -84,8 +83,4 @@ public class TextNoteFragment extends Fragment {
         }, appBarHeight != 0 ? DEFAULT_ANIMATION_DURATION : 0);
     }
 
-    private void observeKeyboardVisibilityChanges() {
-        KeyboardUtils.addKeyboardToggleListener(requireActivity(), isVisible ->
-                mainActivityViewModel.setKeyboardActivated(isVisible));
-    }
 }

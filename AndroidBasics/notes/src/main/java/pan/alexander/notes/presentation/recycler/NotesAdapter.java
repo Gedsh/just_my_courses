@@ -1,15 +1,19 @@
 package pan.alexander.notes.presentation.recycler;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pan.alexander.notes.R;
@@ -17,21 +21,33 @@ import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.presentation.fragments.NotesFragment;
 
 public class NotesAdapter extends SelectableAdapter<NotesViewHolder>{
+    private final Context context;
     final List<Note> notes = new ArrayList<>();
 
     final NotesViewHolder.ClickListener clickListener;
     final OnTopItemChangedListener topItemChangedListener;
+    Drawable icTextNote;
+    Drawable icListNote;
 
     public NotesAdapter(SparseBooleanArray selectedItems, NotesFragment notesFragment) {
         super(selectedItems);
 
+        this.context = notesFragment.requireContext();
         this.clickListener = notesFragment;
         this.topItemChangedListener = notesFragment;
+
+        getRequiredDrawables();
+    }
+
+    private void getRequiredDrawables() {
+        icTextNote = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_text_note, context.getTheme());
+        icListNote = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_list_note, context.getTheme());
     }
 
     public void refreshNotesList(List<Note> notes) {
         this.notes.clear();
         this.notes.addAll(notes);
+        Collections.sort(this.notes);
         notifyDataSetChanged();
     }
 

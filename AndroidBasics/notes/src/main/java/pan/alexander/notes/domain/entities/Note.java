@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 import java.util.Objects;
 
 @Entity
-public class Note implements Parcelable {
+public class Note implements Parcelable, Comparable<Note> {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
@@ -126,5 +126,10 @@ public class Note implements Parcelable {
         dest.writeInt(type);
         dest.writeLong(time);
         dest.writeString(color);
+    }
+
+    @Override
+    public int compareTo(Note o) {
+        return (int) (time - o.time);
     }
 }

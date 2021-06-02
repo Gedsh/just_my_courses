@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".presentation.fragments.TextNoteFragment">
+    tools:context=".presentation.fragments.TaskNoteFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewTextNoteDate"
+            android:id="@+id/textViewTaskNoteDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/top_time_content_padding"
@@ -23,7 +23,7 @@
             tools:text="19.05.2021" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardTextNoteTitle"
+            android:id="@+id/cardTaskNoteTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="@dimen/default_card_corner_radius"
@@ -32,7 +32,7 @@
             app:contentPadding="@dimen/note_title_content_padding">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editTextNoteTitle"
+                android:id="@+id/editTaskNoteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
@@ -45,40 +45,12 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardTextNoteDescription"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTaskNote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="@dimen/default_card_corner_radius"
-            app:cardPreventCornerOverlap="false"
-            app:cardUseCompatPadding="true"
-            app:contentPadding="@dimen/note_title_content_padding">
-
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/editTextNoteDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:gravity="start|top"
-                        android:imeOptions="actionDone|flagNoFullscreen"
-                        android:inputType="textMultiLine"
-                        android:textAlignment="textStart"
-                        tools:text="My text note" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.core.widget.NestedScrollView>
-
-        </com.google.android.material.card.MaterialCardView>
-
+            android:clipToPadding="false" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 </androidx.core.widget.NestedScrollView>

@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/notes_fragment_top_time_background_color"
-                android:padding="@dimen/notes_fragment_top_time_content_padding"
+                android:padding="@dimen/top_time_content_padding"
                 android:textAlignment="center"
                 android:textSize="@dimen/top_time_text_size"
                 android:textStyle="bold"
@@ -41,7 +41,10 @@
             android:name="pan.alexander.notes.presentation.fragments.TextNoteFragment"
             android:layout_width="@dimen/notes_details_min_width"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </androidx.slidingpanelayout.widget.SlidingPaneLayout>
 
@@ -61,7 +64,7 @@
             android:layout_marginEnd="@dimen/fab_end_margin"
             android:layout_marginBottom="@dimen/fab_bottom_margin"
             android:contentDescription="@string/fab_add_text_note"
-            app:srcCompat="@drawable/ic_fab_text_note" />
+            app:srcCompat="@drawable/ic_text_note" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddListNote"
@@ -70,7 +73,7 @@
             android:layout_marginEnd="@dimen/fab_end_margin"
             android:layout_marginBottom="@dimen/fab_bottom_margin"
             android:contentDescription="@string/fab_add_list_note"
-            app:srcCompat="@drawable/ic_fab_list_note" />
+            app:srcCompat="@drawable/ic_list_note" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddNote"
@@ -79,7 +82,7 @@
             android:layout_marginEnd="@dimen/fab_end_margin"
             android:layout_marginBottom="@dimen/fab_bottom_margin"
             android:contentDescription="@string/fab_add_note"
-            app:srcCompat="@drawable/ic_fab_add_note" />
+            app:srcCompat="@drawable/ic_add_note" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
