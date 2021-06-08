@@ -3,12 +3,12 @@ package pan.alexander.notes.presentation.fragments;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
+import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,29 +32,37 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import dagger.Lazy;
+import io.reactivex.disposables.CompositeDisposable;
+import pan.alexander.notes.App;
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.NotesFragmentBinding;
+import pan.alexander.notes.domain.MainInteractor;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
 import pan.alexander.notes.presentation.activities.ActionModeCallback;
 import pan.alexander.notes.presentation.animation.ViewAnimation;
 import pan.alexander.notes.presentation.pains.TwoPaneOnBackPressedCallback;
-import pan.alexander.notes.presentation.recycler.NotesAdapter;
-import pan.alexander.notes.presentation.recycler.NotesViewHolder;
+import pan.alexander.notes.presentation.recycler.notes.NotesAdapter;
+import pan.alexander.notes.presentation.recycler.notes.NotesViewHolder;
 import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
 
-import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static pan.alexander.notes.presentation.viewmodel.MainActivityViewModel.DEFAULT_BOTTOM_NAVIGATION_VIEW_HEIGHT;
 
 public class NotesFragment extends Fragment implements NotesViewHolder.ClickListener,
         NotesAdapter.OnTopItemChangedListener,
         ActionModeCallback.ActionModeFinishedListener {
 
-    public static final String NOTE_DETAILS_ARGUMENT = "NOTE_DETAILS_ARGUMENT";
+    public static final int NEW_NOTE_POSITION = 0;
+
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private MainActivityViewModel mainActivityViewModel;
     private NotesViewModel notesViewModel;
@@ -63,6 +72,8 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private boolean fabIsRotate;
     private Menu menu;
     private TwoPaneOnBackPressedCallback twoPaneOnBackPressedCallback;
+    private Lazy<MainInteractor> mainInteractor;
+    private String defaultNoteColor;
 
     @Nullable
     @Override
@@ -121,15 +132,20 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
+        mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+        defaultNoteColor = Utils.colorIntToHex(ContextCompat.getColor(requireContext(),
+                R.color.default_note_color));
 
-        initSlidingPanelSlideListener();
+        setBottomNavigationViewInvisible();
 
-        connectSlidingPanelToBackButton();
+        initRecycler();
+
+        initSlidingPanelOnGlobalLayoutListener();
 
         initBottomAppBar();
 
@@ -137,18 +153,32 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
         setFloatingButtonClickListener();
 
-        initRecycler();
+    }
 
-        observeNotesChanges();
+    private void initSlidingPanelOnGlobalLayoutListener() {
+        SlidingPaneLayout slidingPaneLayout = binding.notesSlidingPaneLayout;
 
-        observeKeyboardActivated();
+        slidingPaneLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                slidingPaneLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                toggleViewDependOnSlidingPanelIsSlidable();
+                toggleConnectionSlidingPanelToBackButton();
+                showCurrentNoteDetailsIfSlidingPanelIsSlidable();
+                initSlidingPanelSlideListener();
+                setRecycleViewPaddingDependOnTopTextView();
+                observeNotesChanges();
+                observeKeyboardActivated();
+                observeCurrentNoteChanges();
+            }
+        });
     }
 
     private void initSlidingPanelSlideListener() {
         binding.notesSlidingPaneLayout.addPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(@NonNull View panel, float slideOffset) {
-
+                //Stub
             }
 
             @Override
@@ -164,28 +194,38 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
                 hideBottomNavigationView(false);
                 ViewAnimation.fabLayoutShow(binding.fabParentLayout);
                 toggleMenuWhenNoteDetailsDisplayed(true);
+                mainActivityViewModel.clearCurrentNote();
             }
         });
     }
 
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (!binding.notesSlidingPaneLayout.isOpen()) {
-            return;
+    private void toggleConnectionSlidingPanelToBackButton() {
+        if (binding.notesSlidingPaneLayout.isSlideable()) {
+            connectSlidingPanelToBackButton();
+        } else {
+            disconnectSlidingPanelToBackButton();
         }
+    }
+
+    private void showCurrentNoteDetailsIfSlidingPanelIsSlidable() {
 
         if (notesAdapter.getSelectedItemCount() == 0
-                && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                && mainActivityViewModel.getCurrentNote() != null
+                && binding.notesSlidingPaneLayout.isOpen()
+                && binding.notesSlidingPaneLayout.isSlideable()) {
             binding.notesSlidingPaneLayout.openPane();
             if (twoPaneOnBackPressedCallback != null) {
                 twoPaneOnBackPressedCallback.onPanelOpened(binding.notesSlidingPaneLayout);
             }
         }
+    }
 
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+    private void toggleViewDependOnSlidingPanelIsSlidable() {
+        if (!binding.notesSlidingPaneLayout.isOpen()) {
+            return;
+        }
+
+        if (binding.notesSlidingPaneLayout.isSlideable()) {
             showBottomNavigationView();
             ViewAnimation.fabLayoutHide(binding.fabParentLayout);
             toggleMenuWhenNoteDetailsDisplayed(false);
@@ -202,6 +242,12 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         twoPaneOnBackPressedCallback = new TwoPaneOnBackPressedCallback(binding.notesSlidingPaneLayout);
         requireActivity().getOnBackPressedDispatcher().addCallback(
                 getViewLifecycleOwner(), twoPaneOnBackPressedCallback);
+    }
+
+    private void disconnectSlidingPanelToBackButton() {
+        if (twoPaneOnBackPressedCallback != null) {
+            twoPaneOnBackPressedCallback.remove();
+        }
     }
 
     private void initBottomAppBar() {
@@ -225,7 +271,11 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             Toast.makeText(NotesFragment.this.getContext(), "To archive", Toast.LENGTH_SHORT).show();
             return true;
         } else if (menuId == R.id.bottomMenuDelete) {
-            Toast.makeText(NotesFragment.this.getContext(), "To trash can", Toast.LENGTH_SHORT).show();
+            if (actionMode != null) {
+                removeSelectedItems(notesViewModel.getSelectedNotesIndices());
+            } else if (mainActivityViewModel.getCurrentNote() != null) {
+                removeCurrentItem(mainActivityViewModel.getCurrentNote().first);
+            }
             return true;
         } else if (menuId == R.id.bottomMenuColor) {
             Toast.makeText(NotesFragment.this.getContext(), "Change color", Toast.LENGTH_SHORT).show();
@@ -237,29 +287,85 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         return false;
     }
 
+    private void removeSelectedItems(SparseBooleanArray selectedNotes) {
+
+        if (selectedNotes.size() == 1) {
+            notesAdapter.removeItem(selectedNotes.keyAt(0));
+        } else if (selectedNotes.size() > 1) {
+            List<Integer> items = new ArrayList<>(selectedNotes.size());
+            for (int i = 0; i < selectedNotes.size(); i++) {
+                items.add(selectedNotes.keyAt(i));
+            }
+            notesAdapter.removeItems(items);
+        }
+
+        mainActivityViewModel.clearCurrentNote();
+
+        actionMode.finish();
+
+        int firstVisibleItemPosition = RecyclerView.NO_POSITION;
+        if (binding.recyclerViewNotes.getLayoutManager() instanceof LinearLayoutManager) {
+            firstVisibleItemPosition = ((LinearLayoutManager) binding.recyclerViewNotes.getLayoutManager())
+                    .findFirstVisibleItemPosition();
+        }
+
+        if (!binding.notesSlidingPaneLayout.isSlideable() && firstVisibleItemPosition >= 0) {
+            showNoteDetails(firstVisibleItemPosition);
+        }
+    }
+
+    private void removeCurrentItem(int currentNotePosition) {
+
+        if (mainActivityViewModel.getCurrentNote() == null
+                || notesAdapter.getNotes().get(currentNotePosition).getId()
+                != mainActivityViewModel.getCurrentNote().second.getId()) {
+            return;
+        }
+
+        notesAdapter.removeItem(currentNotePosition);
+        binding.notesSlidingPaneLayout.close();
+        mainActivityViewModel.clearCurrentNote();
+    }
+
     private void initFloatingButton() {
         ViewAnimation.fabInit(binding.fabAddTextNote);
         ViewAnimation.fabInit(binding.fabAddListNote);
     }
 
     private void setFloatingButtonClickListener() {
-        binding.fabAddNote.setOnClickListener(view -> {
-            fabIsRotate = ViewAnimation.fabRotate(view, !fabIsRotate);
+        binding.fabAddNote.setOnClickListener(this::toggleFab);
 
-            if (fabIsRotate) {
-                ViewAnimation.fabShowIn(binding.fabAddTextNote);
-                ViewAnimation.fabShowIn(binding.fabAddListNote);
-            } else {
-                ViewAnimation.fabShowOut(binding.fabAddTextNote);
-                ViewAnimation.fabShowOut(binding.fabAddListNote);
-            }
+        binding.fabAddTextNote.setOnClickListener(v -> {
+            Note note = new Note("", "", NoteType.TEXT_NOTE, defaultNoteColor);
+            mainInteractor.get().addNoteToNotes(note);
+            toggleFab(binding.fabAddNote);
         });
 
-        binding.fabAddTextNote.setOnClickListener(v ->
-                Toast.makeText(getContext(), "fab add text note", Toast.LENGTH_SHORT).show());
+        binding.fabAddListNote.setOnClickListener(v -> {
+            Note note = new Note("", "", NoteType.LIST_NOTE, defaultNoteColor);
+            mainInteractor.get().addNoteToNotes(note);
+            toggleFab(binding.fabAddNote);
+        });
+    }
 
-        binding.fabAddListNote.setOnClickListener(v ->
-                Toast.makeText(getContext(), "fab add list note", Toast.LENGTH_SHORT).show());
+    private void toggleFab(View view) {
+        fabIsRotate = ViewAnimation.fabRotate(view, !fabIsRotate);
+
+        if (fabIsRotate) {
+            ViewAnimation.fabShowIn(binding.fabAddTextNote);
+            ViewAnimation.fabShowIn(binding.fabAddListNote);
+        } else {
+            ViewAnimation.fabShowOut(binding.fabAddTextNote);
+            ViewAnimation.fabShowOut(binding.fabAddListNote);
+        }
+    }
+
+    private void closeFabIfRequired(View view) {
+        if (fabIsRotate) {
+            fabIsRotate = ViewAnimation.fabRotate(view, false);
+            ViewAnimation.fabShowOut(binding.fabAddTextNote);
+            ViewAnimation.fabShowOut(binding.fabAddListNote);
+        }
     }
 
     private void initRecycler() {
@@ -268,30 +374,65 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         notesAdapter = new NotesAdapter(selectedNotes, this);
         notesRecycleView.setLayoutManager(new LinearLayoutManager(requireContext()));
         notesRecycleView.setAdapter(notesAdapter);
+    }
 
+    private void setRecycleViewPaddingDependOnTopTextView() {
         TextView textViewTopNoteDate = binding.textViewTopNoteDate;
-        textViewTopNoteDate.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                textViewTopNoteDate.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                notesRecycleView.setPadding(0, textViewTopNoteDate.getHeight(), 0, 0);
-                notesRecycleView.scrollToPosition(0);
-            }
-        });
+        binding.recyclerViewNotes.setPadding(0, textViewTopNoteDate.getHeight(), 0, 0);
     }
 
     private void observeNotesChanges() {
         Observer<List<Note>> notesObserver = notes -> {
+            Collections.sort(notes);
+
+            int oldNotesSize = notesAdapter.getNotes().size();
             notesAdapter.refreshNotesList(notes);
+            int newNotesSize = notesAdapter.getNotes().size();
+
+            if (newNotesSize - oldNotesSize == 1) {
+                noteAdded();
+            } else if (mainActivityViewModel.getCurrentNote() != null) {
+                updateCurrentNotePosition(mainActivityViewModel.getCurrentNote().second);
+            }
+
+            if (newNotesSize == 0
+                    || newNotesSize == 1 && notes.get(0).getTitle().isEmpty()
+                    && notes.get(0).getDescription().isEmpty()) {
+                binding.textViewTopNoteDate.setText("");
+            }
 
             SparseBooleanArray selectedNotes = notesViewModel.getSelectedNotesIndices();
             if (selectedNotes.size() > 0) {
                 activateActionMode(selectedNotes.size(), notes.size());
+            } else {
+                showFirstNoteDetailsIfSlidingPanelIsNotSlidable();
             }
         };
 
         LiveData<List<Note>> notesLiveData = notesViewModel.getNotesLiveData();
         notesLiveData.observe(getViewLifecycleOwner(), notesObserver);
+    }
+
+    private void noteAdded() {
+        showNoteDetails(NEW_NOTE_POSITION);
+        String time = Utils.formatTime(notesAdapter.getNotes().get(NEW_NOTE_POSITION).getTime(), false);
+        binding.textViewTopNoteDate.setText(time);
+        binding.recyclerViewNotes.smoothScrollToPosition(NEW_NOTE_POSITION);
+    }
+
+    private void updateCurrentNotePosition(Note currentNote) {
+        int newPosition = notesAdapter.getNotes().indexOf(currentNote);
+        if (newPosition >= 0) {
+            mainActivityViewModel.setCurrentNote(newPosition, currentNote);
+        }
+    }
+
+    private void showFirstNoteDetailsIfSlidingPanelIsNotSlidable() {
+        if (!binding.notesSlidingPaneLayout.isSlideable()
+                && mainActivityViewModel.getCurrentNote() == null
+                && !notesAdapter.getNotes().isEmpty()) {
+            showNoteDetails(0);
+        }
     }
 
     @Override
@@ -307,9 +448,11 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     public void onDestroyView() {
         super.onDestroyView();
 
+        compositeDisposable.clear();
         binding = null;
         notesAdapter = null;
         menu = null;
+        twoPaneOnBackPressedCallback = null;
     }
 
     @Override
@@ -322,12 +465,17 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     }
 
     private void showNoteDetails(int position) {
-        Bundle arguments = new Bundle();
-        Note note = notesAdapter.getNotes().get(position);
-        arguments.putParcelable(NOTE_DETAILS_ARGUMENT, note);
 
-        Fragment fragment = createFragmentDependOnNoteType(note.getType());
-        fragment.setArguments(arguments);
+        Fragment fragment;
+        if (notesAdapter.getNotes().isEmpty()) {
+            fragment = TextNoteFragment.getInstance();
+        } else {
+            Note note = notesAdapter.getNotes().get(position);
+
+            mainActivityViewModel.setCurrentNote(position, note);
+
+            fragment = createFragmentDependOnNoteType(note.getType());
+        }
 
         FragmentTransaction ft = getChildFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
@@ -337,14 +485,15 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         }
         ft.commit();
         binding.notesSlidingPaneLayout.open();
+        closeFabIfRequired(binding.fabAddNote);
     }
 
     private Fragment createFragmentDependOnNoteType(@NoteType int noteType) {
         switch (noteType) {
             case NoteType.TEXT_NOTE:
-                return new TextNoteFragment();
+                return TextNoteFragment.getInstance();
             case NoteType.LIST_NOTE:
-                return new TaskNoteFragment();
+                return TaskNoteFragment.getInstance();
             default:
                 throw new IllegalArgumentException("NotesFragment: unable to create fragment for undefined note type");
         }
@@ -367,27 +516,25 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     }
 
     private void showBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
 
-        bottomNavigationView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                bottomNavigationView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        if (isBottomNavigationViewVisible()) {
+            return;
+        }
 
-                if (isBottomNavigationViewVisible()) {
-                    return;
-                }
-
-                ViewAnimation.bottomNavigationShow(binding.bottomNavigationView);
-                ViewAnimation.fabParentLayoutUp(binding.fabParentLayout, binding.bottomNavigationView.getHeight());
-                binding.recyclerViewNotes.setPadding(0, binding.recyclerViewNotes.getPaddingTop(), 0, binding.bottomNavigationView.getHeight());
-                mainActivityViewModel.setBottomNavigationViewShowed(binding.bottomNavigationView.getHeight());
-            }
-        });
+        ViewAnimation.bottomNavigationShow(binding.bottomNavigationView);
+        ViewAnimation.fabParentLayoutUp(binding.fabParentLayout, binding.bottomNavigationView.getHeight());
+        binding.recyclerViewNotes.setPadding(0, binding.recyclerViewNotes.getPaddingTop(), 0, binding.bottomNavigationView.getHeight());
+        mainActivityViewModel.setBottomNavigationViewShowed(binding.bottomNavigationView.getHeight());
     }
 
     private boolean isBottomNavigationViewVisible() {
-        return binding.bottomNavigationView.getTranslationY() == 0;
+        LiveData<Integer> bottomNavigationViewShowed = mainActivityViewModel.getBottomNavigationViewShowed();
+        return bottomNavigationViewShowed.getValue() != null
+                && bottomNavigationViewShowed.getValue() > 0;
+    }
+
+    private void setBottomNavigationViewInvisible() {
+        mainActivityViewModel.setBottomNavigationViewShowed(DEFAULT_BOTTOM_NAVIGATION_VIEW_HEIGHT);
     }
 
     private void toggleSelection(int position) {
@@ -440,7 +587,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
                 binding.selectedNoteDetails.requestFocus();
             }
 
-            if (requireContext().getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+            if (!binding.notesSlidingPaneLayout.isSlideable()) {
                 return;
             }
 
@@ -453,4 +600,36 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         });
     }
 
+    private void observeCurrentNoteChanges() {
+        mainActivityViewModel.getDisplayedNoteCallbackLiveData().observe(getViewLifecycleOwner(), data -> {
+
+            Pair<Integer, Note> displayedIndexToNote = mainActivityViewModel.getCurrentNote();
+
+            if (data == null || displayedIndexToNote == null) {
+                return;
+            }
+
+            int displayedNoteIndex = displayedIndexToNote.first;
+            int updatedNoteIndex = data.first;
+
+            if (updatedNoteIndex >= notesAdapter.getNotes().size()
+                    || displayedNoteIndex != updatedNoteIndex) {
+                return;
+            }
+
+            Note displayedNote = displayedIndexToNote.second;
+            Note updatedNote = data.second;
+
+            if (displayedNote.getId() != updatedNote.getId()
+                    || displayedNote.getTitle().equals(updatedNote.getTitle())
+                    && displayedNote.getDescription().equals(updatedNote.getDescription())
+                    && displayedNote.getColor().toLowerCase(Locale.ENGLISH)
+                    .equals(updatedNote.getColor().toLowerCase(Locale.ENGLISH))) {
+                return;
+            }
+
+            mainActivityViewModel.setCurrentNote(displayedNoteIndex, updatedNote);
+            notesAdapter.updateItem(displayedNoteIndex, updatedNote);
+        });
+    }
 }

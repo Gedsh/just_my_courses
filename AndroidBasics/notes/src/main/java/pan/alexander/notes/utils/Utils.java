@@ -52,4 +52,8 @@ public class Utils {
 
         return new ColorStateList(states, colors);
     }
+
+    public static String colorIntToHex(int color) {
+        return String.format("#%06X", (0xFFFFFF & color));
+    }
 }

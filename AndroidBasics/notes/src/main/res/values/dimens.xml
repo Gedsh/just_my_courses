@@ -13,8 +13,8 @@
     <dimen name="recycle_item_note_card_content_padding">8dp</dimen>
     <dimen name="recycle_item_image_width">30dp</dimen>
     <dimen name="recycle_item_add_task_padding">12dp</dimen>
-    <dimen name="recycle_item_add_task_inset_top">4dp</dimen>
-    <dimen name="recycle_item_add_task_inset_bottom">6dp</dimen>
+    <dimen name="recycle_item_add_task_inset_top">3dp</dimen>
+    <dimen name="recycle_item_add_task_inset_bottom">3dp</dimen>
     <dimen name="recycle_item_add_task_inset_side">2dp</dimen>
     <dimen name="recycle_item_task_text_padding_side">10dp</dimen>
     <dimen name="notes_list_min_width">280dp</dimen>

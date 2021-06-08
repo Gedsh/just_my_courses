@@ -1,4 +1,4 @@
-package pan.alexander.notes.presentation.recycler;
+package pan.alexander.notes.presentation.recycler.notes;
 
 import android.graphics.Color;
 import android.view.View;
@@ -42,7 +42,7 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
             return;
         }
 
-        Note note = notesAdapter.notes.get(position);
+        Note note = notesAdapter.getNotes().get(position);
 
         setCardText(note);
 
@@ -55,8 +55,15 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
     private void setCardText(Note note) {
-        textViewNoteTitle.setText(note.getTitle());
-        textViewNoteDate.setText(Utils.formatTime(note.getTime(), false));
+        if (note.getTitle().isEmpty()
+                && note.getDescription().isEmpty()
+                && notesAdapter.getItemCount() > 1) {
+            cardView.setVisibility(View.GONE);
+        } else {
+            cardView.setVisibility(View.VISIBLE);
+            textViewNoteTitle.setText(note.getTitle());
+            textViewNoteDate.setText(Utils.formatTime(note.getTime(), false));
+        }
     }
 
     private void setCardColorStateList(Note note) {
@@ -68,10 +75,10 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
         switch (note.getType()) {
             case NoteType.TEXT_NOTE:
             default:
-                imageSubmenu.setImageDrawable(notesAdapter.icTextNote);
+                imageSubmenu.setImageDrawable(notesAdapter.getIcTextNote());
                 break;
             case NoteType.LIST_NOTE:
-                imageSubmenu.setImageDrawable(notesAdapter.icListNote);
+                imageSubmenu.setImageDrawable(notesAdapter.getIcListNote());
                 break;
         }
     }
@@ -83,16 +90,16 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
             return;
         }
 
-        if (notesAdapter.clickListener == null) {
+        if (notesAdapter.getClickListener() == null) {
             return;
         }
 
         int id = v.getId();
 
         if (id == R.id.cardNotesItem) {
-            notesAdapter.clickListener.onItemClicked(position);
+            notesAdapter.getClickListener().onItemClicked(position);
         } else if (id == R.id.imageViewItemNoteSubmenu) {
-            notesAdapter.clickListener.onItemLongClicked(position);
+            notesAdapter.getClickListener().onItemLongClicked(position);
         }
     }
 
@@ -103,8 +110,8 @@ public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnC
             return false;
         }
 
-        if (v.getId() == R.id.cardNotesItem && notesAdapter.clickListener != null) {
-            notesAdapter.clickListener.onItemLongClicked(position);
+        if (v.getId() == R.id.cardNotesItem && notesAdapter.getClickListener() != null) {
+            notesAdapter.getClickListener().onItemLongClicked(position);
         }
 
         return false;

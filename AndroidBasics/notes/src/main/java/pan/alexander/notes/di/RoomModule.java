@@ -11,6 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 import pan.alexander.notes.data.database.AppDatabase;
 import pan.alexander.notes.data.database.NotesDao;
+import pan.alexander.notes.data.database.TrashDao;
 
 @Module
 public class RoomModule {
@@ -32,5 +33,11 @@ public class RoomModule {
     @Singleton
     NotesDao providesNotesDao() {
         return db.getNotesDao();
+    }
+
+    @Provides
+    @Singleton
+    TrashDao providesTrashDao() {
+        return db.getTrashDao();
     }
 }

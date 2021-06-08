@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:imeOptions="actionDone|flagNoFullscreen"
-                android:inputType="text"
+                android:inputType="text|textCapSentences"
                 android:singleLine="true"
                 android:textAlignment="center"
                 android:textSize="@dimen/note_title_text_size"
@@ -51,6 +51,5 @@
             android:layout_height="match_parent"
             android:clipToPadding="false" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 </androidx.core.widget.NestedScrollView>

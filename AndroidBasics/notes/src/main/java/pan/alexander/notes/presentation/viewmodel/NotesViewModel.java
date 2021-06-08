@@ -11,12 +11,13 @@ import pan.alexander.notes.App;
 import pan.alexander.notes.domain.entities.Note;
 
 public class NotesViewModel extends ViewModel {
+
     private LiveData<List<Note>> notesLiveData;
     private SparseBooleanArray selectedNotesIndices;
 
     public LiveData<List<Note>> getNotesLiveData() {
         if (notesLiveData == null) {
-            notesLiveData = App.getInstance().getDaggerComponent().getMainInteractor().get().getAllNotes();
+            notesLiveData = App.getInstance().getDaggerComponent().getMainInteractor().get().getAllNotesFromNotes();
         }
         return notesLiveData;
     }

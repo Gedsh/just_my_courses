@@ -5,8 +5,13 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +25,7 @@ public class Note implements Parcelable, Comparable<Note> {
     private long time;
     private String color;
 
+
     public Note(@NonNull String title,
                 @NonNull String description,
                 @NoteType int type,
@@ -32,6 +38,27 @@ public class Note implements Parcelable, Comparable<Note> {
         this.color = color;
     }
 
+    @Ignore
+    public Note(@NonNull String title,
+                @NonNull String description,
+                @NoteType int type,
+                @NonNull String color) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.time = System.currentTimeMillis();
+        this.color = color;
+    }
+
+    @Ignore
+    private Note(Trash trash) {
+        this.title = trash.getTitle();
+        this.description = trash.getDescription();
+        this.type = trash.getType();
+        this.time = trash.getTime();
+        this.color = trash.getColor();
+    }
+
     protected Note(Parcel in) {
         id = in.readInt();
         title = in.readString();
@@ -39,6 +66,18 @@ public class Note implements Parcelable, Comparable<Note> {
         type = in.readInt();
         time = in.readLong();
         color = in.readString();
+    }
+
+    public static Note trashToNote(Trash trash) {
+        return new Note(trash);
+    }
+
+    public static List<Note> trashesToNotes(List<Trash> trashes) {
+        List<Note> notes = new ArrayList<>();
+        for (Trash trash: trashes) {
+            notes.add(new Note(trash));
+        }
+        return notes;
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -130,6 +169,19 @@ public class Note implements Parcelable, Comparable<Note> {
 
     @Override
     public int compareTo(Note o) {
-        return (int) (time - o.time);
+        return (int) (o.time - time);
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                ", time=" + time +
+                ", color='" + color + '\'' +
+                '}';
     }
 }

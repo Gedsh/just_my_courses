@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import pan.alexander.notes.domain.NotesRepository;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
@@ -18,7 +20,7 @@ import pan.alexander.notes.domain.tasksnote.Task;
 public class MockNotesRepositoryImplementation implements NotesRepository {
     private MutableLiveData<List<Note>> notesLiveData;
 
-    private final List<Task> task = new ArrayList<Task>(){{
+    private final List<Task> task = new ArrayList<Task>() {{
         add(new Task("Plan your morning at night.", 0));
         add(new Task("Set your wake up time.", 1));
         add(new Task("Choose an alarm you can live with.", 2));
@@ -29,14 +31,15 @@ public class MockNotesRepositoryImplementation implements NotesRepository {
         add(new Task("Sneak in a little me-time.", 7));
     }};
 
-    private final List<Note> notes = new ArrayList<Note>(){{
-        final String tasks = new Gson().toJson(task, new TypeToken<Collection<Task>>(){}.getType());
+    private final List<Note> notes = new ArrayList<Note>() {{
+        final String tasks = new Gson().toJson(task, new TypeToken<Collection<Task>>() {
+        }.getType());
         for (int i = 0; i < 1000; i += 100) {
-            add(new Note("Monday", tasks, NoteType.LIST_NOTE, System.currentTimeMillis() + i * 10000, "#FFFFE57F"));
+            add(new Note("Monday", tasks, NoteType.LIST_NOTE, System.currentTimeMillis() + i * 10000, "#FFE57F"));
             add(new Note("Tuesday", "Ready", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 20000, "#d3ff99"));
-            add(new Note("Wednesday", "Work", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 30000, "#FFFFE57F"));
+            add(new Note("Wednesday", "Work", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 30000, "#FFE57F"));
             add(new Note("Thursday", "Tired", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 40000, "#d3ff99"));
-            add(new Note("Friday", "Wait", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 50000, "#FFFFE57F"));
+            add(new Note("Friday", "Wait", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 50000, "#FFE57F"));
             add(new Note("Saturday", "Play", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 60000, "#ffa099"));
             add(new Note("Sunday", "Sleep", NoteType.TEXT_NOTE, System.currentTimeMillis() + i * 70000, "#99f0ff"));
         }
@@ -54,22 +57,42 @@ public class MockNotesRepositoryImplementation implements NotesRepository {
     }
 
     @Override
-    public void addNoteToDB(Note note) {
-
+    public Single<List<Note>> getNoteByTime(long time) {
+        return null;
     }
 
     @Override
-    public void updateNoteInDB(Note note) {
-
+    public Completable addNoteToDB(Note note) {
+        return null;
     }
 
     @Override
-    public void removeNoteFromDB(Note note) {
-
+    public Completable addNotesToDB(List<Note> notes) {
+        return null;
     }
 
     @Override
-    public void removeAllNotesFromDB() {
+    public Completable updateNoteInDB(Note note) {
+        return null;
+    }
 
+    @Override
+    public Completable removeNoteFromDB(Note note) {
+        return null;
+    }
+
+    @Override
+    public Completable removeEmptyNotesFromDBExceptLast() {
+        return null;
+    }
+
+    @Override
+    public Completable removeNotesFromDB(List<Note> notes) {
+        return null;
+    }
+
+    @Override
+    public Completable removeAllNotesFromDB() {
+        return null;
     }
 }

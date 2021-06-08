@@ -2,10 +2,12 @@ package pan.alexander.notes.domain.tasksnote;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public class Task implements Comparable<Task> {
-    private String text = "";
+    private String text;
     private int orderNumber;
     private boolean isDone;
 
@@ -62,5 +64,15 @@ public class Task implements Comparable<Task> {
     @Override
     public int hashCode() {
         return Objects.hash(text, orderNumber, isDone);
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "Task{" +
+                "text='" + text + '\'' +
+                ", orderNumber=" + orderNumber +
+                ", isDone=" + isDone +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package pan.alexander.notes.presentation.recycler;
+package pan.alexander.notes.presentation.recycler.notes;
 
 import android.util.SparseBooleanArray;
 
