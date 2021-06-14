@@ -34,7 +34,7 @@ public class NotesAdapter extends SelectableAdapter<NotesViewHolder> {
     private final OnTopItemChangedListener topItemChangedListener;
     private Drawable icTextNote;
     private Drawable icListNote;
-    private Lazy<MainInteractor> mainInteractor;
+    private final Lazy<MainInteractor> mainInteractor;
 
     public NotesAdapter(SparseBooleanArray selectedItems, NotesFragment notesFragment) {
         super(selectedItems);

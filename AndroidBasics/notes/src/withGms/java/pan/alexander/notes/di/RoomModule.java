@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import pan.alexander.notes.data.database.AppDatabase;
-import pan.alexander.notes.data.database.NotesDao;
 import pan.alexander.notes.data.database.TrashDao;
 
 @Module
@@ -20,19 +19,15 @@ public class RoomModule {
     private final AppDatabase db;
 
     public RoomModule(@NonNull Application appContext) {
-        db = Room.databaseBuilder(appContext, AppDatabase.class, APP_DATABASE_NAME).build();
+        db = Room.databaseBuilder(appContext, AppDatabase.class, APP_DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     @Provides
     @Singleton
     AppDatabase providesRoomDatabase() {
         return db;
-    }
-
-    @Provides
-    @Singleton
-    NotesDao providesNotesDao() {
-        return db.getNotesDao();
     }
 
     @Provides

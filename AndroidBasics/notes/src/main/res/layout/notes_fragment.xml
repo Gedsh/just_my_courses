@@ -55,7 +55,8 @@
         android:layout_gravity="bottom|end"
         android:gravity="fill"
         android:orientation="vertical"
-        app:layout_behavior="pan.alexander.notes.presentation.animation.FabHideOnScroll">
+        app:layout_behavior="pan.alexander.notes.presentation.animation.FabHideOnScroll"
+        app:layout_dodgeInsetEdges="bottom">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddTextNote"

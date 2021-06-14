@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
+import android.util.Log;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,10 +42,13 @@ import java.util.Locale;
 
 import dagger.Lazy;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import pan.alexander.notes.App;
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.NotesFragmentBinding;
+import pan.alexander.notes.domain.AccountInteractor;
 import pan.alexander.notes.domain.MainInteractor;
+import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
 import pan.alexander.notes.presentation.activities.ActionModeCallback;
@@ -54,6 +60,7 @@ import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
 
+import static pan.alexander.notes.App.LOG_TAG;
 import static pan.alexander.notes.presentation.viewmodel.MainActivityViewModel.DEFAULT_BOTTOM_NAVIGATION_VIEW_HEIGHT;
 
 public class NotesFragment extends Fragment implements NotesViewHolder.ClickListener,
@@ -73,7 +80,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private Menu menu;
     private TwoPaneOnBackPressedCallback twoPaneOnBackPressedCallback;
     private Lazy<MainInteractor> mainInteractor;
+    private Lazy<AccountInteractor> accountInteractor;
     private String defaultNoteColor;
+    private User user;
 
     @Nullable
     @Override
@@ -138,6 +147,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
         mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+        accountInteractor = App.getInstance().getDaggerComponent().getAccountInteractor();
         defaultNoteColor = Utils.colorIntToHex(ContextCompat.getColor(requireContext(),
                 R.color.default_note_color));
 
@@ -153,6 +163,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
         setFloatingButtonClickListener();
 
+        if (Utils.isGmsVersion(requireContext())) {
+            observeAccountChanges();
+        }
     }
 
     private void initSlidingPanelOnGlobalLayoutListener() {
@@ -317,8 +330,8 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private void removeCurrentItem(int currentNotePosition) {
 
         if (mainActivityViewModel.getCurrentNote() == null
-                || notesAdapter.getNotes().get(currentNotePosition).getId()
-                != mainActivityViewModel.getCurrentNote().second.getId()) {
+                || !notesAdapter.getNotes().get(currentNotePosition).getId()
+                .equals(mainActivityViewModel.getCurrentNote().second.getId())) {
             return;
         }
 
@@ -336,16 +349,42 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         binding.fabAddNote.setOnClickListener(this::toggleFab);
 
         binding.fabAddTextNote.setOnClickListener(v -> {
-            Note note = new Note("", "", NoteType.TEXT_NOTE, defaultNoteColor);
-            mainInteractor.get().addNoteToNotes(note);
+            Note note = new Note("", "",
+                    NoteType.TEXT_NOTE, System.currentTimeMillis(), defaultNoteColor);
+            if (user == null && Utils.isGmsVersion(requireContext())) {
+                signInAnonymously(note);
+            } else {
+                mainInteractor.get().addNoteToNotes(note);
+            }
             toggleFab(binding.fabAddNote);
         });
 
         binding.fabAddListNote.setOnClickListener(v -> {
-            Note note = new Note("", "", NoteType.LIST_NOTE, defaultNoteColor);
-            mainInteractor.get().addNoteToNotes(note);
+            Note note = new Note("", "",
+                    NoteType.LIST_NOTE, System.currentTimeMillis(), defaultNoteColor);
+            if (user == null && Utils.isGmsVersion(requireContext())) {
+                signInAnonymously(note);
+            } else {
+                mainInteractor.get().addNoteToNotes(note);
+            }
             toggleFab(binding.fabAddNote);
         });
+    }
+
+    private void observeAccountChanges() {
+        mainActivityViewModel.getUserAccountLiveData().observe(getViewLifecycleOwner(),
+                user -> this.user = user);
+    }
+
+    private void signInAnonymously(Note note) {
+        Disposable disposable = accountInteractor.get()
+                .signInAnonymously()
+                .subscribe(() -> {
+                            mainActivityViewModel.setUser(accountInteractor.get().getUser());
+                            mainInteractor.get().addNoteToNotes(note);
+                        },
+                        throwable -> Log.e(LOG_TAG, "User sign in anonymously exception", throwable));
+        compositeDisposable.add(disposable);
     }
 
     private void toggleFab(View view) {
@@ -371,6 +410,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private void initRecycler() {
         SparseBooleanArray selectedNotes = notesViewModel.getSelectedNotesIndices();
         RecyclerView notesRecycleView = binding.recyclerViewNotes;
+        notesRecycleView.setHasFixedSize(true);
         notesAdapter = new NotesAdapter(selectedNotes, this);
         notesRecycleView.setLayoutManager(new LinearLayoutManager(requireContext()));
         notesRecycleView.setAdapter(notesAdapter);
@@ -620,7 +660,7 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             Note displayedNote = displayedIndexToNote.second;
             Note updatedNote = data.second;
 
-            if (displayedNote.getId() != updatedNote.getId()
+            if (!displayedNote.getId().equals(updatedNote.getId())
                     || displayedNote.getTitle().equals(updatedNote.getTitle())
                     && displayedNote.getDescription().equals(updatedNote.getDescription())
                     && displayedNote.getColor().toLowerCase(Locale.ENGLISH)
@@ -631,5 +671,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             mainActivityViewModel.setCurrentNote(displayedNoteIndex, updatedNote);
             notesAdapter.updateItem(displayedNoteIndex, updatedNote);
         });
+    }
+
+    public void showSnackBar(String text, @BaseTransientBottomBar.Duration int duration) {
+        Snackbar.make(binding.getRoot(), text, duration).show();
     }
 }

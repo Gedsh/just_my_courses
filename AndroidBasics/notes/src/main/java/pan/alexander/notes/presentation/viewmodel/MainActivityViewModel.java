@@ -9,8 +9,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
 import io.reactivex.schedulers.Schedulers;
 import pan.alexander.notes.App;
+import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 
 import static pan.alexander.notes.utils.AppConstants.DELAY_BEFORE_STOP_RX_SCHEDULERS;
@@ -23,6 +26,8 @@ public class MainActivityViewModel extends ViewModel {
     private Pair<Integer, Note> currentNote;
     private MutableLiveData<Pair<Integer, Note>> displayedNoteCallbackForSave;
     private final Handler globalHandler;
+    private MutableLiveData<User> userAccountLiveData;
+    private List<Note> notesFromAnonymousAccount;
 
     public MainActivityViewModel() {
         this.globalHandler = App.getInstance().getHandler();
@@ -103,6 +108,43 @@ public class MainActivityViewModel extends ViewModel {
         if (globalHandler != null) {
             globalHandler.postDelayed(Schedulers::shutdown, DELAY_BEFORE_STOP_RX_SCHEDULERS);
         }
+    }
+
+    @NonNull
+    public LiveData<User> getUserAccountLiveData() {
+        if (userAccountLiveData == null) {
+            userAccountLiveData = new MutableLiveData<>();
+            userAccountLiveData.setValue(App.getInstance()
+                    .getDaggerComponent()
+                    .getAccountInteractor()
+                    .get()
+                    .getUser());
+        }
+        return userAccountLiveData;
+    }
+
+    public void setUser(@NonNull User user) {
+        if (userAccountLiveData == null) {
+            userAccountLiveData = new MutableLiveData<>();
+        }
+        userAccountLiveData.setValue(user);
+    }
+
+    public void clearUser() {
+        userAccountLiveData.setValue(null);
+    }
+
+    @Nullable
+    public List<Note> getNotesFromAnonymousAccount() {
+        return notesFromAnonymousAccount;
+    }
+
+    public void setNotesFromAnonymousAccount(List<Note> notesFromAnonymousAccount) {
+        this.notesFromAnonymousAccount = notesFromAnonymousAccount;
+    }
+
+    public void clearNotesFromAnonymousAccount() {
+        this.notesFromAnonymousAccount = null;
     }
 
     @Override

@@ -6,9 +6,9 @@ import java.util.List;
 
 import dagger.Lazy;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import pan.alexander.notes.App;
 import pan.alexander.notes.data.database.NotesDao;
+import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.NotesRepository;
 
@@ -18,11 +18,6 @@ public class NotesRepositoryImplementation implements NotesRepository {
     @Override
     public LiveData<List<Note>> getAllNotesFromDB() {
         return dao.get().getAllNotes();
-    }
-
-    @Override
-    public Single<List<Note>> getNoteByTime(long time) {
-        return dao.get().getNoteByTime(time);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package pan.alexander.notes.utils;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 
@@ -8,6 +9,8 @@ import androidx.core.graphics.ColorUtils;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import pan.alexander.notes.R;
 
 public class Utils {
 
@@ -55,5 +58,9 @@ public class Utils {
 
     public static String colorIntToHex(int color) {
         return String.format("#%06X", (0xFFFFFF & color));
+    }
+
+    public static boolean isGmsVersion(Context context) {
+        return context.getString(R.string.package_name).endsWith("gp");
     }
 }

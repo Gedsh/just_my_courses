@@ -5,26 +5,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-@Entity
 public class Note implements Parcelable, Comparable<Note> {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    private String id;
     private String title;
     private String description;
     @NoteType
     private final int type;
     private long time;
     private String color;
-
 
     public Note(@NonNull String title,
                 @NonNull String description,
@@ -38,46 +32,13 @@ public class Note implements Parcelable, Comparable<Note> {
         this.color = color;
     }
 
-    @Ignore
-    public Note(@NonNull String title,
-                @NonNull String description,
-                @NoteType int type,
-                @NonNull String color) {
-        this.title = title;
-        this.description = description;
-        this.type = type;
-        this.time = System.currentTimeMillis();
-        this.color = color;
-    }
-
-    @Ignore
-    private Note(Trash trash) {
-        this.title = trash.getTitle();
-        this.description = trash.getDescription();
-        this.type = trash.getType();
-        this.time = trash.getTime();
-        this.color = trash.getColor();
-    }
-
     protected Note(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         title = in.readString();
         description = in.readString();
         type = in.readInt();
         time = in.readLong();
         color = in.readString();
-    }
-
-    public static Note trashToNote(Trash trash) {
-        return new Note(trash);
-    }
-
-    public static List<Note> trashesToNotes(List<Trash> trashes) {
-        List<Note> notes = new ArrayList<>();
-        for (Trash trash: trashes) {
-            notes.add(new Note(trash));
-        }
-        return notes;
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -92,11 +53,11 @@ public class Note implements Parcelable, Comparable<Note> {
         }
     };
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -159,7 +120,7 @@ public class Note implements Parcelable, Comparable<Note> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeInt(type);

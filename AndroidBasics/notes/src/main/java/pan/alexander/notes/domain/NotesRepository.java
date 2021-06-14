@@ -6,12 +6,11 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 
 public interface NotesRepository {
     LiveData<List<Note>> getAllNotesFromDB();
-
-    Single<List<Note>> getNoteByTime(long time);
 
     Completable addNoteToDB(Note note);
 

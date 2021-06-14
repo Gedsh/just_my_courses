@@ -3,8 +3,7 @@
     <string name="title_activity_main">Notes</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Just notes</string>
-    <string name="nav_header_subtitle">invizible.soft@gmail.com</string>
+    <string name="nav_header_mail">Anonymous User</string>
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_view">View</string>
@@ -20,11 +19,18 @@
     <string name="menu_unselect">Clear selection</string>
     <string name="menu_search">Search</string>
 
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign out</string>
+
     <string name="fab_add_note">Add note</string>
     <string name="fab_add_text_note">Add text note</string>
     <string name="fab_add_list_note">Add list note</string>
 
     <string name="fragment_about_text">This is About fragment</string>
+
+    <string name="message_no_network">No internet connection.</string>
+
+    <string name="message_unknown_error">An unknown error has occurred.</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

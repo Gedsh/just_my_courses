@@ -221,7 +221,7 @@ public class TaskNoteFragment extends Fragment implements TaskAdapter.OnTasksCha
 
         if (receivedNote == null || adapter.getTasks() == null
                 || mainActivityViewModel.getCurrentNote() == null
-                || receivedNote.getId() != mainActivityViewModel.getCurrentNote().second.getId()) {
+                || !receivedNote.getId().equals(mainActivityViewModel.getCurrentNote().second.getId())) {
             return;
         }
 
@@ -242,6 +242,7 @@ public class TaskNoteFragment extends Fragment implements TaskAdapter.OnTasksCha
         Note note = new Note(titleText,
                 description.trim(),
                 NoteType.LIST_NOTE,
+                System.currentTimeMillis(),
                 colorHex);
         note.setId(receivedNote.getId());
 

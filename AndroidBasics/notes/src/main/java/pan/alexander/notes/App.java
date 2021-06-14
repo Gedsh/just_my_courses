@@ -1,11 +1,21 @@
 package pan.alexander.notes;
 
-import android.app.Application;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
+
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 
 import pan.alexander.notes.di.ApplicationComponent;
 import pan.alexander.notes.di.DaggerApplicationComponent;
@@ -66,5 +76,25 @@ public class App extends MultiDexApplication {
 
     public Handler getHandler() {
         return handler;
+    }
+
+    @SuppressWarnings("unused")
+    private void getSigningHash() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            String packageName = getPackageName();
+
+            @SuppressLint("PackageManagerGetSignatures")
+            Signature[] signatureArray = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures;
+
+            byte[] byteSign = signatureArray[0].toByteArray();
+            byteSign = CertificateFactory.getInstance("X509").generateCertificate(new ByteArrayInputStream(byteSign)).getEncoded();
+
+            byte[] digest = MessageDigest.getInstance("SHA").digest(byteSign);
+            String hex = String.format("%064x", new BigInteger(1, digest));
+            Log.d(LOG_TAG, hex);
+        } catch (PackageManager.NameNotFoundException | CertificateException | NoSuchAlgorithmException e) {
+            Log.e(LOG_TAG, "Get signature exception", e);
+        }
     }
 }

@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import pan.alexander.notes.domain.NotesRepository;
+import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
 import pan.alexander.notes.domain.tasksnote.Task;
@@ -54,11 +54,6 @@ public class MockNotesRepositoryImplementation implements NotesRepository {
         }
 
         return notesLiveData;
-    }
-
-    @Override
-    public Single<List<Note>> getNoteByTime(long time) {
-        return null;
     }
 
     @Override

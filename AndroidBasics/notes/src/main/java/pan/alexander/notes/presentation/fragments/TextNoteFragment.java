@@ -144,7 +144,7 @@ public class TextNoteFragment extends Fragment implements View.OnLongClickListen
     private void saveChanges() {
 
         if (receivedNote == null || mainActivityViewModel.getCurrentNote() == null
-                || receivedNote.getId() != mainActivityViewModel.getCurrentNote().second.getId()) {
+                || !receivedNote.getId().equals(mainActivityViewModel.getCurrentNote().second.getId())) {
             return;
         }
 
@@ -166,6 +166,7 @@ public class TextNoteFragment extends Fragment implements View.OnLongClickListen
         Note note = new Note(titleText,
                 descriptionText,
                 NoteType.TEXT_NOTE,
+                System.currentTimeMillis(),
                 colorHex);
         note.setId(receivedNote.getId());
 

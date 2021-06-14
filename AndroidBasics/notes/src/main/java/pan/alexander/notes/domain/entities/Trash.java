@@ -2,11 +2,9 @@ package pan.alexander.notes.domain.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 @Entity
 public class Trash {
@@ -32,27 +30,7 @@ public class Trash {
         this.color = color;
     }
 
-    @Ignore
-    private Trash(@NonNull Note note) {
-        this.title = note.getTitle();
-        this.description = note.getDescription();
-        this.type = note.getType();
-        this.time = note.getTime();
-        this.color = note.getColor();
-    }
-
-    public static Trash noteToTrash(Note note) {
-        return new Trash(note);
-    }
-
-    public static List<Trash> notesToTrashes(List<Note> notes) {
-        List<Trash> trashes = new ArrayList<>();
-        for (Note note: notes) {
-            trashes.add(new Trash(note));
-        }
-        return trashes;
-    }
-
+    @NotNull
     @Override
     public String toString() {
         return "Trash{" +
