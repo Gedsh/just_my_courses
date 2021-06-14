@@ -11,12 +11,13 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardTextUserInput"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/calculator_outer_margins"
         android:layout_marginTop="@dimen/calculator_outer_margins"
         android:layout_marginEnd="@dimen/calculator_outer_margins"
         app:cardCornerRadius="@dimen/calculator_card_corners_radius"
         app:cardPreventCornerOverlap="false"
+        app:layout_constraintBottom_toTopOf="@id/cardIntermediateResult"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -87,10 +88,10 @@
         android:layout_marginEnd="@dimen/calculator_button_margins"
         android:text="@string/buttonBracketsOpenText"
         android:textSize="@dimen/calculator_expression_button_text_size"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonHistory"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonBracketsClose"
         app:layout_constraintEnd_toStartOf="@+id/buttonBracketsClose"
         app:layout_constraintStart_toEndOf="@+id/buttonHistory"
-        app:layout_constraintTop_toTopOf="@+id/buttonHistory" />
+        app:layout_constraintTop_toTopOf="@+id/buttonBracketsClose" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonBracketsClose"
@@ -100,23 +101,25 @@
         android:layout_marginEnd="@dimen/calculator_button_margins"
         android:text="@string/buttonBracketsCloseText"
         android:textSize="@dimen/calculator_expression_button_text_size"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonBracketsOpen"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonClear"
         app:layout_constraintEnd_toStartOf="@+id/buttonClear"
         app:layout_constraintStart_toEndOf="@+id/buttonBracketsOpen"
-        app:layout_constraintTop_toTopOf="@+id/buttonBracketsOpen" />
+        app:layout_constraintTop_toTopOf="@+id/buttonClear" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonClear"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/calculator_button_margins"
         android:layout_marginEnd="@dimen/calculator_button_margins"
+        android:layout_marginBottom="@dimen/calculator_button_margins"
         android:text="@string/buttonClearText"
         android:textSize="@dimen/calculator_expression_button_text_size"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonBracketsClose"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDivide"
         app:layout_constraintEnd_toStartOf="@+id/buttonBackspace"
         app:layout_constraintStart_toEndOf="@+id/buttonBracketsClose"
-        app:layout_constraintTop_toTopOf="@+id/buttonBracketsClose" />
+        app:layout_constraintTop_toBottomOf="@+id/cardIntermediateResult" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonBackspace"
@@ -134,7 +137,7 @@
         android:id="@+id/buttonSeven"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/calculator_button_margins"
         android:text="@string/buttonSevenText"
         android:textSize="@dimen/calculator_digit_button_text_size"
@@ -195,7 +198,7 @@
         android:id="@+id/buttonFour"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/calculator_button_margins"
         android:text="@string/buttonFourText"
         android:textSize="@dimen/calculator_digit_button_text_size"
@@ -257,7 +260,7 @@
         android:id="@+id/buttonOne"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/calculator_button_margins"
         android:text="@string/buttonOneText"
         android:textSize="@dimen/calculator_digit_button_text_size"
@@ -318,7 +321,7 @@
         android:id="@+id/buttonZero"
         style="@style/CalculatorButtonsStyle"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/calculator_outer_margins"
         android:text="@string/buttonZeroText"
         android:textSize="@dimen/calculator_digit_button_text_size"
