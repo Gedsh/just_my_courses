@@ -1,6 +1,7 @@
 package pan.alexander.notes.presentation.viewmodel;
 
 import android.os.Handler;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -11,26 +12,40 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import dagger.Lazy;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pan.alexander.notes.App;
+import pan.alexander.notes.domain.AccountInteractor;
+import pan.alexander.notes.domain.MainInteractor;
 import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
+import pan.alexander.notes.presentation.activities.MainActivityActionRequest;
 
+import static pan.alexander.notes.App.LOG_TAG;
 import static pan.alexander.notes.utils.AppConstants.DELAY_BEFORE_STOP_RX_SCHEDULERS;
 
 public class MainActivityViewModel extends ViewModel {
     public static final int DEFAULT_BOTTOM_NAVIGATION_VIEW_HEIGHT = 0;
 
+    private final CompositeDisposable disposables;
     private MutableLiveData<Integer> bottomNavigationViewShowed;
     private MutableLiveData<Boolean> keyboardActivated;
     private Pair<Integer, Note> currentNote;
     private MutableLiveData<Pair<Integer, Note>> displayedNoteCallbackForSave;
+    private MutableLiveData<Integer> mainActivityActionRequest;
     private final Handler globalHandler;
     private MutableLiveData<User> userAccountLiveData;
     private List<Note> notesFromAnonymousAccount;
+    private final Lazy<MainInteractor> mainInteractor;
+    private final Lazy<AccountInteractor> accountInteractor;
 
     public MainActivityViewModel() {
-        this.globalHandler = App.getInstance().getHandler();
+        globalHandler = App.getInstance().getHandler();
+        mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
+        accountInteractor = App.getInstance().getDaggerComponent().getAccountInteractor();
+        disposables = new CompositeDisposable();
         stopPreviousGlobalHandlerTasks();
         startRxSchedulers();
     }
@@ -113,38 +128,107 @@ public class MainActivityViewModel extends ViewModel {
     @NonNull
     public LiveData<User> getUserAccountLiveData() {
         if (userAccountLiveData == null) {
-            userAccountLiveData = new MutableLiveData<>();
-            userAccountLiveData.setValue(App.getInstance()
-                    .getDaggerComponent()
-                    .getAccountInteractor()
-                    .get()
-                    .getUser());
+            updateUser();
         }
         return userAccountLiveData;
     }
 
-    public void setUser(@NonNull User user) {
+    public void updateUser() {
         if (userAccountLiveData == null) {
             userAccountLiveData = new MutableLiveData<>();
         }
+        User user = accountInteractor.get().getUser();
         userAccountLiveData.setValue(user);
+        accountInteractor.get().setUser(user);
     }
 
-    public void clearUser() {
+    private void clearUser() {
         userAccountLiveData.setValue(null);
-    }
-
-    @Nullable
-    public List<Note> getNotesFromAnonymousAccount() {
-        return notesFromAnonymousAccount;
-    }
-
-    public void setNotesFromAnonymousAccount(List<Note> notesFromAnonymousAccount) {
-        this.notesFromAnonymousAccount = notesFromAnonymousAccount;
+        accountInteractor.get().setUser(null);
     }
 
     public void clearNotesFromAnonymousAccount() {
         this.notesFromAnonymousAccount = null;
+    }
+
+    public LiveData<Integer> getMainActivityActionRequest() {
+        if (mainActivityActionRequest == null) {
+            mainActivityActionRequest = new MutableLiveData<>();
+            mainActivityActionRequest.setValue(MainActivityActionRequest.NO_ACTION);
+        }
+        return mainActivityActionRequest;
+    }
+
+    public void clearMainActivityActionRequest() {
+        if (mainActivityActionRequest.getValue() != null
+                && mainActivityActionRequest.getValue() != MainActivityActionRequest.NO_ACTION) {
+            mainActivityActionRequest.setValue(MainActivityActionRequest.NO_ACTION);
+        }
+    }
+
+    private void setMainActivityActionRequest(@MainActivityActionRequest int action) {
+        if (mainActivityActionRequest == null) {
+            mainActivityActionRequest = new MutableLiveData<>();
+        }
+        mainActivityActionRequest.setValue(action);
+    }
+
+    public void moveUserDataFromAnonymousToRegisteredAccount() {
+        List<Note> notes = mainInteractor.get().getAllNotesFromNotes().getValue();
+
+        if (notes != null && !notes.isEmpty()) {
+            notesFromAnonymousAccount = notes;
+        }
+
+        Disposable disposable = mainInteractor.get().removeAllNotesFromNotes()
+                .andThen(accountInteractor.get().signOut())
+                .andThen(accountInteractor.get().deleteCurrentUser())
+                .subscribe(() -> {
+                            setMainActivityActionRequest(MainActivityActionRequest.LAUNCH_ACCOUNT_CHOOSER);
+                            clearUser();
+                        },
+                        throwable -> Log.e(LOG_TAG, "User delete exception", throwable));
+        disposables.add(disposable);
+    }
+
+    public void getUserAccountError(Pair<String, Integer> result) {
+
+        clearUser();
+
+        if (notesFromAnonymousAccount != null && !notesFromAnonymousAccount.isEmpty()) {
+            Disposable disposable = accountInteractor.get()
+                    .signInAnonymously()
+                    .subscribe(() -> {
+                                mainInteractor.get().addNotesToNotes(notesFromAnonymousAccount);
+                                clearNotesFromAnonymousAccount();
+                                updateUser();
+                                setMainActivityActionRequest(MainActivityActionRequest.OPEN_NAV_DRAWER);
+                            },
+                            throwable -> Log.e(LOG_TAG, "User sign in anonymously exception", throwable));
+            disposables.add(disposable);
+        }
+
+        Log.e(LOG_TAG, "Failed to get user account " + result);
+    }
+
+    public void getUserAccountSuccess() {
+        updateUser();
+
+        if (notesFromAnonymousAccount != null && !notesFromAnonymousAccount.isEmpty()) {
+            mainInteractor.get().addNotesToNotes(notesFromAnonymousAccount);
+            clearNotesFromAnonymousAccount();
+        }
+    }
+
+    public void signOutUser() {
+        Disposable disposable = accountInteractor.get()
+                .signOut()
+                .subscribe(() -> {
+                            clearUser();
+                            setMainActivityActionRequest(MainActivityActionRequest.OPEN_NAV_DRAWER);
+                        },
+                        throwable -> Log.e(LOG_TAG, "User sign out exception", throwable));
+        disposables.add(disposable);
     }
 
     @Override
@@ -152,7 +236,8 @@ public class MainActivityViewModel extends ViewModel {
 
         stopRxSchedulersDelayed();
 
-        App.getInstance().getDaggerComponent().getMainInteractor().get().clearDisposablesDelayed();
+        disposables.clear();
+        mainInteractor.get().clearDisposablesDelayed();
 
         super.onCleared();
     }

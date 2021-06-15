@@ -6,7 +6,6 @@ import android.content.Intent;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import pan.alexander.notes.data.database.NotesDao;
 import pan.alexander.notes.domain.account.User;
 
 public class AccountInteractor {

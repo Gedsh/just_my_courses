@@ -8,7 +8,6 @@ import dagger.Lazy;
 import io.reactivex.Completable;
 import pan.alexander.notes.App;
 import pan.alexander.notes.data.database.NotesDao;
-import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.NotesRepository;
 

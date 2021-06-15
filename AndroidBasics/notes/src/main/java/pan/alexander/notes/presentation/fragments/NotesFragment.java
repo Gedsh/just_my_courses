@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -40,14 +39,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import dagger.Lazy;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import pan.alexander.notes.App;
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.NotesFragmentBinding;
-import pan.alexander.notes.domain.AccountInteractor;
-import pan.alexander.notes.domain.MainInteractor;
 import pan.alexander.notes.domain.account.User;
 import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.domain.entities.NoteType;
@@ -60,7 +53,6 @@ import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.presentation.viewmodel.NotesViewModel;
 import pan.alexander.notes.utils.Utils;
 
-import static pan.alexander.notes.App.LOG_TAG;
 import static pan.alexander.notes.presentation.viewmodel.MainActivityViewModel.DEFAULT_BOTTOM_NAVIGATION_VIEW_HEIGHT;
 
 public class NotesFragment extends Fragment implements NotesViewHolder.ClickListener,
@@ -68,8 +60,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
         ActionModeCallback.ActionModeFinishedListener {
 
     public static final int NEW_NOTE_POSITION = 0;
-
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private MainActivityViewModel mainActivityViewModel;
     private NotesViewModel notesViewModel;
@@ -79,8 +69,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private boolean fabIsRotate;
     private Menu menu;
     private TwoPaneOnBackPressedCallback twoPaneOnBackPressedCallback;
-    private Lazy<MainInteractor> mainInteractor;
-    private Lazy<AccountInteractor> accountInteractor;
     private String defaultNoteColor;
     private User user;
 
@@ -146,8 +134,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
 
         mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         notesViewModel = new ViewModelProvider(this).get(NotesViewModel.class);
-        mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
-        accountInteractor = App.getInstance().getDaggerComponent().getAccountInteractor();
         defaultNoteColor = Utils.colorIntToHex(ContextCompat.getColor(requireContext(),
                 R.color.default_note_color));
 
@@ -352,9 +338,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             Note note = new Note("", "",
                     NoteType.TEXT_NOTE, System.currentTimeMillis(), defaultNoteColor);
             if (user == null && Utils.isGmsVersion(requireContext())) {
-                signInAnonymously(note);
+                notesViewModel.signInAnonymously(note, mainActivityViewModel);
             } else {
-                mainInteractor.get().addNoteToNotes(note);
+                notesViewModel.requestNewNote(note);
             }
             toggleFab(binding.fabAddNote);
         });
@@ -363,9 +349,9 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
             Note note = new Note("", "",
                     NoteType.LIST_NOTE, System.currentTimeMillis(), defaultNoteColor);
             if (user == null && Utils.isGmsVersion(requireContext())) {
-                signInAnonymously(note);
+                notesViewModel.signInAnonymously(note, mainActivityViewModel);
             } else {
-                mainInteractor.get().addNoteToNotes(note);
+                notesViewModel.requestNewNote(note);
             }
             toggleFab(binding.fabAddNote);
         });
@@ -374,17 +360,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     private void observeAccountChanges() {
         mainActivityViewModel.getUserAccountLiveData().observe(getViewLifecycleOwner(),
                 user -> this.user = user);
-    }
-
-    private void signInAnonymously(Note note) {
-        Disposable disposable = accountInteractor.get()
-                .signInAnonymously()
-                .subscribe(() -> {
-                            mainActivityViewModel.setUser(accountInteractor.get().getUser());
-                            mainInteractor.get().addNoteToNotes(note);
-                        },
-                        throwable -> Log.e(LOG_TAG, "User sign in anonymously exception", throwable));
-        compositeDisposable.add(disposable);
     }
 
     private void toggleFab(View view) {
@@ -488,7 +463,6 @@ public class NotesFragment extends Fragment implements NotesViewHolder.ClickList
     public void onDestroyView() {
         super.onDestroyView();
 
-        compositeDisposable.clear();
         binding = null;
         notesAdapter = null;
         menu = null;

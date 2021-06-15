@@ -1,8 +1,6 @@
 package pan.alexander.notes.presentation.activities;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,24 +24,13 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
-
-import dagger.Lazy;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import pan.alexander.notes.App;
 import pan.alexander.notes.R;
 import pan.alexander.notes.databinding.ActivityMainBinding;
-import pan.alexander.notes.domain.AccountInteractor;
-import pan.alexander.notes.domain.MainInteractor;
 import pan.alexander.notes.domain.account.User;
-import pan.alexander.notes.domain.entities.Note;
 import pan.alexander.notes.presentation.fragments.NotesFragment;
 import pan.alexander.notes.presentation.viewmodel.MainActivityViewModel;
 import pan.alexander.notes.utils.KeyboardUtils;
 import pan.alexander.notes.utils.Utils;
-
-import static pan.alexander.notes.App.LOG_TAG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,9 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewUserEmail;
     private Button buttonSignInOut;
     private ActivityResultLauncher<Boolean> accountChooser;
-    private Lazy<AccountInteractor> accountInteractor;
-    private Lazy<MainInteractor> mainInteractor;
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
         findNavHeaderViews();
 
-        accountInteractor = App.getInstance().getDaggerComponent().getAccountInteractor();
-        mainInteractor = App.getInstance().getDaggerComponent().getMainInteractor();
-
         if (Utils.isGmsVersion(this)) {
+            observeMainActivityActionRequest();
             observeAccountChanges();
             observeGetAccountResult();
         }
@@ -110,80 +92,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void observeAccountChanges() {
-        mainActivityViewModel.getUserAccountLiveData().observe(this, user -> {
-            setNavHeaderAvatarAndData(user);
-            accountInteractor.get().setUser(user);
+    private void observeMainActivityActionRequest() {
+        mainActivityViewModel.getMainActivityActionRequest().observe(this, action -> {
+            if (action == MainActivityActionRequest.OPEN_NAV_DRAWER) {
+                binding.drawerLayout.open();
+            } else if (action == MainActivityActionRequest.LAUNCH_ACCOUNT_CHOOSER) {
+                launchAccountChooser(false);
+            }
+            mainActivityViewModel.clearMainActivityActionRequest();
         });
+    }
+
+    private void observeAccountChanges() {
+        mainActivityViewModel.getUserAccountLiveData().observe(this, this::setNavHeaderAvatarAndData);
     }
 
     private void observeGetAccountResult() {
         accountChooser = registerForActivityResult(new PickAccount(), result -> {
             if (result.second == PickAccount.ANONYMOUS_UPGRADE_MERGE_CONFLICT) {
-                moveUserDataFromAnonymousToRegisteredAccount();
+                mainActivityViewModel.moveUserDataFromAnonymousToRegisteredAccount();
             } else if (result.first != null) {
-                getUserAccountError(result);
+                showSnackBar(result.first, Snackbar.LENGTH_LONG);
+                mainActivityViewModel.getUserAccountError(result);
             } else {
-                getUserAccountSuccess();
+                binding.drawerLayout.open();
+                mainActivityViewModel.getUserAccountSuccess();
             }
         });
     }
 
-    private void moveUserDataFromAnonymousToRegisteredAccount() {
-        List<Note> notes = mainInteractor.get().getAllNotesFromNotes().getValue();
-
-        if (notes != null && !notes.isEmpty()) {
-            mainActivityViewModel.setNotesFromAnonymousAccount(notes);
-        }
-
-        Disposable disposable = mainInteractor.get().removeAllNotesFromNotes()
-                .andThen(accountInteractor.get().signOut())
-                .andThen(accountInteractor.get().deleteCurrentUser())
-                .subscribe(() -> {
-                            launchAccountChooser(false);
-                            mainActivityViewModel.clearUser();
-                        },
-                        throwable -> Log.e(LOG_TAG, "User delete exception", throwable));
-        compositeDisposable.add(disposable);
-    }
-
-    private void getUserAccountError(Pair<String, Integer> result) {
-
-        mainActivityViewModel.clearUser();
-
-        if (result.first != null && !result.first.isEmpty()) {
-            showSnackBar(result.first, Snackbar.LENGTH_LONG);
-        }
-
-        List<Note> notesFromAnonymousAccount = mainActivityViewModel.getNotesFromAnonymousAccount();
-        if (notesFromAnonymousAccount != null && !notesFromAnonymousAccount.isEmpty()) {
-            Disposable disposable = accountInteractor.get()
-                    .signInAnonymously()
-                    .subscribe(() -> {
-                                mainInteractor.get().addNotesToNotes(notesFromAnonymousAccount);
-                                mainActivityViewModel.clearNotesFromAnonymousAccount();
-                                mainActivityViewModel.setUser(accountInteractor.get().getUser());
-                                binding.drawerLayout.open();
-                            },
-                            throwable -> Log.e(LOG_TAG, "User sign in anonymously exception", throwable));
-            compositeDisposable.add(disposable);
-        }
-
-        Log.e(LOG_TAG, "Failed to get user account " + result);
-    }
-
-    private void getUserAccountSuccess() {
-        mainActivityViewModel.setUser(accountInteractor.get().getUser());
-        binding.drawerLayout.open();
-
-        List<Note> notesFromAnonymousAccount = mainActivityViewModel.getNotesFromAnonymousAccount();
-        if (notesFromAnonymousAccount != null && !notesFromAnonymousAccount.isEmpty()) {
-            mainInteractor.get().addNotesToNotes(notesFromAnonymousAccount);
-            mainActivityViewModel.clearNotesFromAnonymousAccount();
-        }
-    }
-
     private void showSnackBar(String text, @BaseTransientBottomBar.Duration int duration) {
+
+        if (text.isEmpty()) {
+            return;
+        }
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.navHostFragmentContentMain);
         if (navHostFragment == null) {
@@ -203,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setNavHeaderAvatarAndData(User user) {
 
-        if (user == null || user.getUid().isEmpty() || user.isAnonymous()) {
+        if (user == null || user.isAnonymous()) {
 
             setUserSignInOnClickListener();
 
@@ -221,20 +164,9 @@ public class MainActivity extends AppCompatActivity {
             buttonSignInOut.setText(R.string.sign_out);
             buttonSignInOut.setOnClickListener(v -> {
                 binding.drawerLayout.closeDrawer(GravityCompat.START);
-                signOutUser();
+                mainActivityViewModel.signOutUser();
             });
         }
-    }
-
-    private void signOutUser() {
-        Disposable disposable = accountInteractor.get()
-                .signOut()
-                .subscribe(() -> {
-                            mainActivityViewModel.clearUser();
-                            binding.drawerLayout.open();
-                        },
-                        throwable -> Log.e(LOG_TAG, "User sign out exception", throwable));
-        compositeDisposable.add(disposable);
     }
 
     private void setUserSignInOnClickListener() {
@@ -256,8 +188,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
 
         stopObservingKeyboardVisibilityChanges();
-
-        compositeDisposable.clear();
     }
 
     @Override
