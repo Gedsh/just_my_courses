@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="recycle_item_card_radius">5dp</dimen>
+    <dimen name="recycle_item_image_margin_bottom">8dp</dimen>
+    <dimen name="recycle_item_title_margin_bottom">32dp</dimen>
+    <dimen name="recycle_item_year_margin_start">8dp</dimen>
+    <dimen name="recycle_item_year_margin_bottom">8dp</dimen>
+    <dimen name="recycle_item_star_margin_bottom">8dp</dimen>
+    <dimen name="recycle_item_rating_margin_bottom">8dp</dimen>
+    <dimen name="recycle_item_rating_margin_end">8dp</dimen>
+    <dimen name="fragment_titles_margins">8dp</dimen>
+</resources>
