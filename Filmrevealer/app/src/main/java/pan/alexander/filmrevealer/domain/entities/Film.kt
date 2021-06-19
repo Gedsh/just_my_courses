@@ -16,7 +16,7 @@ data class Film(
     var rating: Float = .0f,
     @ColumnInfo(name = "adult") var adult: Boolean = false,
     @ColumnInfo(name = "is_liked") var isLiked: Boolean = false,
-    @ColumnInfo(name = "section") var section: Section = Section.NOW_PLAYING
+    @ColumnInfo(name = "section") var section: Int = Section.NOW_PLAYING.value
 ) {
     constructor(filmDetails: FilmDetails) : this() {
         movieId = filmDetails.id
@@ -33,4 +33,12 @@ data class Film(
         TOP_RATED(3),
         UPCOMING(4)
     }
+
+    override fun toString(): String {
+        return "Film(movieId=$movieId, title='$title', posterUrl='$posterUrl'," +
+                " releaseDate='$releaseDate', rating=$rating, adult=$adult," +
+                " isLiked=$isLiked, section=$section)"
+    }
+
+
 }

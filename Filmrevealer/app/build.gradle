@@ -4,9 +4,25 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def keystorePropertiesFile = file("../../../../.local/KStore/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def tmdbPropertiesFile = file("../../../../.local/KStore/tmdb_key.properties")
+def tmdbProperties = new Properties()
+tmdbProperties.load(new FileInputStream(tmdbPropertiesFile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        releasesign {
+            storeFile file("../../../../.local/KStore/pan_alexander.jks")
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyBAlias']
+            keyPassword keystoreProperties['keyBPassword']
+        }
+    }
 
     defaultConfig {
         applicationId "pan.alexander.filmrevealer"
@@ -17,13 +33,24 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
+        resValue 'string', 'api', tmdbProperties['key']
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
+        }
+
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
         }
     }
     compileOptions {
@@ -57,6 +84,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_interceptor"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

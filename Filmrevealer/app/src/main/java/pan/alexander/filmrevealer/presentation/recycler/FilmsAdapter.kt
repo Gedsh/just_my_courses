@@ -27,8 +27,6 @@ class FilmsAdapter(
         holder.bind(context, items[position])
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount() = items.size
 
 }

@@ -1,6 +1,8 @@
 package pan.alexander.filmrevealer.domain
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPage
 import pan.alexander.filmrevealer.domain.entities.Film
 import retrofit2.Call
@@ -13,111 +15,109 @@ class MainInteractor @Inject constructor(
     private val remoteRepository: RemoteRepository
 ) {
     fun loadNowPlayingFilms(page: Int) {
-        val response =
-            remoteRepository.loadNowPlayingFilms(page).enqueue(object : Callback<FilmsPage> {
-                override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filmsPage ->
-                            val films = filmsPage.results
-                            if (films.isNotEmpty()) {
-                                localRepository.deleteNowPlayingFilms()
-                                films.forEach { filmDetails ->
-                                    val film = Film(filmDetails).also {
-                                        it.section = Film.Section.NOW_PLAYING
-                                    }
-                                    localRepository.addFilm(film)
+        remoteRepository.loadNowPlayingFilms(page).enqueue(object : Callback<FilmsPage> {
+            override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { filmsPage ->
+                        val films = filmsPage.results
+                        if (films.isNotEmpty()) {
+                            localRepository.deleteNowPlayingFilms()
+                            films.forEach { filmDetails ->
+                                val film = Film(filmDetails).also {
+                                    it.section = Film.Section.NOW_PLAYING.value
                                 }
+                                localRepository.addFilm(film)
                             }
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+            override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
+                Log.e(LOG_TAG, "Load Now Playing Films failure.", t)
+            }
+        })
 
     }
 
     fun loadUpcomingFilms(page: Int) {
-        val response =
-            remoteRepository.loadUpcomingFilms(page).enqueue(object : Callback<FilmsPage> {
-                override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filmsPage ->
-                            val films = filmsPage.results
-                            if (films.isNotEmpty()) {
-                                localRepository.deleteUpcomingFilms()
-                                films.forEach { filmDetails ->
-                                    val film = Film(filmDetails).also {
-                                        it.section = Film.Section.UPCOMING
-                                    }
-                                    localRepository.addFilm(film)
+        remoteRepository.loadUpcomingFilms(page).enqueue(object : Callback<FilmsPage> {
+            override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { filmsPage ->
+                        val films = filmsPage.results
+                        if (films.isNotEmpty()) {
+                            localRepository.deleteUpcomingFilms()
+                            films.forEach { filmDetails ->
+                                val film = Film(filmDetails).also {
+                                    it.section = Film.Section.UPCOMING.value
                                 }
+                                localRepository.addFilm(film)
                             }
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
+            override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
+                Log.e(LOG_TAG, "Load Upcoming Films failure.", t)
+            }
+        })
 
 
     }
 
     fun loadTopRatedFilms(page: Int) {
-        val response =
-            remoteRepository.loadTopRatedFilms(page).enqueue(object : Callback<FilmsPage> {
-                override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filmsPage ->
-                            val films = filmsPage.results
-                            if (films.isNotEmpty()) {
-                                localRepository.deleteTopRatedFilms()
-                                films.forEach { filmDetails ->
-                                    val film = Film(filmDetails).also {
-                                        it.section = Film.Section.TOP_RATED
-                                    }
-                                    localRepository.addFilm(film)
+        remoteRepository.loadTopRatedFilms(page).enqueue(object : Callback<FilmsPage> {
+            override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { filmsPage ->
+                        val films = filmsPage.results
+                        if (films.isNotEmpty()) {
+                            localRepository.deleteTopRatedFilms()
+                            films.forEach { filmDetails ->
+                                val film = Film(filmDetails).also {
+                                    it.section = Film.Section.TOP_RATED.value
                                 }
+                                localRepository.addFilm(film)
                             }
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
+            override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
+                Log.e(LOG_TAG, "Load Top Rated Films failure.", t)
+            }
 
-            })
+        })
     }
 
     fun loadPopularFilms(page: Int) {
-        val response =
-            remoteRepository.loadPopularFilms(page).enqueue(object : Callback<FilmsPage> {
-                override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filmsPage ->
-                            val films = filmsPage.results
-                            if (films.isNotEmpty()) {
-                                localRepository.deletePopularFilms()
-                                films.forEach { filmDetails ->
-                                    val film =
-                                        Film(filmDetails).also { it.section = Film.Section.POPULAR }
-                                    localRepository.addFilm(film)
-                                }
+        remoteRepository.loadPopularFilms(page).enqueue(object : Callback<FilmsPage> {
+            override fun onResponse(call: Call<FilmsPage>, response: Response<FilmsPage>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { filmsPage ->
+                        val films = filmsPage.results
+                        if (films.isNotEmpty()) {
+                            localRepository.deletePopularFilms()
+                            films.forEach { filmDetails ->
+                                val film =
+                                    Film(filmDetails).also {
+                                        it.section = Film.Section.POPULAR.value
+                                    }
+                                localRepository.addFilm(film)
                             }
                         }
                     }
                 }
+            }
 
-                override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
+            override fun onFailure(call: Call<FilmsPage>, t: Throwable) {
+                Log.e(LOG_TAG, "Load Popular Films failure.", t)
+            }
 
-            })
+        })
     }
 
     fun getNowPlayingFilms(): LiveData<List<Film>> {

@@ -1,7 +1,6 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.domain.entities.Film
@@ -19,8 +18,7 @@ class HomeViewModel : ViewModel() {
         mainInteractor.get().loadNowPlayingFilms(page)
     }
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    fun updateUpcomingFilms(page: Int) {
+        mainInteractor.get().loadUpcomingFilms(page)
     }
-    val text: LiveData<String> = _text
 }

@@ -12,7 +12,7 @@ import pan.alexander.filmrevealer.presentation.viewmodels.HomeViewModel
 
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var viewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -24,7 +24,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        homeViewModel =
+        viewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -35,26 +35,33 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    private fun initRecyclers() {
+    private fun initRecyclers() = with(binding) {
         nowPlayingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
 
-        binding.recyclerViewNowPlaying.adapter = nowPlayingFilmsAdapter
+        recyclerViewNowPlaying.adapter = nowPlayingFilmsAdapter
 
         upcomingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
 
-        binding.recyclerViewUpcoming.adapter = upcomingFilmsAdapter
+        recyclerViewUpcoming.adapter = upcomingFilmsAdapter
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        homeViewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, {
-            nowPlayingFilmsAdapter.updateItems(it)
+        viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                nowPlayingFilmsAdapter.updateItems(it)
+            }
         })
 
-        homeViewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, {
-            nowPlayingFilmsAdapter.updateItems(it)
+        viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                upcomingFilmsAdapter.updateItems(it)
+            }
         })
+
+        viewModel.updateNowPlayingFilms(1)
+        viewModel.updateUpcomingFilms(1)
     }
 
     override fun onDestroyView() {
