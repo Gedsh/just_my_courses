@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class DateRange(
-    @SerializedName("maximum") val maximum: String,
-    @SerializedName("minimum") val minimum: String
+data class Genre(
+    @SerializedName("id") val id: Int,
+    @SerializedName("name") val name: String
 )

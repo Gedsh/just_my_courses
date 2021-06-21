@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import pan.alexander.filmrevealer.data.database.AppDatabase
 import pan.alexander.filmrevealer.data.database.FilmDao
+import pan.alexander.filmrevealer.data.database.FilmDetailsDao
 import javax.inject.Singleton
 
 @Module
@@ -22,5 +23,9 @@ class RoomModule(appContext: Application) {
 
     @Provides
     @Singleton
-    fun providesFilmDao(): FilmDao = appDatabase.filmDao()
+    fun provideFilmDao(): FilmDao = appDatabase.filmDao()
+
+    @Provides
+    @Singleton
+    fun provideFilmDetailsDao(): FilmDetailsDao = appDatabase.filmDetailsDao()
 }

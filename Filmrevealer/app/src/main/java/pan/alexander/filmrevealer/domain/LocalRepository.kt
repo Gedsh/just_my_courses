@@ -2,6 +2,7 @@ package pan.alexander.filmrevealer.domain
 
 import androidx.lifecycle.LiveData
 import pan.alexander.filmrevealer.domain.entities.Film
+import pan.alexander.filmrevealer.domain.entities.FilmDetails
 
 interface LocalRepository {
     fun getNowPlayingFilms(): LiveData<List<Film>>
@@ -10,9 +11,15 @@ interface LocalRepository {
     fun getPopularFilms(): LiveData<List<Film>>
     fun getLikedFilms(): LiveData<List<Film>>
     fun addFilm(film: Film)
-    fun deleteNowPlayingFilms()
-    fun deleteUpcomingFilms()
-    fun deleteTopRatedFilms()
-    fun deletePopularFilms()
+    fun addFilms(films: List<Film>)
+    fun deleteNowPlayingFilms(page: Int)
+    fun deleteUpcomingFilms(page: Int)
+    fun deleteTopRatedFilms(page: Int)
+    fun deletePopularFilms(page: Int)
     fun updateFilm(film: Film)
+
+    fun getFilmDetailsById(id: Int): LiveData<List<FilmDetails>>
+    fun addFilmDetails(filmDetails: FilmDetails)
+    fun updateFilmDetails(filmDetails: FilmDetails)
+    fun deleteFilmsDetailsOlderTimestamp(timestamp: Long)
 }

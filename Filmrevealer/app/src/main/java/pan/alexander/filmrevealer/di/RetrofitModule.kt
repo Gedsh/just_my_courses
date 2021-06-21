@@ -9,7 +9,10 @@ import pan.alexander.filmrevealer.BuildConfig
 import pan.alexander.filmrevealer.data.web.FilmsApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
+private const val CALL_TIMEOUT_SEC = 10L
 
 @Module
 class RetrofitModule {
@@ -26,13 +29,11 @@ class RetrofitModule {
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
-        val builder = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(App.BASE_URL)
             .addConverterFactory(gsonConverterFactory)
-        if (BuildConfig.DEBUG) {
-            builder.client(okHttpClient)
-        }
-        return builder.build()
+            .client(okHttpClient)
+            .build()
     }
 
     @Provides
@@ -50,8 +51,11 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun provideClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
-            .build()
+        val builder = OkHttpClient.Builder()
+            .callTimeout(CALL_TIMEOUT_SEC, TimeUnit.SECONDS)
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(httpLoggingInterceptor)
+        }
+        return builder.build()
     }
 }

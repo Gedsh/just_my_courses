@@ -1,10 +1,9 @@
 package pan.alexander.filmrevealer
 
 import android.app.Application
-import pan.alexander.filmrevealer.di.ApplicationComponent
-import pan.alexander.filmrevealer.di.DaggerApplicationComponent
-import pan.alexander.filmrevealer.di.RetrofitModule
-import pan.alexander.filmrevealer.di.RoomModule
+import android.content.Context
+import androidx.multidex.MultiDex
+import pan.alexander.filmrevealer.di.*
 
 class App : Application() {
     companion object {
@@ -15,6 +14,13 @@ class App : Application() {
     }
 
     lateinit var daggerComponent: ApplicationComponent
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        if(BuildConfig.DEBUG) {
+            MultiDex.install(this)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -29,6 +35,7 @@ class App : Application() {
             .builder()
             .retrofitModule(RetrofitModule())
             .roomModule(RoomModule(instance))
+            .mainThreadHandler(MainThreadHandler(instance))
             .build()
     }
 }

@@ -5,6 +5,10 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
+    <action
+        android:id="@+id/action_to_film_details"
+        app:destination="@+id/navigation_film_details" />
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="pan.alexander.filmrevealer.presentation.fragments.HomeFragment"
@@ -22,4 +26,10 @@
         android:name="pan.alexander.filmrevealer.presentation.fragments.RatingsFragment"
         android:label="@string/title_ratings"
         tools:layout="@layout/fragment_ratings" />
+
+    <fragment
+        android:id="@+id/navigation_to_film_details"
+        android:name="pan.alexander.filmrevealer.presentation.fragments.FilmDetailsFragment"
+        tools:layout="@layout/fragment_film_details" />
+
 </navigation>

@@ -2,6 +2,7 @@ package pan.alexander.filmrevealer.presentation.recycler
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,8 +17,10 @@ import pan.alexander.filmrevealer.domain.entities.Film
 
 
 class FilmsViewHolder(
-    private val binding: RecyclerItemFilmBinding
-) : RecyclerView.ViewHolder(binding.root) {
+    private val binding: RecyclerItemFilmBinding,
+    private val onFilmClickListener: OnFilmClickListener?,
+    private val films: List<Film>
+) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
     fun bind(context: Context, film: Film) = with(binding) {
 
         imageViewFilmPoster.scaleType = ImageView.ScaleType.CENTER
@@ -45,7 +48,7 @@ class FilmsViewHolder(
                     isFirstResource: Boolean
                 ): Boolean {
                     imageViewFilmPoster.scaleType = ImageView.ScaleType.FIT_XY
-                    imageViewFilmPoster.requestLayout()
+                    root.requestLayout()
                     return false
                 }
 
@@ -53,7 +56,15 @@ class FilmsViewHolder(
             .into(imageViewFilmPoster)
 
         textViewTitle.text = film.title
-        textViewYear.text = film.releaseDate
+        textViewYear.text = if (film.releaseDate.contains("-"))
+            film.releaseDate.split("-")[0] else film.releaseDate
         textViewRating.text = String.format("%.1f", film.rating)
+    }
+
+    override fun onClick(v: View?) {
+        adapterPosition.takeIf { it >= 0 }?.let {
+            onFilmClickListener?.onFilmClicked(v, films[it])
+        }
+
     }
 }

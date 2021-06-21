@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/filmDetailsConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".presentation.fragments.FilmDetailsFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="@dimen/fragment_film_details_title_text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Fight Club" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewOriginalTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/fragment_film_details_text_margins"
+                android:textSize="@dimen/fragment_film_details_original_title_text_size"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
+                tools:text="Fight Club (2021)" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/posterVerticalGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="@fraction/fragment_film_details_vertical_guideline_percent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewPoster"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/fragment_film_details_text_margins"
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                app:layout_constraintBottom_toTopOf="@+id/posterHorizontalGuideline"
+                app:layout_constraintEnd_toStartOf="@id/posterVerticalGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewGenres"
+                app:srcCompat="@drawable/ic_baseline_cached_24" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/posterHorizontalGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="@fraction/fragment_film_details_horizontal_guideline_percent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewGenres"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewOriginalTitle"
+                tools:text="Drama" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewRuntime"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewGenres"
+                tools:text="135" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewMinutes"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/minutes"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewRuntime"
+                app:layout_constraintStart_toEndOf="@+id/textViewRuntime"
+                app:layout_constraintTop_toTopOf="@+id/textViewRuntime" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewRating"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewRuntime"
+                tools:text="7.8 (3439)" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewStar"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewRating"
+                app:layout_constraintStart_toEndOf="@+id/textViewRating"
+                app:layout_constraintTop_toTopOf="@+id/textViewRating"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewBudget"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/budget"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewRating" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewBudgetValue"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewBudget"
+                app:layout_constraintStart_toEndOf="@+id/textViewBudget"
+                app:layout_constraintTop_toTopOf="@+id/textViewBudget"
+                tools:text="63000000 $" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewRevenue"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/revenue"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewBudget" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewRevenueValue"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewRevenue"
+                app:layout_constraintStart_toEndOf="@+id/textViewRevenue"
+                app:layout_constraintTop_toTopOf="@+id/textViewRevenue"
+                tools:text="100853753 $" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewReleaseDate"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/release_date"
+                app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/textViewRevenue" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewReleaseDateValue"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewReleaseDate"
+                app:layout_constraintStart_toEndOf="@+id/textViewReleaseDate"
+                app:layout_constraintTop_toTopOf="@+id/textViewReleaseDate"
+                tools:text="2021-10-12" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierPostToSideText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="imageViewPoster, textViewReleaseDate"
+                tools:layout_editor_absoluteY="69dp" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/barrierPostToSideText">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/textViewDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/fragment_film_details_text_margins"
+                        android:textSize="@dimen/fragment_film_details_text_size"
+                        tools:text="A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground 'fight clubs' forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion." />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</ScrollView>
+

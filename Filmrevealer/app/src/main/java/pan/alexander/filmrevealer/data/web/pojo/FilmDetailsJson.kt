@@ -1,8 +1,10 @@
 package pan.alexander.filmrevealer.data.web.pojo
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
-data class FilmDetails(
+@Keep
+data class FilmDetailsJson(
     @SerializedName("poster_path") val posterPath: String?,
     @SerializedName("adult") val adult: Boolean,
     @SerializedName("overview") val overview: String,

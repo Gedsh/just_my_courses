@@ -1,13 +1,20 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import pan.alexander.filmrevealer.App
 
 class RatingsViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is ratings Fragment"
+    private val mainInteractor = App.instance.daggerComponent.getMainInteractor()
+
+    val listOfTopRatedFilmsLiveData by lazy { mainInteractor.get().getTopRatedFilms() }
+    val listOfPopularFilmsLiveData by lazy { mainInteractor.get().getPopularFilms() }
+
+    fun updateTopRatedFilms(page: Int) {
+        mainInteractor.get().loadTopRatedFilms(page)
     }
-    val text: LiveData<String> = _text
+
+    fun updatePopularFilms(page: Int) {
+        mainInteractor.get().loadPopularFilms(page)
+    }
 }

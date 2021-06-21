@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 def keystorePropertiesFile = file("../../../../.local/KStore/keystore.properties")
@@ -26,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId "pan.alexander.filmrevealer"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -49,6 +50,7 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            multiDexEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releasesign
         }
@@ -74,6 +76,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.google.dagger:dagger:$dagger_version"
@@ -84,7 +87,8 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_interceptor"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "androidx.multidex:multidex:$multidex_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
