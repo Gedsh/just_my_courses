@@ -2,6 +2,7 @@ package pan.alexander.filmrevealer.presentation.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import pan.alexander.filmrevealer.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
@@ -12,12 +13,9 @@ class FilmsAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<FilmsViewHolder>(), OnRecyclerScrolledListener {
 
-    interface OnDataRequiredListener {
-        fun onDataRequired(section: Film.Section, page: Int)
-    }
+    var onDataRequiredListener: ((section: Film.Section, page: Int) -> Unit)? = null
+    var onFilmClickListener: ((view: View?, film: Film) -> Unit)? = null
 
-    var onDataRequiredListener: OnDataRequiredListener? = null
-    var onFilmClickListener: OnFilmClickListener? = null
     private val items: MutableList<Film> = mutableListOf()
 
     fun updateItems(films: List<Film>) {
@@ -77,9 +75,8 @@ class FilmsAdapter(
 
     override fun getItemCount() = items.size
 
-    override fun onRecyclerScrolled(lastVisibleItemPosition: Int) {
+    override fun onRecyclerScrolled(lastVisibleItemPosition: Int) =
         loadNextPageIfNecessary(lastVisibleItemPosition)
-    }
 
     private fun loadNextPageIfNecessary(position: Int) {
         if (items.getOrNull(position + 1) != null) {
@@ -89,13 +86,13 @@ class FilmsAdapter(
                 && (System.currentTimeMillis() - nextFilm.timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
             ) {
                 val nextFilmSection = getSectionForSectionValue(nextFilm.section)
-                onDataRequiredListener?.onDataRequired(nextFilmSection, nextFilm.page)
+                onDataRequiredListener?.let { it(nextFilmSection, nextFilm.page) }
             }
         } else {
             val lastFilm = items[position]
             if (lastFilm.page < lastFilm.totalPages) {
                 val lastFilmSection = getSectionForSectionValue(lastFilm.section)
-                onDataRequiredListener?.onDataRequired(lastFilmSection, lastFilm.page + 1)
+                onDataRequiredListener?.let { it(lastFilmSection, lastFilm.page + 1) }
             }
         }
     }

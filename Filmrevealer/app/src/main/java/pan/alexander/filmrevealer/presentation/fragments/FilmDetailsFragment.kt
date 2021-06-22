@@ -21,7 +21,9 @@ import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.databinding.FragmentFilmDetailsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
+import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.viewmodels.FilmDetailsViewModel
+import pan.alexander.filmrevealer.showSnackBar
 import java.util.*
 
 private const val UNDEFINED_FILM_ID = -1
@@ -29,7 +31,7 @@ private const val LOAD_DETAILS_RETRY_COUNT = 3
 
 class FilmDetailsFragment : Fragment() {
 
-    private lateinit var viewModel: FilmDetailsViewModel
+    private val viewModel by lazy { ViewModelProvider(this).get(FilmDetailsViewModel::class.java) }
     private var _binding: FragmentFilmDetailsBinding? = null
     private val binding get() = _binding!!
     private var filmId = UNDEFINED_FILM_ID
@@ -44,7 +46,6 @@ class FilmDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this).get(FilmDetailsViewModel::class.java)
         _binding = FragmentFilmDetailsBinding.inflate(inflater, container, false)
 
         useFilmDataFromArguments()
@@ -73,6 +74,14 @@ class FilmDetailsFragment : Fragment() {
             return
         }
 
+        lifecycle.addObserver(viewModel)
+
+        observeFilmDetails()
+
+        observeLoadingFailure()
+    }
+
+    private fun observeFilmDetails() {
         viewModel.getFilmDetailsLiveData(filmId).observe(viewLifecycleOwner, {
 
             if (it.isNotEmpty()) {
@@ -83,6 +92,24 @@ class FilmDetailsFragment : Fragment() {
                 || System.currentTimeMillis() - it[0].timeStamp > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
             ) {
                 requestUpdates()
+            }
+        })
+    }
+
+    private fun observeLoadingFailure() {
+        viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
+            when (failure) {
+                is Failure.WithMessageAndAction ->
+                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                        binding.root.showSnackBar(message, R.string.retry, {
+                            failure.block()
+                        })
+                    }
+
+                is Failure.WithMessage ->
+                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                        binding.root.showSnackBar(message)
+                    }
             }
         })
     }
@@ -106,21 +133,21 @@ class FilmDetailsFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayData(filmDetails: FilmDetails) {
-        binding.textViewTitle.text = filmDetails.title
-        binding.textViewOriginalTitle.text = "${filmDetails.originalTitle} " +
+    private fun displayData(filmDetails: FilmDetails) = with(binding) {
+        textViewTitle.text = filmDetails.title
+        textViewOriginalTitle.text = "${filmDetails.originalTitle} " +
                 "(${filmDetails.releaseDate.split("-")[0]})"
-        binding.textViewGenres.text = filmDetails.genres.replaceFirstChar {
+        textViewGenres.text = filmDetails.genres.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.getDefault()
             ) else it.toString()
         }
-        binding.textViewRuntime.text = filmDetails.runtime.toString()
-        binding.textViewRating.text = "${filmDetails.voteAverage} (${filmDetails.voteCount})"
-        binding.textViewBudgetValue.text = "${filmDetails.budget} $"
-        binding.textViewRevenueValue.text = "${filmDetails.revenue} $"
-        binding.textViewReleaseDateValue.text = filmDetails.releaseDate
-        binding.textViewDescription.text = filmDetails.overview
+        textViewRuntime.text = filmDetails.runtime.toString()
+        textViewRating.text = "${filmDetails.voteAverage} (${filmDetails.voteCount})"
+        textViewBudgetValue.text = "${filmDetails.budget} $"
+        textViewRevenueValue.text = "${filmDetails.revenue} $"
+        textViewReleaseDateValue.text = filmDetails.releaseDate
+        textViewDescription.text = filmDetails.overview
 
         if (filmDetails.posterUrl != filmPosterUrl
             && filmDetails.posterUrl.isNotBlank()

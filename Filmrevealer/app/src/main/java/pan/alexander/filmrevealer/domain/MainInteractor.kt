@@ -1,10 +1,10 @@
 package pan.alexander.filmrevealer.domain
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
+import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
 import pan.alexander.filmrevealer.domain.entities.Film
@@ -69,7 +69,7 @@ class MainInteractor @Inject constructor(
             }
         }
 
-    fun loadNowPlayingFilms(page: Int) {
+    fun loadNowPlayingFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingNowPlayingFilms) {
             return
@@ -81,21 +81,7 @@ class MainInteractor @Inject constructor(
             override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
-                        val results = filmsPage.results
-                        if (results.isNotEmpty()) {
-                            val films = mutableListOf<Film>()
-                            results.forEach { filmDetails ->
-                                val film = Film(filmDetails).also {
-                                    it.section = Film.Section.NOW_PLAYING.value
-                                    it.page = filmsPage.page
-                                    it.totalPages = filmsPage.totalPages
-                                }
-
-                                films.add(film)
-                            }
-                            localRepository.deleteNowPlayingFilms(filmsPage.page)
-                            localRepository.addFilms(films)
-                        }
+                        updateNowPlayingFilms(filmsPage)
                     }
                 }
                 loadingNowPlayingFilms = false
@@ -103,13 +89,42 @@ class MainInteractor @Inject constructor(
 
             override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
                 loadingNowPlayingFilms = false
+
+                t.message?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_now_playing_films_failure)
+                                + ": " + message
+                    )
+                }
+
                 Log.e(LOG_TAG, "Load Now Playing Films failure.", t)
             }
         })
 
     }
 
-    fun loadUpcomingFilms(page: Int) {
+    private fun updateNowPlayingFilms(filmsPage: FilmsPageJson) {
+        val results = filmsPage.results
+        if (results.isNotEmpty()) {
+            val films = mutableListOf<Film>()
+            results.forEach { filmDetails ->
+                val film = Film(filmDetails).apply {
+                    section = Film.Section.NOW_PLAYING.value
+                    page = filmsPage.page
+                    totalPages = filmsPage.totalPages
+                }
+
+                films.add(film)
+            }
+
+            with(localRepository) {
+                deleteNowPlayingFilms(filmsPage.page)
+                addFilms(films)
+            }
+        }
+    }
+
+    fun loadUpcomingFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingUpcomingFilms) {
             return
@@ -121,20 +136,7 @@ class MainInteractor @Inject constructor(
             override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
-                        val results = filmsPage.results
-                        if (results.isNotEmpty()) {
-                            val films = mutableListOf<Film>()
-                            results.forEach { filmDetails ->
-                                val film = Film(filmDetails).also {
-                                    it.section = Film.Section.UPCOMING.value
-                                    it.page = filmsPage.page
-                                    it.totalPages = filmsPage.totalPages
-                                }
-                                films.add(film)
-                            }
-                            localRepository.deleteUpcomingFilms(filmsPage.page)
-                            localRepository.addFilms(films)
-                        }
+                        updateUpcomingFilms(filmsPage)
                     }
                 }
                 loadingUpcomingFilms = false
@@ -142,6 +144,12 @@ class MainInteractor @Inject constructor(
 
             override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
                 loadingUpcomingFilms = false
+                t.message?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_upcoming_films_failure)
+                                + ": " + message
+                    )
+                }
                 Log.e(LOG_TAG, "Load Upcoming Films failure.", t)
             }
         })
@@ -149,7 +157,27 @@ class MainInteractor @Inject constructor(
 
     }
 
-    fun loadTopRatedFilms(page: Int) {
+    private fun updateUpcomingFilms(filmsPage: FilmsPageJson) {
+        val results = filmsPage.results
+        if (results.isNotEmpty()) {
+            val films = mutableListOf<Film>()
+            results.forEach { filmDetails ->
+                val film = Film(filmDetails).apply {
+                    section = Film.Section.UPCOMING.value
+                    page = filmsPage.page
+                    totalPages = filmsPage.totalPages
+                }
+                films.add(film)
+            }
+
+            with(localRepository) {
+                deleteUpcomingFilms(filmsPage.page)
+                addFilms(films)
+            }
+        }
+    }
+
+    fun loadTopRatedFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingTopRatedFilms) {
             return
@@ -161,20 +189,7 @@ class MainInteractor @Inject constructor(
             override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
-                        val results = filmsPage.results
-                        if (results.isNotEmpty()) {
-                            val films = mutableListOf<Film>()
-                            results.forEach { filmDetails ->
-                                val film = Film(filmDetails).also {
-                                    it.section = Film.Section.TOP_RATED.value
-                                    it.page = filmsPage.page
-                                    it.totalPages = filmsPage.totalPages
-                                }
-                                films.add(film)
-                            }
-                            localRepository.deleteTopRatedFilms(filmsPage.page)
-                            localRepository.addFilms(films)
-                        }
+                        updateToRatedFilms(filmsPage)
                     }
                 }
                 loadingTopRatedFilms = false
@@ -182,13 +197,39 @@ class MainInteractor @Inject constructor(
 
             override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
                 loadingTopRatedFilms = false
+                t.message?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_top_rated_films_failure)
+                                + ": " + message
+                    )
+                }
                 Log.e(LOG_TAG, "Load Top Rated Films failure.", t)
             }
 
         })
     }
 
-    fun loadPopularFilms(page: Int) {
+    private fun updateToRatedFilms(filmsPage: FilmsPageJson) {
+        val results = filmsPage.results
+        if (results.isNotEmpty()) {
+            val films = mutableListOf<Film>()
+            results.forEach { filmDetails ->
+                val film = Film(filmDetails).apply {
+                    section = Film.Section.TOP_RATED.value
+                    page = filmsPage.page
+                    totalPages = filmsPage.totalPages
+                }
+                films.add(film)
+            }
+
+            with(localRepository) {
+                deleteTopRatedFilms(filmsPage.page)
+                addFilms(films)
+            }
+        }
+    }
+
+    fun loadPopularFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingPopularFilms) {
             return
@@ -200,21 +241,7 @@ class MainInteractor @Inject constructor(
             override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
-                        val results = filmsPage.results
-                        if (results.isNotEmpty()) {
-                            val films = mutableListOf<Film>()
-                            results.forEach { filmDetails ->
-                                val film =
-                                    Film(filmDetails).also {
-                                        it.section = Film.Section.POPULAR.value
-                                        it.page = filmsPage.page
-                                        it.totalPages = filmsPage.totalPages
-                                    }
-                                films.add(film)
-                            }
-                            localRepository.deletePopularFilms(filmsPage.page)
-                            localRepository.addFilms(films)
-                        }
+                        updatePopularFilms(filmsPage)
                     }
                 }
                 loadingPopularFilms = false
@@ -222,13 +249,40 @@ class MainInteractor @Inject constructor(
 
             override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
                 loadingPopularFilms = false
+                t.message?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_popular_films_failure)
+                                + ": " + message
+                    )
+                }
                 Log.e(LOG_TAG, "Load Popular Films failure.", t)
             }
 
         })
     }
 
-    fun loadFilmPreciseDetails(movieId: Int) {
+    private fun updatePopularFilms(filmsPage: FilmsPageJson) {
+        val results = filmsPage.results
+        if (results.isNotEmpty()) {
+            val films = mutableListOf<Film>()
+            results.forEach { filmDetails ->
+                val film =
+                    Film(filmDetails).apply {
+                        section = Film.Section.POPULAR.value
+                        page = filmsPage.page
+                        totalPages = filmsPage.totalPages
+                    }
+                films.add(film)
+            }
+
+            with(localRepository) {
+                deletePopularFilms(filmsPage.page)
+                addFilms(films)
+            }
+        }
+    }
+
+    fun loadFilmPreciseDetails(movieId: Int, block: (error: String) -> Unit) {
         remoteRepository.loadFilmPreciseDetails(movieId)
             .enqueue(object : Callback<FilmPreciseDetailsJson> {
                 override fun onResponse(
@@ -237,54 +291,50 @@ class MainInteractor @Inject constructor(
                 ) {
                     if (response.isSuccessful) {
                         response.body()?.let { details ->
-                            if (localRepository.getFilmDetailsById(movieId).value.isNullOrEmpty()) {
-                                localRepository.addFilmDetails(FilmDetails(details))
-                            } else {
-                                localRepository.updateFilmDetails(FilmDetails(details))
-                            }
+                            updateFilmPreciseDetails(movieId, details)
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<FilmPreciseDetailsJson>, t: Throwable) {
+                    t.message?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_film_details_failure)
+                                    + ": " + message
+                        )
+                    }
                     Log.e(LOG_TAG, "Load Film precise details failure.", t)
                 }
 
             })
     }
 
-    fun getNowPlayingFilms(): LiveData<List<Film>> {
-        return localRepository.getNowPlayingFilms()
+    private fun updateFilmPreciseDetails(movieId: Int, details: FilmPreciseDetailsJson) {
+        if (localRepository.getFilmDetailsById(movieId).value.isNullOrEmpty()) {
+            localRepository.addFilmDetails(FilmDetails(details))
+        } else {
+            localRepository.updateFilmDetails(FilmDetails(details))
+        }
     }
 
-    fun getUpcomingFilms(): LiveData<List<Film>> {
-        return localRepository.getUpcomingFilms()
-    }
+    fun getNowPlayingFilms() = localRepository.getNowPlayingFilms()
 
-    fun getTopRatedFilms(): LiveData<List<Film>> {
-        return localRepository.getTopRatedFilms()
-    }
+    fun getUpcomingFilms() = localRepository.getUpcomingFilms()
 
-    fun getPopularFilms(): LiveData<List<Film>> {
-        return localRepository.getPopularFilms()
-    }
+    fun getTopRatedFilms() = localRepository.getTopRatedFilms()
 
-    fun getLikedFilms(): LiveData<List<Film>> {
-        return localRepository.getLikedFilms()
-    }
+    fun getPopularFilms() = localRepository.getPopularFilms()
 
-    fun toggleLike(film: Film) {
-        film.isLiked = !film.isLiked
-        localRepository.updateFilm(film)
-    }
+    fun getLikedFilms() = localRepository.getLikedFilms()
 
-    fun getFilmDetailsById(id: Int): LiveData<List<FilmDetails>> {
-        return localRepository.getFilmDetailsById(id)
-    }
+    fun toggleLike(film: Film) =
+        localRepository.apply { updateFilm(film.also { it.isLiked = !it.isLiked }) }
 
-    fun deleteOldFilmDetails() {
+    fun getFilmDetailsById(id: Int) = localRepository.getFilmDetailsById(id)
+
+    fun deleteOldFilmDetails() =
         localRepository.deleteFilmsDetailsOlderTimestamp(
             System.currentTimeMillis() - FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
         )
-    }
+
 }

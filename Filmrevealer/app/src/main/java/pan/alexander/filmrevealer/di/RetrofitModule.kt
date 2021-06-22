@@ -19,22 +19,19 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideServiceApi(retrofit: Retrofit): FilmsApiService {
-        return retrofit.create(FilmsApiService::class.java)
-    }
+    fun provideServiceApi(retrofit: Retrofit): FilmsApiService =
+        retrofit.create(FilmsApiService::class.java)
 
     @Provides
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(App.BASE_URL)
-            .addConverterFactory(gsonConverterFactory)
-            .client(okHttpClient)
-            .build()
-    }
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(App.BASE_URL)
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
+        .build()
 
     @Provides
     @Singleton
@@ -42,20 +39,16 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideInterceptor(): HttpLoggingInterceptor {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        return interceptor
-    }
+    fun provideInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
     @Provides
     @Singleton
-    fun provideClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .callTimeout(CALL_TIMEOUT_SEC, TimeUnit.SECONDS)
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(httpLoggingInterceptor)
-        }
-        return builder.build()
-    }
+    fun provideClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+        OkHttpClient.Builder()
+            .callTimeout(CALL_TIMEOUT_SEC, TimeUnit.SECONDS).apply {
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(httpLoggingInterceptor)
+                }
+            }.build()
 }

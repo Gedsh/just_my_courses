@@ -9,7 +9,5 @@ import dagger.Provides
 class MainThreadHandler(val context: Context) {
 
     @Provides
-    fun provideHandler(): Handler {
-        return Handler(context.mainLooper)
-    }
+    fun provideHandler() = Handler(context.mainLooper)
 }

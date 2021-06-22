@@ -18,7 +18,7 @@ import pan.alexander.filmrevealer.domain.entities.Film
 
 class FilmsViewHolder(
     private val binding: RecyclerItemFilmBinding,
-    private val onFilmClickListener: OnFilmClickListener?,
+    private var onFilmClickListener: ((view: View?, film: Film) -> Unit)?,
     private val films: List<Film>
 ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
     fun bind(context: Context, film: Film) = with(binding) {
@@ -62,8 +62,8 @@ class FilmsViewHolder(
     }
 
     override fun onClick(v: View?) {
-        adapterPosition.takeIf { it >= 0 }?.let {
-            onFilmClickListener?.onFilmClicked(v, films[it])
+        adapterPosition.takeIf { it >= 0 }?.let { itemPosition ->
+            onFilmClickListener?.let { it(v, films[itemPosition]) }
         }
 
     }

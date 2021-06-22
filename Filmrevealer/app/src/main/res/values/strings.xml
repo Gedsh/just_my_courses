@@ -12,4 +12,10 @@
     <string name="release_date">Release date:</string>
     <string name="minutes">min.</string>
     <string name="loading">Loading…</string>
+    <string name="retry">RETRY</string>
+    <string name="load_now_playing_films_failure">Loading now playing films fail</string>
+    <string name="load_upcoming_films_failure">Loading upcoming films fail</string>
+    <string name="load_top_rated_films_failure">Loading top rated films fail</string>
+    <string name="load_popular_films_failure">Loading popular films fail</string>
+    <string name="load_film_details_failure">Loading film details fail</string>
 </resources>

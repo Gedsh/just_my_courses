@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        lifecycle.addObserver(viewModel)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
