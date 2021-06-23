@@ -1,4 +1,4 @@
-package pan.alexander.filmrevealer.ui.main
+package pan.alexander.filmrevealer.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 

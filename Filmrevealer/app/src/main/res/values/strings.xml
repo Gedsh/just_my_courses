@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Film revealer</string>
+    <string name="title_home">Home</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="title_ratings">Ratings</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="upcoming">Upcoming</string>
 </resources>
