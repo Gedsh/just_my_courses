@@ -1,12 +1,15 @@
 package pan.alexander.filmrevealer.domain
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
+import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
 import retrofit2.Call
@@ -20,7 +23,8 @@ private const val DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS = 1000L
 @Singleton
 class MainInteractor @Inject constructor(
     private val localRepository: LocalRepository,
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: RemoteRepository,
+    private val preferencesRepository: PreferencesRepository
 ) {
     private val handler = App.instance.daggerComponent.getMainHandler()
 
@@ -58,6 +62,18 @@ class MainInteractor @Inject constructor(
             }
         }
     var loadingPopularFilms = false
+        set(value) {
+            if (value) {
+                field = value
+            } else {
+                handler.get().postDelayed(
+                    { field = value },
+                    DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS
+                )
+            }
+        }
+
+    var loadingFilmsRatedByUser = false
         set(value) {
             if (value) {
                 field = value
@@ -317,6 +333,113 @@ class MainInteractor @Inject constructor(
         }
     }
 
+    suspend fun createGuestSession(block: (error: String) -> Unit) = withContext(Dispatchers.IO) {
+        try {
+            remoteRepository.createGuestSession().execute().let { response ->
+                if (response.isSuccessful) {
+                    response.body()?.let { session ->
+                        preferencesRepository.setGuestSessionId(session.guestSessionId)
+                    }
+                }
+            }
+        } catch (t: Throwable) {
+            t.message?.let { message ->
+                block(
+                    App.instance.getString(R.string.create_guest_session_failure)
+                            + ": " + message
+                )
+            }
+            Log.e(LOG_TAG, "Failed to create guest session.", t)
+        }
+
+    }
+
+    fun loadUserRatedFilms(guestSessionId: String, block: (error: String) -> Unit) {
+
+        if (loadingFilmsRatedByUser) {
+            return
+        }
+
+        loadingFilmsRatedByUser = true
+
+        remoteRepository.getUserRatedFilms(guestSessionId)
+            .enqueue(object : Callback<FilmsPageJson> {
+                override fun onResponse(
+                    call: Call<FilmsPageJson>,
+                    response: Response<FilmsPageJson>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.let { filmsPage ->
+                            updateUserRatedFilms(filmsPage)
+                        }
+                    }
+                    loadingFilmsRatedByUser = false
+                }
+
+                override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
+                    loadingFilmsRatedByUser = false
+                    t.message?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_film_rated_by_user_failure)
+                                    + ": " + message
+                        )
+                    }
+                    Log.e(LOG_TAG, "Load films rated by user failure.", t)
+                }
+
+            })
+    }
+
+    private fun updateUserRatedFilms(filmsPage: FilmsPageJson) {
+        val results = filmsPage.results
+        if (results.isNotEmpty()) {
+            val films = mutableListOf<Film>()
+            results.forEach { filmDetails ->
+                val film = Film(filmDetails).apply {
+                    section = Film.Section.USER_RATED.value
+                    page = filmsPage.page
+                    totalPages = filmsPage.totalPages
+                }
+                films.add(film)
+            }
+
+            with(localRepository) {
+                deleteUserRatedFilms(filmsPage.page)
+                addFilms(films)
+            }
+        }
+    }
+
+    fun rateFilm(
+        film: Film,
+        rate: Float,
+        guestSessionId: String,
+        block: (error: String) -> Unit
+    ) {
+        remoteRepository.rateFilm(film.movieId, rate, guestSessionId)
+            .enqueue(object : Callback<ServerResponse> {
+                override fun onResponse(
+                    call: Call<ServerResponse>,
+                    response: Response<ServerResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        localRepository.addFilm(film)
+                    }
+                }
+
+                override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
+                    t.message?.let { message ->
+                        block(
+                            App.instance.getString(R.string.rate_film_failure)
+                                    + ": " + message
+                        )
+                    }
+                    Log.e(LOG_TAG, "Failed to rate the film.", t)
+                }
+
+            })
+    }
+
     fun getNowPlayingFilms() = localRepository.getNowPlayingFilms()
 
     fun getUpcomingFilms() = localRepository.getUpcomingFilms()
@@ -324,6 +447,12 @@ class MainInteractor @Inject constructor(
     fun getTopRatedFilms() = localRepository.getTopRatedFilms()
 
     fun getPopularFilms() = localRepository.getPopularFilms()
+
+    fun getUserGuestSessionId() = preferencesRepository.getGuestSessionId()
+
+    fun getUserRatedFilms() = localRepository.getUserRatedFilms()
+
+    fun getRatedFilmById(movieId: Int) = localRepository.getRatedFilmById(movieId)
 
     fun getLikedFilms() = localRepository.getLikedFilms()
 

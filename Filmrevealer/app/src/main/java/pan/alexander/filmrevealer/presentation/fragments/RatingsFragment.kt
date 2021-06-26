@@ -1,6 +1,7 @@
 package pan.alexander.filmrevealer.presentation.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +26,11 @@ class RatingsFragment : Fragment() {
     private var _binding: FragmentRatingsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var topRatedFilmsAdapter: FilmsAdapter
-    private lateinit var popularFilmsAdapter: FilmsAdapter
+    private var topRatedFilmsAdapter: FilmsAdapter? = null
+    private var popularFilmsAdapter: FilmsAdapter? = null
+
+    private var topRatedRecycleViewState: Parcelable? = null
+    private var popularRecycleViewState: Parcelable? = null
 
     private val onDataRequiredListener by lazy {
         fun(section: Film.Section, page: Int) {
@@ -56,14 +60,23 @@ class RatingsFragment : Fragment() {
         initTopRatedFilmsRecycler()
         initPopularFilmsRecycler()
 
+        topRatedRecycleViewState?.let {
+            binding.recyclerViewTopRated.layoutManager?.onRestoreInstanceState(it)
+        }
+
+        popularRecycleViewState?.let {
+            binding.recyclerViewPopular.layoutManager?.onRestoreInstanceState(it)
+        }
+
         return root
     }
 
     private fun initTopRatedFilmsRecycler() = with(binding) {
         recyclerViewTopRated.setHasFixedSize(true)
-        topRatedFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-        topRatedFilmsAdapter.onDataRequiredListener = onDataRequiredListener
-        topRatedFilmsAdapter.onFilmClickListener = onFilmClickListener
+        topRatedFilmsAdapter = context?.let { FilmsAdapter(it) }
+        topRatedFilmsAdapter?.setHasStableIds(true)
+        topRatedFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
+        topRatedFilmsAdapter?.onFilmClickListener = onFilmClickListener
         recyclerViewTopRated.adapter = topRatedFilmsAdapter
 
         val layoutManager = recyclerViewTopRated.layoutManager as? LinearLayoutManager
@@ -83,8 +96,9 @@ class RatingsFragment : Fragment() {
     private fun initPopularFilmsRecycler() = with(binding) {
         recyclerViewPopular.setHasFixedSize(true)
         popularFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-        popularFilmsAdapter.onDataRequiredListener = onDataRequiredListener
-        popularFilmsAdapter.onFilmClickListener = onFilmClickListener
+        popularFilmsAdapter?.setHasStableIds(true)
+        popularFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
+        popularFilmsAdapter?.onFilmClickListener = onFilmClickListener
         recyclerViewPopular.adapter = popularFilmsAdapter
 
         val layoutManager = recyclerViewPopular.layoutManager as? LinearLayoutManager
@@ -118,11 +132,18 @@ class RatingsFragment : Fragment() {
     private fun observeTopRatedFilms() {
         viewModel.listOfTopRatedFilmsLiveData.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                topRatedFilmsAdapter.updateItems(it)
+                val recycleViewState =
+                    binding.recyclerViewTopRated.layoutManager?.onSaveInstanceState()
 
-                if ((System.currentTimeMillis() - it[0].timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
+                topRatedFilmsAdapter?.updateItems(it)
+
+                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
                     viewModel.updateTopRatedFilms(FIRST_PAGE_NUMBER)
                 }
+
+                binding.recyclerViewTopRated.layoutManager?.onRestoreInstanceState(
+                    recycleViewState
+                )
             } else {
                 viewModel.updateTopRatedFilms(FIRST_PAGE_NUMBER)
             }
@@ -132,11 +153,18 @@ class RatingsFragment : Fragment() {
     private fun observePopularFilms() {
         viewModel.listOfPopularFilmsLiveData.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                popularFilmsAdapter.updateItems(it)
+                val recycleViewState =
+                    binding.recyclerViewPopular.layoutManager?.onSaveInstanceState()
 
-                if ((System.currentTimeMillis() - it[0].timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
+                popularFilmsAdapter?.updateItems(it)
+
+                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
                     viewModel.updatePopularFilms(FIRST_PAGE_NUMBER)
                 }
+
+                binding.recyclerViewPopular.layoutManager?.onRestoreInstanceState(
+                    recycleViewState
+                )
             } else {
                 viewModel.updatePopularFilms(FIRST_PAGE_NUMBER)
             }
@@ -163,10 +191,14 @@ class RatingsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        topRatedFilmsAdapter.onDataRequiredListener = null
-        topRatedFilmsAdapter.onFilmClickListener = null
-        popularFilmsAdapter.onDataRequiredListener = null
-        popularFilmsAdapter.onFilmClickListener = null
+
+        topRatedRecycleViewState = binding.recyclerViewTopRated.layoutManager?.onSaveInstanceState()
+        popularRecycleViewState = binding.recyclerViewPopular.layoutManager?.onSaveInstanceState()
+
+        topRatedFilmsAdapter?.onDataRequiredListener = null
+        topRatedFilmsAdapter?.onFilmClickListener = null
+        popularFilmsAdapter?.onDataRequiredListener = null
+        popularFilmsAdapter?.onFilmClickListener = null
         _binding = null
     }
 }

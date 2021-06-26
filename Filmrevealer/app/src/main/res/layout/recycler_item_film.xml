@@ -58,12 +58,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewYear"
-                app:layout_constraintEnd_toStartOf="@+id/textViewRating"
+                app:layout_constraintEnd_toStartOf="@+id/textViewVotes"
                 app:layout_constraintTop_toTopOf="@+id/textViewYear"
                 app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/textViewRating"
+                android:id="@+id/textViewVotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/recycle_item_rating_margin_end"

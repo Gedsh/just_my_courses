@@ -3,6 +3,7 @@ package pan.alexander.filmrevealer.domain.entities
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 
@@ -17,14 +18,15 @@ data class FilmDetails(
     var runtime: Int? = 0,
     @ColumnInfo(name = "vote_average") var voteAverage: Float = .0f,
     @ColumnInfo(name = "vote_count") var voteCount: Int = 0,
+    @Ignore var userRating: Int = 0,
     var budget: Int = 0,
-    var revenue: Int = 0,
+    var revenue: Long = 0,
     @ColumnInfo(name = "release_date") var releaseDate: String = "",
     @ColumnInfo(name = "poster_url") var posterUrl: String = "",
     var overview: String? = "",
     var adult: Boolean = false,
     @ColumnInfo(name = "is_liked") var isLiked: Boolean = false,
-    @ColumnInfo(name = "timestamp") val timeStamp: Long = System.currentTimeMillis()
+    @ColumnInfo(name = "timestamp") var timeStamp: Long = System.currentTimeMillis()
 ) {
     constructor(filmPreciseDetailsJson: FilmPreciseDetailsJson) : this() {
         movieId = filmPreciseDetailsJson.id

@@ -1,6 +1,7 @@
 package pan.alexander.filmrevealer.presentation.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,8 +27,11 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var nowPlayingFilmsAdapter: FilmsAdapter
-    private lateinit var upcomingFilmsAdapter: FilmsAdapter
+    private var nowPlayingFilmsAdapter: FilmsAdapter? = null
+    private var upcomingFilmsAdapter: FilmsAdapter? = null
+
+    private var nowPlayingRecycleViewState: Parcelable? = null
+    private var upcomingRecycleViewState: Parcelable? = null
 
     private val onDataRequiredListener by lazy {
         fun(section: Film.Section, page: Int) {
@@ -58,14 +62,23 @@ class HomeFragment : Fragment() {
 
         initUpcomingFilmsRecycler()
 
+        nowPlayingRecycleViewState?.let {
+            binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(it)
+        }
+
+        upcomingRecycleViewState?.let {
+            binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(it)
+        }
+
         return binding.root
     }
 
     private fun initNowPlayingFilmsRecycler() = with(binding) {
         recyclerViewNowPlaying.setHasFixedSize(true)
         nowPlayingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-        nowPlayingFilmsAdapter.onDataRequiredListener = onDataRequiredListener
-        nowPlayingFilmsAdapter.onFilmClickListener = onFilmClickListener
+        nowPlayingFilmsAdapter?.setHasStableIds(true)
+        nowPlayingFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
+        nowPlayingFilmsAdapter?.onFilmClickListener = onFilmClickListener
         recyclerViewNowPlaying.adapter = nowPlayingFilmsAdapter
 
         val layoutManager = recyclerViewNowPlaying.layoutManager as? LinearLayoutManager
@@ -84,9 +97,10 @@ class HomeFragment : Fragment() {
 
     private fun initUpcomingFilmsRecycler() = with(binding) {
         recyclerViewUpcoming.setHasFixedSize(true)
-        upcomingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-        upcomingFilmsAdapter.onDataRequiredListener = onDataRequiredListener
-        upcomingFilmsAdapter.onFilmClickListener = onFilmClickListener
+        upcomingFilmsAdapter = context?.let { FilmsAdapter(it) }
+        upcomingFilmsAdapter?.setHasStableIds(true)
+        upcomingFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
+        upcomingFilmsAdapter?.onFilmClickListener = onFilmClickListener
         recyclerViewUpcoming.adapter = upcomingFilmsAdapter
 
         val layoutManager = recyclerViewUpcoming.layoutManager as? LinearLayoutManager
@@ -120,11 +134,17 @@ class HomeFragment : Fragment() {
     private fun observeNowPlayingFilms() {
         viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                nowPlayingFilmsAdapter.updateItems(it)
+                val recycleViewState =
+                    binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
 
-                if ((System.currentTimeMillis() - it[0].timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
+                nowPlayingFilmsAdapter?.updateItems(it)
+
+                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
                     viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
                 }
+                binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(
+                    recycleViewState
+                )
             } else {
                 viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
             }
@@ -134,11 +154,18 @@ class HomeFragment : Fragment() {
     private fun observeUpcomingFilms() {
         viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
-                upcomingFilmsAdapter.updateItems(it)
+                val recycleViewState =
+                    binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
 
-                if ((System.currentTimeMillis() - it[0].timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
+                upcomingFilmsAdapter?.updateItems(it)
+
+                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
                     viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
                 }
+
+                binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(
+                    recycleViewState
+                )
             } else {
                 viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
             }
@@ -165,10 +192,14 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        nowPlayingFilmsAdapter.onDataRequiredListener = null
-        nowPlayingFilmsAdapter.onFilmClickListener = null
-        upcomingFilmsAdapter.onDataRequiredListener = null
-        upcomingFilmsAdapter.onFilmClickListener = null
+
+        nowPlayingRecycleViewState = binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
+        upcomingRecycleViewState = binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
+
+        nowPlayingFilmsAdapter?.onDataRequiredListener = null
+        nowPlayingFilmsAdapter?.onFilmClickListener = null
+        upcomingFilmsAdapter?.onDataRequiredListener = null
+        upcomingFilmsAdapter?.onFilmClickListener = null
         _binding = null
     }
 

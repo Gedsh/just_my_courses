@@ -1,11 +1,12 @@
 package pan.alexander.filmrevealer.data.web
 
+import com.google.gson.JsonObject
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
+import pan.alexander.filmrevealer.data.web.pojo.GuestSession
+import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface FilmsApiService {
     @GET("3/movie/now_playing")
@@ -46,4 +47,25 @@ interface FilmsApiService {
         @Query("api_key") apiKey: String,
         @Query("language") language: String
     ): Call<FilmPreciseDetailsJson>
+
+    @GET("3/authentication/guest_session/new")
+    fun createGuestSession(
+        @Query("api_key") apiKey: String
+    ): Call<GuestSession>
+
+    @GET("3/guest_session/{guest_session_id}/rated/movies?sort_by=created_at.desc")
+    fun getRatedByUser(
+        @Path("guest_session_id") guestSessionId: String,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String
+    ): Call<FilmsPageJson>
+
+    @Headers("Content-Type: application/json;charset=utf-8")
+    @POST("3/movie/{movie_id}/rating")
+    fun rateFilm(
+        @Path("movie_id") movieId: Int,
+        @Body body: JsonObject,
+        @Query("api_key") apiKey: String,
+        @Query("guest_session_id") guestSessionId: String,
+    ): Call<ServerResponse>
 }

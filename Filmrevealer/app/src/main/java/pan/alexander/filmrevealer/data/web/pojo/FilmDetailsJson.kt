@@ -18,5 +18,6 @@ data class FilmDetailsJson(
     @SerializedName("popularity") val popularity: Float,
     @SerializedName("vote_count") val voteCount: Int,
     @SerializedName("video") val video: Boolean,
-    @SerializedName("vote_average") val voteAverage: Float
+    @SerializedName("vote_average") val voteAverage: Float,
+    @SerializedName("rating") val rating: Int?
 )

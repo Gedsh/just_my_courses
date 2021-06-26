@@ -10,7 +10,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import pan.alexander.filmrevealer.App
+import pan.alexander.filmrevealer.BuildConfig
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.databinding.RecyclerItemFilmBinding
 import pan.alexander.filmrevealer.domain.entities.Film
@@ -26,7 +26,7 @@ class FilmsViewHolder(
         imageViewFilmPoster.scaleType = ImageView.ScaleType.CENTER
 
         Glide.with(context)
-            .load(App.POSTER_BASE_URL + film.posterUrl)
+            .load(BuildConfig.POSTER_BASE_URL + film.posterUrl)
             .override(binding.imageViewFilmPoster.width, binding.imageViewFilmPoster.height)
             .placeholder(R.drawable.ic_baseline_cached_24)
             .error(R.drawable.ic_baseline_warning_24)
@@ -56,9 +56,12 @@ class FilmsViewHolder(
             .into(imageViewFilmPoster)
 
         textViewTitle.text = film.title
-        textViewYear.text = if (film.releaseDate.contains("-"))
-            film.releaseDate.split("-")[0] else film.releaseDate
-        textViewRating.text = String.format("%.1f", film.rating)
+        textViewYear.text = if (film.releaseDate.contains("-")) {
+            film.releaseDate.split("-").first()
+        } else {
+            film.releaseDate
+        }
+        textViewVotes.text = String.format("%.1f", film.voteAverage)
     }
 
     override fun onClick(v: View?) {

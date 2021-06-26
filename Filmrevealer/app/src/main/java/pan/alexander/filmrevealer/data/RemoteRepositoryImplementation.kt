@@ -2,10 +2,13 @@ package pan.alexander.filmrevealer.data
 
 import android.os.Build
 import android.util.Base64
+import com.google.gson.JsonObject
 import pan.alexander.filmrevealer.App
-import pan.alexander.filmrevealer.R
+import pan.alexander.filmrevealer.BuildConfig
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
+import pan.alexander.filmrevealer.data.web.pojo.GuestSession
+import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
 import pan.alexander.filmrevealer.domain.RemoteRepository
 import retrofit2.Call
 
@@ -21,7 +24,7 @@ class RemoteRepositoryImplementation : RemoteRepository {
 
     var region: String = locale.country.uppercase()
 
-    private val key = Base64.decode("${App.instance.getString(R.string.api)}=", Base64.DEFAULT)
+    private val key = Base64.decode("${BuildConfig.API_KEY}=", Base64.DEFAULT)
         .toString(charset("UTF-8"))
 
     override fun loadNowPlayingFilms(page: Int): Call<FilmsPageJson> {
@@ -67,4 +70,28 @@ class RemoteRepositoryImplementation : RemoteRepository {
             language = "${locale.language}-${locale.country}"
         )
     }
+
+    override fun createGuestSession(): Call<GuestSession> {
+        return api.get().createGuestSession(
+            apiKey = key
+        )
+    }
+
+    override fun getUserRatedFilms(guestSessionId: String): Call<FilmsPageJson> {
+        return api.get().getRatedByUser(
+            guestSessionId = guestSessionId,
+            apiKey = key,
+            language = "${locale.language}-${locale.country}"
+        )
+    }
+
+    override fun rateFilm(movieId: Int, rate: Float, guestSessionId: String): Call<ServerResponse> {
+        return api.get().rateFilm(
+            movieId = movieId,
+            body = JsonObject().apply { addProperty("value", rate) },
+            apiKey = key,
+            guestSessionId = guestSessionId
+        )
+    }
+
 }

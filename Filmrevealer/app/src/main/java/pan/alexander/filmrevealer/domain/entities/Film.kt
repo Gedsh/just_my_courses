@@ -13,25 +13,27 @@ import pan.alexander.filmrevealer.data.web.pojo.FilmDetailsJson
 @Parcelize
 @Entity(indices = [Index("title")])
 data class Film(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "movie_id") var movieId: Int = 0,
     var title: String = "",
     @ColumnInfo(name = "poster_url") var posterUrl: String = "",
     @ColumnInfo(name = "release_date") var releaseDate: String = "",
-    var rating: Float = .0f,
+    var voteAverage: Float = .0f,
+    @ColumnInfo(name = "user_rating") var userRating: Int = 0,
     @ColumnInfo(name = "adult") var adult: Boolean = false,
     @ColumnInfo(name = "is_liked") var isLiked: Boolean = false,
     @ColumnInfo(name = "section") var section: Int = Section.NOW_PLAYING.value,
     var page: Int = 0,
     @ColumnInfo(name = "total_pages") var totalPages: Int = 0,
-    @ColumnInfo(name = "timestamp") val timeStamp: Long = System.currentTimeMillis()
+    @ColumnInfo(name = "timestamp") var timeStamp: Long = System.currentTimeMillis()
 ) : Parcelable {
     constructor(filmDetailsJson: FilmDetailsJson) : this() {
         movieId = filmDetailsJson.id
         title = filmDetailsJson.title
         posterUrl = filmDetailsJson.posterPath ?: ""
         releaseDate = filmDetailsJson.releaseDate
-        rating = filmDetailsJson.voteAverage
+        voteAverage = filmDetailsJson.voteAverage
+        userRating = filmDetailsJson.rating ?: 0
         adult = filmDetailsJson.adult
     }
 
@@ -39,13 +41,9 @@ data class Film(
         NOW_PLAYING(1),
         POPULAR(2),
         TOP_RATED(3),
-        UPCOMING(4)
-    }
-
-    override fun toString(): String {
-        return "Film(movieId=$movieId, title='$title', posterUrl='$posterUrl'," +
-                " releaseDate='$releaseDate', rating=$rating, adult=$adult, isLiked=$isLiked," +
-                " section=$section, page=$page, totalPages=$totalPages, timeStamp=$timeStamp)"
+        UPCOMING(4),
+        USER_RATED(5),
+        LIKED(6)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -58,7 +56,7 @@ data class Film(
         if (title != other.title) return false
         if (posterUrl != other.posterUrl) return false
         if (releaseDate != other.releaseDate) return false
-        if (rating != other.rating) return false
+        if (voteAverage != other.voteAverage) return false
         if (adult != other.adult) return false
         if (isLiked != other.isLiked) return false
         if (section != other.section) return false
@@ -73,13 +71,20 @@ data class Film(
         result = 31 * result + title.hashCode()
         result = 31 * result + posterUrl.hashCode()
         result = 31 * result + releaseDate.hashCode()
-        result = 31 * result + rating.hashCode()
+        result = 31 * result + voteAverage.hashCode()
         result = 31 * result + adult.hashCode()
         result = 31 * result + isLiked.hashCode()
         result = 31 * result + section
         result = 31 * result + page
         result = 31 * result + totalPages
         return result
+    }
+
+    override fun toString(): String {
+        return "Film(id=$id, movieId=$movieId, title='$title', posterUrl='$posterUrl'," +
+                " releaseDate='$releaseDate', voteAverage=$voteAverage, userRating=$userRating," +
+                " adult=$adult, isLiked=$isLiked, section=$section, page=$page," +
+                " totalPages=$totalPages, timeStamp=$timeStamp)"
     }
 
 }

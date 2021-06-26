@@ -9,6 +9,9 @@ interface FilmDao {
     @Query("SELECT * FROM Film WHERE section = :section ORDER BY page")
     fun getFilmsForSection(section: Int): LiveData<List<Film>>
 
+    @Query("SELECT * FROM Film WHERE section = :ratingSection AND movie_id = :movieId")
+    fun getRatedFilmById(movieId: Int, ratingSection: Int): LiveData<List<Film>>
+
     @Query("SELECT * FROM Film WHERE is_liked = 1")
     fun getLikedFilms(): LiveData<List<Film>>
 

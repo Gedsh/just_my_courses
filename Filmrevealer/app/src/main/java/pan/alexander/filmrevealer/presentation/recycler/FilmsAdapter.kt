@@ -73,6 +73,10 @@ class FilmsAdapter(
         return filmSection
     }
 
+    override fun getItemId(position: Int): Long {
+        return items[position].movieId.toLong()
+    }
+
     override fun getItemCount() = items.size
 
     override fun onRecyclerScrolled(lastVisibleItemPosition: Int) =

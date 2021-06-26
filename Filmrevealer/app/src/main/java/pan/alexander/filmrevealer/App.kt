@@ -8,8 +8,6 @@ import pan.alexander.filmrevealer.di.*
 class App : Application() {
     companion object {
         lateinit var instance: App
-        const val BASE_URL = "https://api.themoviedb.org/"
-        const val POSTER_BASE_URL = "https://image.tmdb.org/t/p/original/"
         const val LOG_TAG = "filmrevealer"
     }
 
@@ -17,7 +15,7 @@ class App : Application() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             MultiDex.install(this)
         }
     }
@@ -36,6 +34,7 @@ class App : Application() {
             .retrofitModule(RetrofitModule())
             .roomModule(RoomModule(instance))
             .mainThreadHandler(MainThreadHandler(instance))
+            .dataStoreModule(DataStoreModule(instance))
             .build()
     }
 }

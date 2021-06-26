@@ -99,7 +99,7 @@
                 app:layout_constraintTop_toTopOf="@+id/textViewRuntime" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/textViewRating"
+                android:id="@+id/textViewVotes"
                 style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,9 +113,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fragment_film_details_text_margins"
-                app:layout_constraintBottom_toBottomOf="@+id/textViewRating"
-                app:layout_constraintStart_toEndOf="@+id/textViewRating"
-                app:layout_constraintTop_toTopOf="@+id/textViewRating"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewVotes"
+                app:layout_constraintStart_toEndOf="@+id/textViewVotes"
+                app:layout_constraintTop_toTopOf="@+id/textViewVotes"
                 app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -125,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/budget"
                 app:layout_constraintStart_toStartOf="@+id/posterVerticalGuideline"
-                app:layout_constraintTop_toBottomOf="@+id/textViewRating" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewVotes" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textViewBudgetValue"
@@ -183,6 +183,115 @@
                 app:constraint_referenced_ids="imageViewPoster, textViewReleaseDate"
                 tools:layout_editor_absoluteY="69dp" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar1"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/posterHorizontalGuideline"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar2"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar1"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar1"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar1"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar3"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar2"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar2"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar2"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar4"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar3"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar3"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar3"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar5"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar4"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar4"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar4"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar6"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar5"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar5"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar5"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar7"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar6"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar6"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar6"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar8"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar7"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar7"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar7"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar9"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar8"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar8"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar8"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewRatingStar10"
+                style="@style/TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewRatingStar9"
+                app:layout_constraintStart_toEndOf="@+id/imageViewRatingStar9"
+                app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar9"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="0dp"
@@ -190,7 +299,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barrierPostToSideText">
+                app:layout_constraintTop_toBottomOf="@+id/imageViewRatingStar1">
 
                 <LinearLayout
                     android:layout_width="match_parent"

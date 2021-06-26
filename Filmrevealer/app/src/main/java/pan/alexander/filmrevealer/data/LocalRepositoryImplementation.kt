@@ -18,6 +18,9 @@ class LocalRepositoryImplementation : LocalRepository {
 
     override fun getPopularFilms() = filmDao.get().getFilmsForSection(Film.Section.POPULAR.value)
 
+    override fun getUserRatedFilms() =
+        filmDao.get().getFilmsForSection(Film.Section.USER_RATED.value)
+
     override fun getLikedFilms() = filmDao.get().getLikedFilms()
 
     override fun addFilm(film: Film) = filmDao.get().insert(film)
@@ -36,6 +39,9 @@ class LocalRepositoryImplementation : LocalRepository {
     override fun deletePopularFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.POPULAR.value, page)
 
+    override fun deleteUserRatedFilms(page: Int) =
+        filmDao.get().deleteAllFilmsFromSection(Film.Section.USER_RATED.value, page)
+
     override fun updateFilm(film: Film) = filmDao.get().update(film)
 
     override fun getFilmDetailsById(id: Int) = filmDetailsDao.get().getFilmDetailsById(id)
@@ -48,4 +54,7 @@ class LocalRepositoryImplementation : LocalRepository {
 
     override fun deleteFilmsDetailsOlderTimestamp(timestamp: Long) =
         filmDetailsDao.get().deleteFilmsDetailsOlderTimestamp(timestamp)
+
+    override fun getRatedFilmById(movieId: Int) =
+        filmDao.get().getRatedFilmById(movieId, Film.Section.USER_RATED.value)
 }

@@ -13,9 +13,12 @@
     <string name="minutes">min.</string>
     <string name="loading">Loading…</string>
     <string name="retry">RETRY</string>
-    <string name="load_now_playing_films_failure">Loading now playing films fail</string>
-    <string name="load_upcoming_films_failure">Loading upcoming films fail</string>
-    <string name="load_top_rated_films_failure">Loading top rated films fail</string>
-    <string name="load_popular_films_failure">Loading popular films fail</string>
-    <string name="load_film_details_failure">Loading film details fail</string>
+    <string name="load_now_playing_films_failure">Failed to load now playing films</string>
+    <string name="load_upcoming_films_failure">Failed to load upcoming films</string>
+    <string name="load_top_rated_films_failure">Failed to load top rated films</string>
+    <string name="load_popular_films_failure">Failed to load popular films</string>
+    <string name="load_film_details_failure">Failed to load film details</string>
+    <string name="create_guest_session_failure">Failed to create guest session</string>
+    <string name="load_film_rated_by_user_failure">Failed to load user rated films</string>
+    <string name="rate_film_failure">Failed to rate the film</string>
 </resources>

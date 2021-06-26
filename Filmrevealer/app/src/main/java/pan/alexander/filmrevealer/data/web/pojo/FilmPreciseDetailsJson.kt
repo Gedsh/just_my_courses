@@ -21,7 +21,7 @@ data class FilmPreciseDetailsJson(
     @SerializedName("production_companies") val productionCompanies: List<ProductionCompany>,
     @SerializedName("production_countries") val productionCountries: List<ProductionCountry>,
     @SerializedName("release_date") val releaseDate: String,
-    @SerializedName("revenue") val revenue: Int,
+    @SerializedName("revenue") val revenue: Long,
     @SerializedName("runtime") val runtime: Int?,
     @SerializedName("spoken_languages") val spokenLanguages: List<SpokenLanguage>,
     @SerializedName("status") val status: String,

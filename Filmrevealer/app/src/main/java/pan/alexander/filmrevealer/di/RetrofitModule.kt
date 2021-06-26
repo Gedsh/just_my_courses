@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.BuildConfig
 import pan.alexander.filmrevealer.data.web.FilmsApiService
 import retrofit2.Retrofit
@@ -28,7 +27,7 @@ class RetrofitModule {
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(App.BASE_URL)
+        .baseUrl(BuildConfig.API_BASE_URL)
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()
