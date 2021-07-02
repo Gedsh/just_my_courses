@@ -13,12 +13,15 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pan.alexander.filmrevealer.*
+import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.databinding.FragmentRatingsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.RatingsViewModel
+import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.Utils
 
 class RatingsFragment : Fragment() {
 
@@ -37,7 +40,7 @@ class RatingsFragment : Fragment() {
             when (section) {
                 Film.Section.TOP_RATED -> viewModel.updateTopRatedFilms(page)
                 Film.Section.POPULAR -> viewModel.updatePopularFilms(page)
-                else -> Log.e(App.LOG_TAG, "Section $section is not supported in RatingsFragment")
+                else -> Log.e(LOG_TAG, "Section $section is not supported in RatingsFragment")
             }
         }
     }
@@ -127,64 +130,102 @@ class RatingsFragment : Fragment() {
         observePopularFilms()
 
         observeLoadingFailure()
+
+        observeInternetConnectionAvailable()
+    }
+
+    private fun observeInternetConnectionAvailable() {
+        context?.let {
+            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+                if (connected) {
+                    viewModel.listOfTopRatedFilmsLiveData.value?.let { updateTopRatedFilms(it) }
+                    viewModel.listOfPopularFilmsLiveData.value?.let { updatePopularFilms(it) }
+                }
+            }
+        }
     }
 
     private fun observeTopRatedFilms() {
-        viewModel.listOfTopRatedFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                val recycleViewState =
-                    binding.recyclerViewTopRated.layoutManager?.onSaveInstanceState()
-
-                topRatedFilmsAdapter?.updateItems(it)
-
-                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
-                    viewModel.updateTopRatedFilms(FIRST_PAGE_NUMBER)
-                }
-
-                binding.recyclerViewTopRated.layoutManager?.onRestoreInstanceState(
-                    recycleViewState
-                )
-            } else {
-                viewModel.updateTopRatedFilms(FIRST_PAGE_NUMBER)
-            }
+        viewModel.listOfTopRatedFilmsLiveData.observe(viewLifecycleOwner, { films ->
+            updateTopRatedFilms(films)
         })
     }
 
-    private fun observePopularFilms() {
-        viewModel.listOfPopularFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                val recycleViewState =
-                    binding.recyclerViewPopular.layoutManager?.onSaveInstanceState()
+    private fun updateTopRatedFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewTopRated.layoutManager?.onSaveInstanceState()
 
-                popularFilmsAdapter?.updateItems(it)
+            topRatedFilmsAdapter?.updateItems(films)
 
-                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
-                    viewModel.updatePopularFilms(FIRST_PAGE_NUMBER)
-                }
+            val layoutManager = binding.recyclerViewTopRated.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
 
-                binding.recyclerViewPopular.layoutManager?.onRestoreInstanceState(
-                    recycleViewState
-                )
-            } else {
-                viewModel.updatePopularFilms(FIRST_PAGE_NUMBER)
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updateTopRatedFilms(lastVisibleFilm.page)
             }
+
+            binding.recyclerViewTopRated.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updateTopRatedFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun observePopularFilms() {
+        viewModel.listOfPopularFilmsLiveData.observe(viewLifecycleOwner, { films ->
+            updatePopularFilms(films)
         })
+    }
+
+    private fun updatePopularFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewPopular.layoutManager?.onSaveInstanceState()
+
+            popularFilmsAdapter?.updateItems(films)
+
+            val layoutManager = binding.recyclerViewPopular.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updatePopularFilms(lastVisibleFilm.page)
+            }
+
+            binding.recyclerViewPopular.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updatePopularFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun isUpdateRequired(filmTimestamp: Long): Boolean {
+        return (System.currentTimeMillis() - filmTimestamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
     }
 
     private fun observeLoadingFailure() {
         viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
-            when (failure) {
-                is Failure.WithMessageAndAction ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message, R.string.retry, {
-                            failure.block()
-                        })
-                    }
 
-                is Failure.WithMessage ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message)
+            context?.let { context ->
+                if (Utils.isInternetAvailable(context)) {
+                    when (failure) {
+                        is Failure.WithMessageAndAction ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message, R.string.retry, {
+                                    failure.block()
+                                })
+                            }
+
+                        is Failure.WithMessage ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message)
+                            }
                     }
+                }
             }
         })
     }

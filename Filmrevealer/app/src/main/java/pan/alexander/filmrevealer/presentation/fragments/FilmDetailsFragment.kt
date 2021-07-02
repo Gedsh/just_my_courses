@@ -1,7 +1,10 @@
 package pan.alexander.filmrevealer.presentation.fragments
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -13,6 +16,7 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -24,6 +28,9 @@ import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
 import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.viewmodels.FilmDetailsViewModel
+import pan.alexander.filmrevealer.services.RateFilmIntentService
+import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.Utils
 import java.util.*
 
 private const val LOAD_DETAILS_RETRY_COUNT = 3
@@ -53,8 +60,26 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            intent?.let {
+                if (it.action == RATE_FILM_ERROR_ACTION) {
+                    it.getStringExtra(EXTRA_PARAM_ERROR)
+                        ?.takeIf { message -> message.isNotBlank() }
+                        ?.let { message ->
+                            binding.root.showSnackBar(message)
+                        }
+                }
+            }
+        }
+    }
+
     companion object {
         const val BUNDLE_EXTRA = "film"
+        const val RATE_FILM_ERROR_ACTION =
+            "pan.alexander.filmrevealer.presentation.fragments.action.RATE_FILM_ERROR"
+        const val EXTRA_PARAM_ERROR =
+            "pan.alexander.filmrevealer.presentation.fragments.extra.PARAM_ERROR"
     }
 
     override fun onCreateView(
@@ -104,6 +129,10 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
 
         lifecycle.addObserver(viewModel)
 
+        registerRateFilmErrorBroadcastReceiver()
+
+        observeInternetConnectionAvailable()
+
         observeFilmDetails()
 
         observeRatedFilmLiveData()
@@ -111,25 +140,44 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
         observeLoadingFailure()
     }
 
-    private fun observeFilmDetails() {
-
-        if (filmFromArguments == null) {
-            return
+    private fun registerRateFilmErrorBroadcastReceiver() {
+        context?.let {
+            LocalBroadcastManager.getInstance(it)
+                .registerReceiver(broadcastReceiver, IntentFilter(RATE_FILM_ERROR_ACTION))
         }
+    }
 
+    private fun observeInternetConnectionAvailable() {
+        context?.let {
+            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+                if (connected) {
+                    filmFromArguments?.let { film ->
+                        viewModel.getFilmDetailsLiveData(film.movieId).value?.let { filmDetails ->
+                            updateFilmDetails(film, filmDetails)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeFilmDetails() {
         filmFromArguments?.let { film ->
             viewModel.getFilmDetailsLiveData(film.movieId).observe(viewLifecycleOwner, {
-
-                if (it.isNotEmpty()) {
-                    displayData(it.first())
-                }
-
-                if (it.isEmpty()
-                    || System.currentTimeMillis() - it.first().timeStamp > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
-                ) {
-                    requestUpdates(film)
-                }
+                updateFilmDetails(film, it)
             })
+        }
+    }
+
+    private fun updateFilmDetails(filmFromArguments: Film, filmDetails: List<FilmDetails>) {
+        if (filmDetails.isNotEmpty()) {
+            displayData(filmDetails.first())
+        }
+
+        if (filmDetails.isEmpty()
+            || System.currentTimeMillis() - filmDetails.first().timeStamp > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
+        ) {
+            requestUpdates(filmFromArguments)
         }
     }
 
@@ -155,18 +203,23 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
 
     private fun observeLoadingFailure() {
         viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
-            when (failure) {
-                is Failure.WithMessageAndAction ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message, R.string.retry, {
-                            failure.block()
-                        })
-                    }
 
-                is Failure.WithMessage ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message)
+            context?.let { context ->
+                if (Utils.isInternetAvailable(context)) {
+                    when (failure) {
+                        is Failure.WithMessageAndAction ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message, R.string.retry, {
+                                    failure.block()
+                                })
+                            }
+
+                        is Failure.WithMessage ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message)
+                            }
                     }
+                }
             }
         })
     }
@@ -251,9 +304,18 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        unregisterRateFilmErrorBroadcastReceiver()
+
         ratingStarsList = null
         _binding = null
         loadDetailsRetryCounter = LOAD_DETAILS_RETRY_COUNT
+    }
+
+    private fun unregisterRateFilmErrorBroadcastReceiver() {
+        context?.let {
+            LocalBroadcastManager.getInstance(it)
+                .unregisterReceiver(broadcastReceiver)
+        }
     }
 
     override fun onClick(v: View?) {
@@ -273,6 +335,13 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
 
     private fun changeFilmRating(rating: Int) {
 
+        val context = context ?: return
+
+        if (!Utils.isInternetAvailable(context)) {
+            binding.root.showSnackBar(context.getString(R.string.internet_not_available))
+            return
+        }
+
         val filmToRate = ratedFilm ?: filmFromArguments
 
         filmToRate?.apply {
@@ -284,7 +353,7 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
             }
             userRating = rating
         }?.let {
-            viewModel.rateFilm(it, rating.toFloat())
+            RateFilmIntentService.rateFilm(context, it, rating.toFloat())
         }
 
         ratingStarsList?.forEachIndexed { index, imageView ->

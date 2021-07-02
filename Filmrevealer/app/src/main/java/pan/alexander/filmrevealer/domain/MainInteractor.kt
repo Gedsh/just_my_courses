@@ -18,7 +18,7 @@ import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS = 1000L
+private const val DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS = 3000L
 
 @Singleton
 class MainInteractor @Inject constructor(

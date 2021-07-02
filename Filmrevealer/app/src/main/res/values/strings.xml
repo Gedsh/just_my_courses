@@ -21,4 +21,5 @@
     <string name="create_guest_session_failure">Failed to create guest session</string>
     <string name="load_film_rated_by_user_failure">Failed to load user rated films</string>
     <string name="rate_film_failure">Failed to rate the film</string>
+    <string name="internet_not_available">Internet connection not available. You cannot rate films.</string>
 </resources>
