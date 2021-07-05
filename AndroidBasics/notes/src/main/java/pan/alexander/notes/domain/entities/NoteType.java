@@ -1,11 +1,13 @@
 package pan.alexander.notes.domain.entities;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Keep;
 
 import java.lang.annotation.Retention;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
+@Keep
 @Retention(SOURCE)
 @IntDef({
         NoteType.TEXT_NOTE,

@@ -1,11 +1,13 @@
 package pan.alexander.notes.domain.tasksnote;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+@Keep
 public class Task implements Comparable<Task> {
     private String text;
     private int orderNumber;

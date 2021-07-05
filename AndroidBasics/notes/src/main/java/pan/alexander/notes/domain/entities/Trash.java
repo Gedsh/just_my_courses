@@ -1,11 +1,13 @@
 package pan.alexander.notes.domain.entities;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
+@Keep
 @Entity
 public class Trash {
 

@@ -1,6 +1,8 @@
 package pan.alexander.notes;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Handler;
@@ -8,7 +10,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
@@ -22,7 +24,7 @@ import pan.alexander.notes.di.DaggerApplicationComponent;
 import pan.alexander.notes.di.RepositoryModule;
 import pan.alexander.notes.di.RoomModule;
 
-public class App extends MultiDexApplication {
+public class App extends Application {
 
     static {
         System.setProperty("rx2.purge-enabled", "false");
@@ -36,6 +38,15 @@ public class App extends MultiDexApplication {
 
     private ApplicationComponent daggerComponent;
     private Handler handler;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this);
+        }
+    }
 
     @Override
     public void onCreate() {

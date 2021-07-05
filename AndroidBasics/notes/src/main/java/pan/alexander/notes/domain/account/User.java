@@ -2,10 +2,12 @@ package pan.alexander.notes.domain.account;
 
 import android.net.Uri;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+@Keep
 public class User {
     private final String uid;
     private final String name;

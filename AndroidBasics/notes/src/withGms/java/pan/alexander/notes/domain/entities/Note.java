@@ -3,14 +3,14 @@ package pan.alexander.notes.domain.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+@Keep
 public class Note implements Parcelable, Comparable<Note> {
     private String id;
     private String title;

@@ -9,7 +9,7 @@ buildscript {
         room_version = "2.3.0"
         leak_canary = "2.7"
         navigation_version = "2.3.5"
-        slidingpane_version = "1.2.0-alpha02"
+        slidingpane_version = "1.2.0-alpha03"
         gson_version = "2.8.7"
         multidex_version = "2.0.1"
         firebase_firestore = "23.0.1"
@@ -22,7 +22,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.1"
+        classpath 'com.android.tools.build:gradle:4.2.2'
 
         if (gradle.startParameter.taskNames.size() > 0
                 && gradle.startParameter.taskNames.get(0).contains("WithGms")) {
