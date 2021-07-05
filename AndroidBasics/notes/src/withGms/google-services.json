@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "340417404660",
+    "project_id": "invizible-notes",
+    "storage_bucket": "invizible-notes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340417404660:android:2c01b858d07b7973a588a1",
+        "android_client_info": {
+          "package_name": "pan.alexander.notes.gp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "340417404660-6ggh2j9arobse1otkna7jj3ov4ae5fio.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEUHbuOs7wN3mHAJyDa-JEDqMuxQfDOQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "340417404660-6ggh2j9arobse1otkna7jj3ov4ae5fio.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

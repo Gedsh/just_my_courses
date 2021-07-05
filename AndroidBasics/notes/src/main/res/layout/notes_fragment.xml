@@ -1,38 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".presentation.fragments.NotesFragment">
 
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewTopNoteDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        tools:text="19.05.2021" />
-
     <androidx.slidingpanelayout.widget.SlidingPaneLayout
         android:id="@+id/notesSlidingPaneLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewNotes"
-            android:layout_width="280dp"
+        <FrameLayout
+            android:layout_width="@dimen/notes_list_min_width"
             android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            android:layout_gravity="start">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewNotes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewTopNoteDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/notes_fragment_top_time_background_color"
+                android:padding="@dimen/top_time_content_padding"
+                android:textAlignment="center"
+                android:textSize="@dimen/top_time_text_size"
+                android:textStyle="bold"
+                tools:text="19.05.2021" />
+
+        </FrameLayout>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/selectedNoteDetails"
-            android:layout_width="300dp"
-            android:layout_weight="1"
+            android:name="pan.alexander.notes.presentation.fragments.TextNoteFragment"
+            android:layout_width="@dimen/notes_details_min_width"
             android:layout_height="match_parent"
-            android:name="pan.alexander.notes.presentation.fragments.TextNoteFragment" />
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </androidx.slidingpanelayout.widget.SlidingPaneLayout>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/fabParentLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:gravity="fill"
+        android:orientation="vertical"
+        app:layout_behavior="pan.alexander.notes.presentation.animation.FabHideOnScroll"
+        app:layout_dodgeInsetEdges="bottom">
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddTextNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fab_end_margin"
+            android:layout_marginBottom="@dimen/fab_bottom_margin"
+            android:contentDescription="@string/fab_add_text_note"
+            app:srcCompat="@drawable/ic_text_note" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddListNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fab_end_margin"
+            android:layout_marginBottom="@dimen/fab_bottom_margin"
+            android:contentDescription="@string/fab_add_list_note"
+            app:srcCompat="@drawable/ic_list_note" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fab_end_margin"
+            android:layout_marginBottom="@dimen/fab_bottom_margin"
+            android:contentDescription="@string/fab_add_note"
+            app:srcCompat="@drawable/ic_add_note" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:clickable="false"
+        app:itemIconTint="@color/bottom_navigation_color"
+        app:itemTextColor="@color/bottom_navigation_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_menu_item_selected" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

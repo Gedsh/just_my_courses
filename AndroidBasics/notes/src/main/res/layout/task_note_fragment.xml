@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".presentation.fragments.TaskNoteFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewTaskNoteDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/top_time_content_padding"
+            android:textAlignment="center"
+            android:textSize="@dimen/top_time_text_size"
+            android:textStyle="bold"
+            tools:text="19.05.2021" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTaskNoteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/default_card_corner_radius"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="@dimen/note_title_content_padding">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editTaskNoteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionDone|flagNoFullscreen"
+                android:inputType="text|textCapSentences"
+                android:singleLine="true"
+                android:textAlignment="center"
+                android:textSize="@dimen/note_title_text_size"
+                tools:text="Title" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTaskNote"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>

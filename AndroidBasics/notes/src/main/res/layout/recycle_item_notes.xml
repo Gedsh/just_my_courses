@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
-    android:id="@+id/linearLayoutItemNote"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewNotesItemNoteTitle"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardNotesItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        tool:text="Tuesday" />
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewNotesItemNoteDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        tool:text="19 May" />
-</androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/recycle_item_note_card_content_padding"
+            android:layout_marginTop="@dimen/recycle_item_note_card_content_padding"
+            android:layout_marginBottom="@dimen/recycle_item_note_card_content_padding"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewNotesItemNoteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical|start"
+                android:singleLine="true"
+                android:textSize="@dimen/note_title_text_size"
+                tool:text="@tools:sample/lorem/random" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewNotesItemNoteDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|end"
+                android:textSize="@dimen/recycle_item_note_time_text_size"
+                tool:text="20.05.2021 23.52.00" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewItemNoteSubmenu"
+                android:layout_width="@dimen/recycle_item_image_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                tool:srcCompat="@drawable/ic_text_note" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

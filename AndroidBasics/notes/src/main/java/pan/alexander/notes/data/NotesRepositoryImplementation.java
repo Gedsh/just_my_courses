@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import dagger.Lazy;
+import io.reactivex.Completable;
 import pan.alexander.notes.App;
 import pan.alexander.notes.data.database.NotesDao;
 import pan.alexander.notes.domain.entities.Note;
@@ -19,22 +20,37 @@ public class NotesRepositoryImplementation implements NotesRepository {
     }
 
     @Override
-    public void addNoteToDB(Note note) {
-        dao.get().insertNote(note);
+    public Completable addNoteToDB(Note note) {
+        return dao.get().insertNote(note);
     }
 
     @Override
-    public void updateNoteInDB(Note note) {
-        dao.get().updateNote(note);
+    public Completable addNotesToDB(List<Note> notes) {
+        return dao.get().insertNotes(notes);
     }
 
     @Override
-    public void removeNoteFromDB(Note note) {
-        dao.get().deleteNote(note);
+    public Completable updateNoteInDB(Note note) {
+        return dao.get().updateNote(note);
     }
 
     @Override
-    public void removeAllNotesFromDB() {
-        dao.get().deleteAllNotes();
+    public Completable removeNoteFromDB(Note note) {
+        return dao.get().deleteNote(note);
+    }
+
+    @Override
+    public Completable removeEmptyNotesFromDBExceptLast() {
+        return dao.get().deleteEmptyNotesExceptLast();
+    }
+
+    @Override
+    public Completable removeNotesFromDB(List<Note> notes) {
+        return dao.get().deleteNotes(notes);
+    }
+
+    @Override
+    public Completable removeAllNotesFromDB() {
+        return dao.get().deleteAllNotes();
     }
 }

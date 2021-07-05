@@ -1,17 +1,57 @@
-plugins {
-    id 'com.android.application'
+apply plugin: 'com.android.application'
+
+if (gradle.startParameter.taskNames.size() > 0
+        && gradle.startParameter.taskNames.get(0).contains("WithGms")) {
+    apply plugin: 'com.google.gms.google-services'
 }
+
+def keystorePropertiesFile = file("/home/alexander/.local/KStore/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        releasesign {
+            storeFile file("/home/alexander/.local/KStore/pan_alexander.jks")
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyBAlias']
+            keyPassword keystoreProperties['keyBPassword']
+        }
+    }
+
+    flavorDimensions "version"
+
+    productFlavors {
+        withGms {
+            applicationId "pan.alexander.notes.gp"
+            dimension = 'version'
+            resValue 'string', 'package_name', applicationId
+        }
+
+        withoutGms {
+            applicationId "pan.alexander.notes"
+            dimension = 'version'
+            resValue 'string', 'package_name', applicationId
+        }
+    }
 
     defaultConfig {
         applicationId "pan.alexander.notes"
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
+
+        vectorDrawables.useSupportLibrary = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,6 +61,15 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
+        }
+
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
         }
     }
     compileOptions {
@@ -31,20 +80,48 @@ android {
     buildFeatures {
         viewBinding true
     }
+    sourceSets {
+        withGms {
+            java {
+                srcDirs 'src/withGms/java'
+            }
+        }
+        withoutGms {
+            java {
+                srcDirs 'src/withoutGms/java'
+            }
+        }
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha02"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "androidx.slidingpanelayout:slidingpanelayout:$slidingpane_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_extension_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
     implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.navigation:navigation-fragment:$navigation_version"
+    implementation "androidx.navigation:navigation-ui:$navigation_version"
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation "com.google.dagger:dagger:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+    withGmsImplementation "com.google.firebase:firebase-firestore:$firebase_firestore"
+    withGmsImplementation "com.google.firebase:firebase-auth:$firebase_auth"
+    withGmsImplementation "com.firebaseui:firebase-ui-auth:$firebase_ui_auth"
+    debugImplementation "androidx.multidex:multidex:$multidex_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

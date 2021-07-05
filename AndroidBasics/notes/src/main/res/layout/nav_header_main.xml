@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navHeaderLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageUserPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/nav_header_desc"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toTopOf="@id/textViewUserEmail"
+        app:layout_constraintEnd_toEndOf="@+id/textViewUserEmail"
+        app:layout_constraintStart_toStartOf="@+id/textViewUserEmail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/default_user_photo" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/textViewUserEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/nav_header_mail"
+        android:textAlignment="gravity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageUserPhoto" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSignInOut"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintBottom_toBottomOf="@+id/imageUserPhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageUserPhoto"
+        app:layout_constraintTop_toTopOf="@+id/imageUserPhoto"
+        app:rippleColor="?attr/colorAccent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

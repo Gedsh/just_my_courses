@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTaskNoteItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/default_card_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/moveTaskNoteItem"
+                android:layout_width="@dimen/recycle_item_image_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_task_move" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/checkBoxTaskNoteItem"
+                android:layout_width="@dimen/recycle_item_image_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editTextTaskNoteItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/recycle_item_note_card_content_padding"
+                android:layout_marginBottom="@dimen/recycle_item_note_card_content_padding"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:gravity="start|center_vertical"
+                android:imeOptions="flagNoFullscreen"
+                android:inputType="textMultiLine|textCapSentences"
+                android:paddingStart="@dimen/recycle_item_task_text_padding_side"
+                android:paddingEnd="@dimen/recycle_item_task_text_padding_side"
+                android:textAlignment="textStart"
+                android:textSize="@dimen/note_title_text_size"
+                tool:text="@tools:sample/lorem/random" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/deleteTaskNoteItem"
+                android:layout_width="@dimen/recycle_item_image_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_delete_item" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>
