@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="@dimen/recycle_item_card_radius"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewFilmPoster"
+                android:layout_width="@dimen/recycle_item_poster_image_width"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/recycle_item_image_margin_bottom"
+                android:scaleType="center"
+                app:layout_constraintBottom_toTopOf="@+id/textViewTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_baseline_warning_24" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/recycle_item_title_margin"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:singleLine="false"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintBottom_toTopOf="@+id/textViewYear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Avatar" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/recycle_item_year_margin_start"
+                android:layout_marginBottom="@dimen/recycle_item_year_margin_bottom"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="2021" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewYear"
+                app:layout_constraintEnd_toStartOf="@+id/textViewRating"
+                app:layout_constraintTop_toTopOf="@+id/textViewYear"
+                app:srcCompat="@drawable/ic_baseline_star_rate_24" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/recycle_item_rating_margin_end"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewYear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewYear"
+                tools:text="5.7" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</FrameLayout>
