@@ -1,13 +1,26 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import pan.alexander.filmrevealer.App
+import pan.alexander.filmrevealer.presentation.Failure
 
-class FavoritesViewModel : ViewModel() {
+class FavoritesViewModel : BaseViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is favorites Fragment"
+    val listOfLikedFilmsLiveData by lazy { mainInteractor.get().getLikedFilms() }
+    val listOfRatedFilmsLiveData by lazy { mainInteractor.get().getUserRatedFilms() }
+
+    fun updateRatedFilms() = viewModelScope.launch {
+        val guestSessionId = mainInteractor.get().getUserGuestSessionId().firstOrNull()
+        guestSessionId?.takeIf { it.isNotBlank() }?.let { sessionId ->
+            mainInteractor.get().loadUserRatedFilms(sessionId) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    mainInteractor.get().loadUserRatedFilms(sessionId) {
+                        mFailureLiveData.value = Failure.WithMessage(it)
+                    }
+                }
+            }
+        }
     }
-    val text: LiveData<String> = _text
 }

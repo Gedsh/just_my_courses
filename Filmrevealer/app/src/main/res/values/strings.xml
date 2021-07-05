@@ -7,6 +7,8 @@
     <string name="upcoming">Upcoming</string>
     <string name="top_rated">Top Rated</string>
     <string name="popular">Popular</string>
+    <string name="liked">Liked</string>
+    <string name="rated">Rated</string>
     <string name="budget">Budget:</string>
     <string name="revenue">Revenue:</string>
     <string name="release_date">Release date:</string>

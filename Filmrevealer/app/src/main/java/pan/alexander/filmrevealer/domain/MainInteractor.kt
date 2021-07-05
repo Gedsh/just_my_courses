@@ -334,15 +334,15 @@ class MainInteractor @Inject constructor(
     }
 
     suspend fun createGuestSession(block: (error: String) -> Unit) = withContext(Dispatchers.IO) {
-        try {
-            remoteRepository.createGuestSession().execute().let { response ->
-                if (response.isSuccessful) {
-                    response.body()?.let { session ->
-                        preferencesRepository.setGuestSessionId(session.guestSessionId)
-                    }
+        kotlin.runCatching {
+            remoteRepository.createGuestSession().execute()
+        }.onSuccess { response ->
+            if (response.isSuccessful) {
+                response.body()?.let { session ->
+                    preferencesRepository.setGuestSessionId(session.guestSessionId)
                 }
             }
-        } catch (t: Throwable) {
+        }.onFailure { t ->
             t.message?.let { message ->
                 block(
                     App.instance.getString(R.string.create_guest_session_failure)
@@ -351,7 +351,6 @@ class MainInteractor @Inject constructor(
             }
             Log.e(LOG_TAG, "Failed to create guest session.", t)
         }
-
     }
 
     fun loadUserRatedFilms(guestSessionId: String, block: (error: String) -> Unit) {
@@ -448,7 +447,9 @@ class MainInteractor @Inject constructor(
 
     fun getPopularFilms() = localRepository.getPopularFilms()
 
-    fun getUserGuestSessionId() = preferencesRepository.getGuestSessionId()
+    suspend fun getUserGuestSessionId() = withContext(Dispatchers.IO) {
+        preferencesRepository.getGuestSessionId()
+    }
 
     fun getUserRatedFilms() = localRepository.getUserRatedFilms()
 
@@ -456,8 +457,23 @@ class MainInteractor @Inject constructor(
 
     fun getLikedFilms() = localRepository.getLikedFilms()
 
-    fun toggleLike(film: Film) =
-        localRepository.apply { updateFilm(film.also { it.isLiked = !it.isLiked }) }
+    fun getLikedImdbIds() = localRepository.getLikedImdbIds()
+
+    fun toggleLike(film: Film) {
+        val likedFilm = localRepository.getLikedFilmById(film.movieId)
+        if (likedFilm == null) {
+            localRepository.addFilm(
+                film.apply {
+                    id = 0
+                    page = 1
+                    totalPages = 1
+                    section = Film.Section.LIKED.value
+                }
+            )
+        } else {
+            localRepository.deleteFilm(likedFilm)
+        }
+    }
 
     fun getFilmDetailsById(id: Int) = localRepository.getFilmDetailsById(id)
 

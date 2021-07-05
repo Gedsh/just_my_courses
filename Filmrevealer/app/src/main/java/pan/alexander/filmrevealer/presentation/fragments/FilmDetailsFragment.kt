@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ import pan.alexander.filmrevealer.*
 import pan.alexander.filmrevealer.databinding.FragmentFilmDetailsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
-import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.viewmodels.FilmDetailsViewModel
 import pan.alexander.filmrevealer.services.RateFilmIntentService
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
@@ -35,7 +33,7 @@ import java.util.*
 
 private const val LOAD_DETAILS_RETRY_COUNT = 3
 
-class FilmDetailsFragment : Fragment(), View.OnClickListener {
+class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
     private val viewModel by lazy { ViewModelProvider(this).get(FilmDetailsViewModel::class.java) }
     private var _binding: FragmentFilmDetailsBinding? = null
@@ -137,7 +135,7 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
 
         observeRatedFilmLiveData()
 
-        observeLoadingFailure()
+        observeLoadingFailure(viewModel, binding.root)
     }
 
     private fun registerRateFilmErrorBroadcastReceiver() {
@@ -199,29 +197,6 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
                     }
                 })
         }
-    }
-
-    private fun observeLoadingFailure() {
-        viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
-
-            context?.let { context ->
-                if (Utils.isInternetAvailable(context)) {
-                    when (failure) {
-                        is Failure.WithMessageAndAction ->
-                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                                binding.root.showSnackBar(message, R.string.retry, {
-                                    failure.block()
-                                })
-                            }
-
-                        is Failure.WithMessage ->
-                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                                binding.root.showSnackBar(message)
-                            }
-                    }
-                }
-            }
-        })
     }
 
     @SuppressLint("SetTextI18n")
@@ -373,6 +348,5 @@ class FilmDetailsFragment : Fragment(), View.OnClickListener {
                     .createBlendModeColorFilterCompat(it, BlendModeCompat.SRC_ATOP)
             }
         }
-
     }
 }

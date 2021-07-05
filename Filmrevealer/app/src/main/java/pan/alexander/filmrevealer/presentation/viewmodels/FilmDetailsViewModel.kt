@@ -1,14 +1,8 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.*
-import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.presentation.Failure
 
-class FilmDetailsViewModel : ViewModel(), LifecycleObserver {
-    private val mainInteractor = App.instance.daggerComponent.getMainInteractor()
-
-    private val mFailureLiveData by lazy { MutableLiveData<Any>() }
-    val failureLiveData: LiveData<Any> = mFailureLiveData
+class FilmDetailsViewModel : BaseViewModel() {
 
     fun getFilmDetailsLiveData(filmId: Int) = mainInteractor.get().getFilmDetailsById(filmId)
 
@@ -22,19 +16,4 @@ class FilmDetailsViewModel : ViewModel(), LifecycleObserver {
                 }
             }
         }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun onResume() {
-        clearLastFailure()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    private fun onPause() {
-        clearLastFailure()
-    }
-
-    private fun clearLastFailure() {
-        mFailureLiveData.value = Failure.WithMessage("")
-    }
-
 }
