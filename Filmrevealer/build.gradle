@@ -10,7 +10,7 @@ buildscript {
         glide_version = "4.12.0"
         okhttp_version = "4.2.1"
         multidex_version = "2.0.1"
-        datastore_preferences = "1.0.0-beta02"
+        datastore_preferences = "1.0.0-rc01"
     }
     repositories {
         google()

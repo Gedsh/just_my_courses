@@ -13,8 +13,14 @@ class FilmsAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<FilmsViewHolder>(), OnRecyclerScrolledListener {
 
+    companion object {
+        const val UNDEFINED_POSITION = -1
+    }
+
     var onDataRequiredListener: ((section: Film.Section, page: Int) -> Unit)? = null
     var onFilmClickListener: ((view: View?, film: Film) -> Unit)? = null
+    var lastVisibleFilmPosition: Int = UNDEFINED_POSITION
+        private set
 
     private val items: MutableList<Film> = mutableListOf()
 
@@ -85,20 +91,25 @@ class FilmsAdapter(
     private fun loadNextPageIfNecessary(position: Int) {
         if (items.getOrNull(position + 1) != null) {
             val currentFilm = items[position]
+            lastVisibleFilmPosition = position
             val nextFilm = items[position + 1]
-            if (nextFilm.page != currentFilm.page
-                && (System.currentTimeMillis() - nextFilm.timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
+            if (nextFilm.page != currentFilm.page && isUpdateRequired(nextFilm.timeStamp)
             ) {
                 val nextFilmSection = getSectionForSectionValue(nextFilm.section)
                 onDataRequiredListener?.let { it(nextFilmSection, nextFilm.page) }
             }
         } else {
             val lastFilm = items[position]
+            lastVisibleFilmPosition = position
             if (lastFilm.page < lastFilm.totalPages) {
                 val lastFilmSection = getSectionForSectionValue(lastFilm.section)
                 onDataRequiredListener?.let { it(lastFilmSection, lastFilm.page + 1) }
             }
         }
+    }
+
+    private fun isUpdateRequired(filmTimestamp: Long): Boolean {
+        return (System.currentTimeMillis() - filmTimestamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
     }
 
 }

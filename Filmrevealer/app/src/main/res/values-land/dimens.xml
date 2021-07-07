@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <fraction name="fragment_film_details_vertical_guideline_percent">0.2</fraction>
-    <fraction name="fragment_film_details_horizontal_guideline_percent">0.7</fraction>
-</resources>

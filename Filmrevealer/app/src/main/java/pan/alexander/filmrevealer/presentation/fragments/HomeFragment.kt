@@ -20,6 +20,8 @@ import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.HomeViewModel
+import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.Utils
 
 class HomeFragment : Fragment() {
 
@@ -129,63 +131,102 @@ class HomeFragment : Fragment() {
         observeUpcomingFilms()
 
         observeLoadingFailure()
+
+        observeInternetConnectionAvailable()
+    }
+
+    private fun observeInternetConnectionAvailable() {
+        context?.let {
+            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+                if (connected) {
+                    viewModel.listOfNowPlayingFilmsLiveData.value?.let { updateNowPlayingFilms(it) }
+                    viewModel.listOfUpcomingFilmsLiveData.value?.let { updateUpcomingFilms(it) }
+                }
+            }
+        }
     }
 
     private fun observeNowPlayingFilms() {
-        viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                val recycleViewState =
-                    binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
-
-                nowPlayingFilmsAdapter?.updateItems(it)
-
-                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
-                    viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
-                }
-                binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(
-                    recycleViewState
-                )
-            } else {
-                viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
-            }
+        viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, { films ->
+            updateNowPlayingFilms(films)
         })
     }
 
-    private fun observeUpcomingFilms() {
-        viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                val recycleViewState =
-                    binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
+    private fun updateNowPlayingFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
 
-                upcomingFilmsAdapter?.updateItems(it)
+            nowPlayingFilmsAdapter?.updateItems(films)
 
-                if ((System.currentTimeMillis() - it.first().timeStamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS) {
-                    viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
-                }
+            val layoutManager = binding.recyclerViewNowPlaying.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
 
-                binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(
-                    recycleViewState
-                )
-            } else {
-                viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updateNowPlayingFilms(lastVisibleFilm.page)
             }
+
+            binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun observeUpcomingFilms() {
+        viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, { films ->
+            updateUpcomingFilms(films)
         })
+    }
+
+    private fun updateUpcomingFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
+
+            upcomingFilmsAdapter?.updateItems(films)
+
+            val layoutManager = binding.recyclerViewUpcoming.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updateUpcomingFilms(lastVisibleFilm.page)
+            }
+
+            binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun isUpdateRequired(filmTimestamp: Long): Boolean {
+        return (System.currentTimeMillis() - filmTimestamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
     }
 
     private fun observeLoadingFailure() {
         viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
-            when (failure) {
-                is Failure.WithMessageAndAction ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message, R.string.retry, {
-                            failure.block()
-                        })
-                    }
 
-                is Failure.WithMessage ->
-                    failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                        binding.root.showSnackBar(message)
+            context?.let { context ->
+                if (Utils.isInternetAvailable(context)) {
+                    when (failure) {
+                        is Failure.WithMessageAndAction ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message, R.string.retry, {
+                                    failure.block()
+                                })
+                            }
+
+                        is Failure.WithMessage ->
+                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
+                                binding.root.showSnackBar(message)
+                            }
                     }
+                }
             }
         })
     }
@@ -193,7 +234,8 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        nowPlayingRecycleViewState = binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
+        nowPlayingRecycleViewState =
+            binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
         upcomingRecycleViewState = binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
 
         nowPlayingFilmsAdapter?.onDataRequiredListener = null

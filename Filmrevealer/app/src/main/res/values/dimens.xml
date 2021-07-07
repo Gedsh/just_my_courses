@@ -16,6 +16,6 @@
     <dimen name="fragment_film_details_original_title_text_size">18sp</dimen>
     <dimen name="fragment_film_details_text_size">16sp</dimen>
     <dimen name="fragment_film_details_text_margins">4dp</dimen>
-    <fraction name="fragment_film_details_vertical_guideline_percent">0.4</fraction>
-    <fraction name="fragment_film_details_horizontal_guideline_percent">0.5</fraction>
+    <dimen name="fragment_film_details_vertical_guideline_guide_begin">150dp</dimen>
+    <dimen name="fragment_film_details_horizontal_guideline_guide_begin">270dp</dimen>
 </resources>

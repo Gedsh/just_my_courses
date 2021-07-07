@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="@fraction/fragment_film_details_vertical_guideline_percent" />
+                app:layout_constraintGuide_begin="@dimen/fragment_film_details_vertical_guideline_guide_begin" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageViewPoster"
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="@fraction/fragment_film_details_horizontal_guideline_percent" />
+                app:layout_constraintGuide_begin="@dimen/fragment_film_details_horizontal_guideline_guide_begin" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textViewGenres"
@@ -190,7 +190,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fragment_film_details_text_margins"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/posterHorizontalGuideline"
+                app:layout_constraintTop_toBottomOf="@+id/barrierPostToSideText"
                 app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -292,29 +292,16 @@
                 app:layout_constraintTop_toTopOf="@+id/imageViewRatingStar9"
                 app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScrollView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewRatingStar1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/textViewDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/fragment_film_details_text_margins"
-                        android:textSize="@dimen/fragment_film_details_text_size"
-                        tools:text="A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground 'fight clubs' forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion." />
-                </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textViewDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fragment_film_details_text_margins"
+                android:textSize="@dimen/fragment_film_details_text_size"
+                app:layout_constraintEnd_toStartOf="@+id/textViewOriginalTitle"
+                app:layout_constraintStart_toEndOf="@+id/textViewOriginalTitle"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewRatingStar1"
+                tools:text="A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground 'fight clubs' forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion." />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
