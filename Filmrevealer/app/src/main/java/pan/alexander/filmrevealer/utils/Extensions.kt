@@ -1,4 +1,4 @@
-package pan.alexander.filmrevealer
+package pan.alexander.filmrevealer.utils
 
 import android.annotation.SuppressLint
 import android.view.View

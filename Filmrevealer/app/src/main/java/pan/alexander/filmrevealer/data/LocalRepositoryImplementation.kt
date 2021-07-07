@@ -25,44 +25,44 @@ class LocalRepositoryImplementation : LocalRepository {
     override fun getLikedFilms() =
         filmDao.get().getFilmsForSectionOrderByAdding(Film.Section.LIKED.value)
 
-    override fun addFilm(film: Film) = filmDao.get().insert(film)
+    override suspend fun addFilm(film: Film) = filmDao.get().insert(film)
 
-    override fun addFilms(films: List<Film>) = filmDao.get().insertFilms(films)
+    override suspend fun addFilms(films: List<Film>) = filmDao.get().insertFilms(films)
 
-    override fun deleteNowPlayingFilms(page: Int) =
+    override suspend fun deleteNowPlayingFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.NOW_PLAYING.value, page)
 
-    override fun deleteUpcomingFilms(page: Int) =
+    override suspend fun deleteUpcomingFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.UPCOMING.value, page)
 
-    override fun deleteTopRatedFilms(page: Int) =
+    override suspend fun deleteTopRatedFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.TOP_RATED.value, page)
 
-    override fun deletePopularFilms(page: Int) =
+    override suspend fun deletePopularFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.POPULAR.value, page)
 
-    override fun deleteUserRatedFilms(page: Int) =
+    override suspend fun deleteUserRatedFilms(page: Int) =
         filmDao.get().deleteAllFilmsFromSection(Film.Section.USER_RATED.value, page)
 
-    override fun updateFilm(film: Film) = filmDao.get().update(film)
+    override suspend fun updateFilm(film: Film) = filmDao.get().update(film)
 
-    override fun deleteFilm(film: Film) = filmDao.get().delete(film)
+    override suspend fun deleteFilm(film: Film) = filmDao.get().delete(film)
 
     override fun getFilmDetailsById(id: Int) = filmDetailsDao.get().getFilmDetailsById(id)
 
-    override fun addFilmDetails(filmDetails: FilmDetails) =
+    override suspend fun addFilmDetails(filmDetails: FilmDetails) =
         filmDetailsDao.get().insertFilmDetails(filmDetails)
 
-    override fun updateFilmDetails(filmDetails: FilmDetails) =
+    override suspend fun updateFilmDetails(filmDetails: FilmDetails) =
         filmDetailsDao.get().updateFilmDetails(filmDetails)
 
-    override fun deleteFilmsDetailsOlderTimestamp(timestamp: Long) =
+    override suspend fun deleteFilmsDetailsOlderTimestamp(timestamp: Long) =
         filmDetailsDao.get().deleteFilmsDetailsOlderTimestamp(timestamp)
 
     override fun getRatedFilmById(movieId: Int) =
         filmDao.get().getRatedFilmById(movieId, Film.Section.USER_RATED.value)
 
-    override fun getLikedFilmById(movieId: Int) =
+    override suspend fun getLikedFilmById(movieId: Int) =
         filmDao.get().getLikedFilmById(movieId, Film.Section.LIKED.value)
 
     override fun getLikedImdbIds(): LiveData<List<Int>> =

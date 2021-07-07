@@ -32,4 +32,9 @@
         android:name="pan.alexander.filmrevealer.presentation.fragments.FilmDetailsFragment"
         tools:layout="@layout/fragment_film_details" />
 
+    <activity
+        android:id="@+id/navigation_to_settings_activity"
+        android:name="pan.alexander.filmrevealer.presentation.activities.SettingsActivity"
+        tools:layout="@layout/settings_activity" />
+
 </navigation>

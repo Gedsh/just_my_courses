@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.viewmodels.BaseViewModel
-import pan.alexander.filmrevealer.showSnackBar
-import pan.alexander.filmrevealer.utils.Utils
+import pan.alexander.filmrevealer.utils.showSnackBar
+import pan.alexander.filmrevealer.utils.ConnectionUtils
 
 abstract class BaseFragment : Fragment() {
 
@@ -14,7 +14,7 @@ abstract class BaseFragment : Fragment() {
         viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
 
             context?.let { context ->
-                if (Utils.isInternetAvailable(context)) {
+                if (ConnectionUtils.isInternetAvailable(context)) {
                     when (failure) {
                         is Failure.WithMessageAndAction ->
                             failure.message.takeIf { it.isNotBlank() }?.let { message ->

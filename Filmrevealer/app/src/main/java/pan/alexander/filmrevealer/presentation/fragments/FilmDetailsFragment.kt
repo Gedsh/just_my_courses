@@ -15,6 +15,7 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.lifecycle.distinctUntilChanged
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,7 +29,9 @@ import pan.alexander.filmrevealer.domain.entities.FilmDetails
 import pan.alexander.filmrevealer.presentation.viewmodels.FilmDetailsViewModel
 import pan.alexander.filmrevealer.services.RateFilmIntentService
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
-import pan.alexander.filmrevealer.utils.Utils
+import pan.alexander.filmrevealer.utils.ConnectionUtils
+import pan.alexander.filmrevealer.utils.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
+import pan.alexander.filmrevealer.utils.showSnackBar
 import java.util.*
 
 private const val LOAD_DETAILS_RETRY_COUNT = 3
@@ -161,9 +164,10 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
     private fun observeFilmDetails() {
         filmFromArguments?.let { film ->
-            viewModel.getFilmDetailsLiveData(film.movieId).observe(viewLifecycleOwner, {
-                updateFilmDetails(film, it)
-            })
+            viewModel.getFilmDetailsLiveData(film.movieId).distinctUntilChanged()
+                .observe(viewLifecycleOwner, {
+                    updateFilmDetails(film, it)
+                })
         }
     }
 
@@ -182,7 +186,7 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
     private fun observeRatedFilmLiveData() {
 
         filmFromArguments?.let { film ->
-            viewModel.getRatedFilmLiveData(film.movieId)
+            viewModel.getRatedFilmLiveData(film.movieId).distinctUntilChanged()
                 .observe(viewLifecycleOwner, { ratedFilm ->
                     ratedFilm.takeIf { it.isNotEmpty() }.let {
                         val userRating = it?.first()?.userRating ?: 0
@@ -312,7 +316,7 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
         val context = context ?: return
 
-        if (!Utils.isInternetAvailable(context)) {
+        if (!ConnectionUtils.isInternetAvailable(context)) {
             binding.root.showSnackBar(context.getString(R.string.internet_not_available))
             return
         }

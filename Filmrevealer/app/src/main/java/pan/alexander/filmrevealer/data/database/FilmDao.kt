@@ -16,23 +16,23 @@ interface FilmDao {
     fun getRatedFilmById(movieId: Int, ratingSection: Int): LiveData<List<Film>>
 
     @Query("SELECT * FROM Film WHERE section = :likedSection AND movie_id = :movieId")
-    fun getLikedFilmById(movieId: Int, likedSection: Int): Film?
+    suspend fun getLikedFilmById(movieId: Int, likedSection: Int): Film?
 
     @Query("SELECT movie_id FROM Film WHERE section = :likedSection")
     fun getLikedImdbIds(likedSection: Int): LiveData<List<Int>>
 
     @Query("DELETE FROM Film WHERE section = :section AND page = :page")
-    fun deleteAllFilmsFromSection(section: Int, page: Int)
+    suspend fun deleteAllFilmsFromSection(section: Int, page: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(film: Film)
+    suspend fun insert(film: Film)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFilms(films: List<Film>)
+    suspend fun insertFilms(films: List<Film>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(film: Film)
+    suspend fun update(film: Film)
 
     @Delete
-    fun delete(film: Film)
+    suspend fun delete(film: Film)
 }

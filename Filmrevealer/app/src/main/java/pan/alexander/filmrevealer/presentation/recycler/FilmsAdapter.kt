@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import pan.alexander.filmrevealer.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
+import pan.alexander.filmrevealer.utils.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.databinding.RecyclerItemFilmBinding
 import pan.alexander.filmrevealer.domain.entities.Film
+import pan.alexander.filmrevealer.utils.ALLOW_ADULT_CONTENT_PREFERENCE
 
 class FilmsAdapter(
     private val context: Context
@@ -34,40 +36,60 @@ class FilmsAdapter(
         ContextCompat.getDrawable(context, R.drawable.ic_outline_like_border_24)
     }
 
+    private val defaultSharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
+
     fun updateItems(films: List<Film>) {
 
+        val filmsToUpdate: List<Film> = if (isAdultContentAllowed()) {
+            films
+        } else {
+            films.filter { !it.adult }
+        }
+
         if (items.isNotEmpty()) {
-            for (i in films.indices) {
+            for (i in filmsToUpdate.indices) {
                 val existingItem = items.getOrNull(i)
                 when {
                     existingItem == null -> {
-                        items.add(i, films[i])
+                        items.add(i, filmsToUpdate[i])
                         notifyItemInserted(i)
                     }
-                    films[i] != existingItem -> {
-                        items[i] = films[i]
+                    filmsToUpdate[i] != existingItem -> {
+                        items[i] = filmsToUpdate[i]
                         notifyItemChanged(i)
                     }
                     else -> {
-                        items[i] = films[i]
+                        items[i] = filmsToUpdate[i]
                     }
                 }
             }
 
             val itemsSize = items.size
-            val filmsSize = films.size
+            val filmsSize = filmsToUpdate.size
+            val iterator = items.iterator()
             if (itemsSize > filmsSize) {
-                for (i in filmsSize until itemsSize) {
-                    items.removeAt(i)
-                    notifyItemRemoved(i)
-                }
+                var position = 0
+                do {
+                    iterator.next()
+                    if (position >= filmsSize) {
+                        iterator.remove()
+                        notifyItemRemoved(position)
+                    }
+                    position++
+                } while (iterator.hasNext())
             }
 
         } else {
-            items.addAll(films)
+            items.addAll(filmsToUpdate)
             notifyDataSetChanged()
         }
 
+    }
+
+    private fun isAdultContentAllowed(): Boolean {
+        return defaultSharedPreferences.getBoolean(ALLOW_ADULT_CONTENT_PREFERENCE, false)
     }
 
     fun updateLikedImdbIds(likedImdbIds: List<Int>) {

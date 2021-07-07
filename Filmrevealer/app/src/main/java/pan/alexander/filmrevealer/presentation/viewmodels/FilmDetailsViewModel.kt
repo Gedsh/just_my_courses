@@ -1,5 +1,7 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import pan.alexander.filmrevealer.presentation.Failure
 
 class FilmDetailsViewModel : BaseViewModel() {
@@ -8,12 +10,18 @@ class FilmDetailsViewModel : BaseViewModel() {
 
     fun getRatedFilmLiveData(filmId: Int) = mainInteractor.get().getRatedFilmById(filmId)
 
-    fun loadFilmDetails(filmId: Int) =
-        mainInteractor.get().loadFilmPreciseDetails(filmId) { message ->
-            mFailureLiveData.value = Failure.WithMessageAndAction(message) {
-                mainInteractor.get().loadFilmPreciseDetails(filmId) {
-                    mFailureLiveData.value = Failure.WithMessage(it)
+    fun loadFilmDetails(filmId: Int) = with(viewModelScope) {
+        launch {
+            mainInteractor.get().loadFilmPreciseDetails(filmId) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    launch {
+                        mainInteractor.get().loadFilmPreciseDetails(filmId) {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                    }
                 }
             }
         }
+    }
+
 }

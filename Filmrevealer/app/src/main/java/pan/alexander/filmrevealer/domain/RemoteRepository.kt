@@ -4,16 +4,20 @@ import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
 import pan.alexander.filmrevealer.data.web.pojo.GuestSession
 import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
-import retrofit2.Call
+import retrofit2.Response
 
 interface RemoteRepository {
-    fun loadNowPlayingFilms(page: Int): Call<FilmsPageJson>
-    fun loadUpcomingFilms(page: Int): Call<FilmsPageJson>
-    fun loadTopRatedFilms(page: Int): Call<FilmsPageJson>
-    fun loadPopularFilms(page: Int): Call<FilmsPageJson>
-    fun loadFilmPreciseDetails(movieId: Int): Call<FilmPreciseDetailsJson>
+    suspend fun loadNowPlayingFilms(page: Int): Response<FilmsPageJson>
+    suspend fun loadUpcomingFilms(page: Int): Response<FilmsPageJson>
+    suspend fun loadTopRatedFilms(page: Int): Response<FilmsPageJson>
+    suspend fun loadPopularFilms(page: Int): Response<FilmsPageJson>
+    suspend fun loadFilmPreciseDetails(movieId: Int): Response<FilmPreciseDetailsJson>
 
-    fun createGuestSession(): Call<GuestSession>
-    fun getUserRatedFilms(guestSessionId: String): Call<FilmsPageJson>
-    fun rateFilm(movieId: Int, rate: Float, guestSessionId: String): Call<ServerResponse>
+    suspend fun createGuestSession(): Response<GuestSession>
+    suspend fun getUserRatedFilms(guestSessionId: String): Response<FilmsPageJson>
+    suspend fun rateFilm(
+        movieId: Int,
+        rate: Float,
+        guestSessionId: String
+    ): Response<ServerResponse>
 }

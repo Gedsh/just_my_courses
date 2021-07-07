@@ -1,6 +1,7 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.Failure
@@ -13,7 +14,7 @@ open class BaseViewModel : ViewModel(), LifecycleObserver {
     protected val mFailureLiveData by lazy { MutableLiveData<Any>() }
     val failureLiveData: LiveData<Any> = mFailureLiveData
 
-    fun toggleFilmLike(film: Film) {
+    fun toggleFilmLike(film: Film) = viewModelScope.launch {
         mainInteractor.get().toggleLike(film)
     }
 
