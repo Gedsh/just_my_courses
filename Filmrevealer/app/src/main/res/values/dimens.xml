@@ -8,6 +8,8 @@
     <dimen name="recycle_item_year_margin_start">8dp</dimen>
     <dimen name="recycle_item_year_margin_bottom">8dp</dimen>
     <dimen name="recycle_item_rating_margin_end">8dp</dimen>
+    <dimen name="recycle_item_like_margins">8dp</dimen>
+    <dimen name="recycle_item_like_size">30dp</dimen>
     <dimen name="recycle_item_card_width">120dp</dimen>
     <dimen name="recycle_item_card_height">210dp</dimen>
     <dimen name="fragment_titles_margins">8dp</dimen>

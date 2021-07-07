@@ -9,13 +9,19 @@ interface FilmDao {
     @Query("SELECT * FROM Film WHERE section = :section ORDER BY page")
     fun getFilmsForSection(section: Int): LiveData<List<Film>>
 
+    @Query("SELECT * FROM Film WHERE section = :section ORDER BY id DESC")
+    fun getFilmsForSectionOrderByAdding(section: Int): LiveData<List<Film>>
+
     @Query("SELECT * FROM Film WHERE section = :ratingSection AND movie_id = :movieId")
     fun getRatedFilmById(movieId: Int, ratingSection: Int): LiveData<List<Film>>
 
-    @Query("SELECT * FROM Film WHERE is_liked = 1")
-    fun getLikedFilms(): LiveData<List<Film>>
+    @Query("SELECT * FROM Film WHERE section = :likedSection AND movie_id = :movieId")
+    fun getLikedFilmById(movieId: Int, likedSection: Int): Film?
 
-    @Query("DELETE FROM Film WHERE section = :section AND page = :page AND is_liked = 0")
+    @Query("SELECT movie_id FROM Film WHERE section = :likedSection")
+    fun getLikedImdbIds(likedSection: Int): LiveData<List<Int>>
+
+    @Query("DELETE FROM Film WHERE section = :section AND page = :page")
     fun deleteAllFilmsFromSection(section: Int, page: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

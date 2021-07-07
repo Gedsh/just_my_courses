@@ -1,10 +1,6 @@
 package pan.alexander.filmrevealer.data.web
 
-import com.google.gson.JsonObject
-import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
-import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
-import pan.alexander.filmrevealer.data.web.pojo.GuestSession
-import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
+import pan.alexander.filmrevealer.data.web.pojo.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -53,7 +49,7 @@ interface FilmsApiService {
         @Query("api_key") apiKey: String
     ): Call<GuestSession>
 
-    @GET("3/guest_session/{guest_session_id}/rated/movies?sort_by=created_at.desc")
+    @GET("3/guest_session/{guest_session_id}/rated/movies?sort_by=created_at.asc")
     fun getRatedByUser(
         @Path("guest_session_id") guestSessionId: String,
         @Query("api_key") apiKey: String,
@@ -64,7 +60,7 @@ interface FilmsApiService {
     @POST("3/movie/{movie_id}/rating")
     fun rateFilm(
         @Path("movie_id") movieId: Int,
-        @Body body: JsonObject,
+        @Body body: RateBody,
         @Query("api_key") apiKey: String,
         @Query("guest_session_id") guestSessionId: String,
     ): Call<ServerResponse>

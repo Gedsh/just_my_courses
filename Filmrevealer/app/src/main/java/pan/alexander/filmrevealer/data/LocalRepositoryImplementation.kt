@@ -1,5 +1,6 @@
 package pan.alexander.filmrevealer.data
 
+import androidx.lifecycle.LiveData
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.domain.LocalRepository
 import pan.alexander.filmrevealer.domain.entities.Film
@@ -19,9 +20,10 @@ class LocalRepositoryImplementation : LocalRepository {
     override fun getPopularFilms() = filmDao.get().getFilmsForSection(Film.Section.POPULAR.value)
 
     override fun getUserRatedFilms() =
-        filmDao.get().getFilmsForSection(Film.Section.USER_RATED.value)
+        filmDao.get().getFilmsForSectionOrderByAdding(Film.Section.USER_RATED.value)
 
-    override fun getLikedFilms() = filmDao.get().getLikedFilms()
+    override fun getLikedFilms() =
+        filmDao.get().getFilmsForSectionOrderByAdding(Film.Section.LIKED.value)
 
     override fun addFilm(film: Film) = filmDao.get().insert(film)
 
@@ -44,6 +46,8 @@ class LocalRepositoryImplementation : LocalRepository {
 
     override fun updateFilm(film: Film) = filmDao.get().update(film)
 
+    override fun deleteFilm(film: Film) = filmDao.get().delete(film)
+
     override fun getFilmDetailsById(id: Int) = filmDetailsDao.get().getFilmDetailsById(id)
 
     override fun addFilmDetails(filmDetails: FilmDetails) =
@@ -57,4 +61,10 @@ class LocalRepositoryImplementation : LocalRepository {
 
     override fun getRatedFilmById(movieId: Int) =
         filmDao.get().getRatedFilmById(movieId, Film.Section.USER_RATED.value)
+
+    override fun getLikedFilmById(movieId: Int) =
+        filmDao.get().getLikedFilmById(movieId, Film.Section.LIKED.value)
+
+    override fun getLikedImdbIds(): LiveData<List<Int>> =
+        filmDao.get().getLikedImdbIds(Film.Section.LIKED.value)
 }

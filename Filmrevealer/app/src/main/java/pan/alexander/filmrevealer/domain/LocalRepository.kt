@@ -1,8 +1,6 @@
 package pan.alexander.filmrevealer.domain
 
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.flow.Flow
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
 
@@ -21,6 +19,7 @@ interface LocalRepository {
     fun deletePopularFilms(page: Int)
     fun deleteUserRatedFilms(page: Int)
     fun updateFilm(film: Film)
+    fun deleteFilm(film: Film)
 
     fun getFilmDetailsById(id: Int): LiveData<List<FilmDetails>>
     fun addFilmDetails(filmDetails: FilmDetails)
@@ -28,4 +27,6 @@ interface LocalRepository {
     fun deleteFilmsDetailsOlderTimestamp(timestamp: Long)
 
     fun getRatedFilmById(movieId: Int): LiveData<List<Film>>
+    fun getLikedFilmById(movieId: Int): Film?
+    fun getLikedImdbIds(): LiveData<List<Int>>
 }

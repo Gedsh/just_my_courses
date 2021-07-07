@@ -2,13 +2,9 @@ package pan.alexander.filmrevealer.data
 
 import android.os.Build
 import android.util.Base64
-import com.google.gson.JsonObject
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.BuildConfig
-import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
-import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
-import pan.alexander.filmrevealer.data.web.pojo.GuestSession
-import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
+import pan.alexander.filmrevealer.data.web.pojo.*
 import pan.alexander.filmrevealer.domain.RemoteRepository
 import retrofit2.Call
 
@@ -88,7 +84,7 @@ class RemoteRepositoryImplementation : RemoteRepository {
     override fun rateFilm(movieId: Int, rate: Float, guestSessionId: String): Call<ServerResponse> {
         return api.get().rateFilm(
             movieId = movieId,
-            body = JsonObject().apply { addProperty("value", rate) },
+            body = RateBody(rate),
             apiKey = key,
             guestSessionId = guestSessionId
         )

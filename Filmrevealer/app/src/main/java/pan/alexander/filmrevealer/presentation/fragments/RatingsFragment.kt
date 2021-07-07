@@ -6,24 +6,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pan.alexander.filmrevealer.*
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.databinding.FragmentRatingsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
-import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.RatingsViewModel
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
-import pan.alexander.filmrevealer.utils.Utils
 
-class RatingsFragment : Fragment() {
+class RatingsFragment : FilmsBaseFragment() {
 
     private val viewModel by lazy { ViewModelProvider(this).get(RatingsViewModel::class.java) }
     private var _binding: FragmentRatingsBinding? = null
@@ -42,13 +37,6 @@ class RatingsFragment : Fragment() {
                 Film.Section.POPULAR -> viewModel.updatePopularFilms(page)
                 else -> Log.e(LOG_TAG, "Section $section is not supported in RatingsFragment")
             }
-        }
-    }
-
-    private val onFilmClickListener by lazy {
-        fun(view: View?, film: Film) {
-            val bundle = bundleOf(FilmDetailsFragment.BUNDLE_EXTRA to film)
-            view?.findNavController()?.navigate(R.id.navigation_to_film_details, bundle)
         }
     }
 
@@ -76,10 +64,12 @@ class RatingsFragment : Fragment() {
 
     private fun initTopRatedFilmsRecycler() = with(binding) {
         recyclerViewTopRated.setHasFixedSize(true)
-        topRatedFilmsAdapter = context?.let { FilmsAdapter(it) }
-        topRatedFilmsAdapter?.setHasStableIds(true)
-        topRatedFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
-        topRatedFilmsAdapter?.onFilmClickListener = onFilmClickListener
+        topRatedFilmsAdapter = context?.let { FilmsAdapter(it) }?.also {
+            it.setHasStableIds(true)
+            it.onDataRequiredListener = onDataRequiredListener
+            it.onFilmClickListener = onFilmClickListener
+            it.onLikeClickListener = onLikeClickListener
+        }
         recyclerViewTopRated.adapter = topRatedFilmsAdapter
 
         val layoutManager = recyclerViewTopRated.layoutManager as? LinearLayoutManager
@@ -98,10 +88,12 @@ class RatingsFragment : Fragment() {
 
     private fun initPopularFilmsRecycler() = with(binding) {
         recyclerViewPopular.setHasFixedSize(true)
-        popularFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-        popularFilmsAdapter?.setHasStableIds(true)
-        popularFilmsAdapter?.onDataRequiredListener = onDataRequiredListener
-        popularFilmsAdapter?.onFilmClickListener = onFilmClickListener
+        popularFilmsAdapter = context?.let { FilmsAdapter(it) }?.also {
+            it.setHasStableIds(true)
+            it.onDataRequiredListener = onDataRequiredListener
+            it.onFilmClickListener = onFilmClickListener
+            it.onLikeClickListener = onLikeClickListener
+        }
         recyclerViewPopular.adapter = popularFilmsAdapter
 
         val layoutManager = recyclerViewPopular.layoutManager as? LinearLayoutManager
@@ -125,23 +117,21 @@ class RatingsFragment : Fragment() {
 
         binding.recyclerViewTopRated.requestFocus()
 
+        observeLikedFilmsImdbIds()
+
         observeTopRatedFilms()
 
         observePopularFilms()
 
-        observeLoadingFailure()
+        observeLoadingFailure(viewModel, binding.root)
 
         observeInternetConnectionAvailable()
     }
 
-    private fun observeInternetConnectionAvailable() {
-        context?.let {
-            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
-                if (connected) {
-                    viewModel.listOfTopRatedFilmsLiveData.value?.let { updateTopRatedFilms(it) }
-                    viewModel.listOfPopularFilmsLiveData.value?.let { updatePopularFilms(it) }
-                }
-            }
+    private fun observeLikedFilmsImdbIds() {
+        viewModel.listOfLikedImdbIdsLiveData.observe(viewLifecycleOwner) {
+            topRatedFilmsAdapter?.updateLikedImdbIds(it)
+            popularFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
@@ -203,31 +193,15 @@ class RatingsFragment : Fragment() {
         }
     }
 
-    private fun isUpdateRequired(filmTimestamp: Long): Boolean {
-        return (System.currentTimeMillis() - filmTimestamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
-    }
-
-    private fun observeLoadingFailure() {
-        viewModel.failureLiveData.observe(viewLifecycleOwner, { failure ->
-
-            context?.let { context ->
-                if (Utils.isInternetAvailable(context)) {
-                    when (failure) {
-                        is Failure.WithMessageAndAction ->
-                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                                binding.root.showSnackBar(message, R.string.retry, {
-                                    failure.block()
-                                })
-                            }
-
-                        is Failure.WithMessage ->
-                            failure.message.takeIf { it.isNotBlank() }?.let { message ->
-                                binding.root.showSnackBar(message)
-                            }
-                    }
+    private fun observeInternetConnectionAvailable() {
+        context?.let {
+            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+                if (connected) {
+                    viewModel.listOfTopRatedFilmsLiveData.value?.let { updateTopRatedFilms(it) }
+                    viewModel.listOfPopularFilmsLiveData.value?.let { updatePopularFilms(it) }
                 }
             }
-        })
+        }
     }
 
     override fun onDestroyView() {

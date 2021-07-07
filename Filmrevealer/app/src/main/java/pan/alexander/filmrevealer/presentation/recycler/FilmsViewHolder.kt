@@ -19,10 +19,42 @@ import pan.alexander.filmrevealer.domain.entities.Film
 class FilmsViewHolder(
     private val binding: RecyclerItemFilmBinding,
     private var onFilmClickListener: ((view: View?, film: Film) -> Unit)?,
-    private val films: List<Film>
+    private var onLikeClickListener: ((film: Film) -> Unit)?,
+    private val films: List<Film>,
+    private val likedImdbIds: List<Int>,
+    private val likedDrawable: Drawable?,
+    private val notLikedDrawable: Drawable?
 ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
     fun bind(context: Context, film: Film) = with(binding) {
 
+        setTitle(film)
+
+        setPoster(context, film)
+
+        setReleaseDate(film)
+
+        setVotes(film)
+
+        setLiked(film)
+    }
+
+    private fun setTitle(film: Film) = with(binding) {
+        textViewTitle.text = film.title
+    }
+
+    private fun setReleaseDate(film: Film) = with(binding) {
+        textViewYear.text = if (film.releaseDate.contains("-")) {
+            film.releaseDate.split("-").first()
+        } else {
+            film.releaseDate
+        }
+    }
+
+    private fun setVotes(film: Film) = with(binding) {
+        textViewVotes.text = String.format("%.1f", film.voteAverage)
+    }
+
+    private fun setPoster(context: Context, film: Film) = with(binding) {
         imageViewFilmPoster.scaleType = ImageView.ScaleType.CENTER
 
         Glide.with(context)
@@ -54,19 +86,24 @@ class FilmsViewHolder(
 
             })
             .into(imageViewFilmPoster)
+    }
 
-        textViewTitle.text = film.title
-        textViewYear.text = if (film.releaseDate.contains("-")) {
-            film.releaseDate.split("-").first()
+    private fun setLiked(film: Film) = with(binding) {
+        if (likedImdbIds.contains(film.movieId)) {
+            imageViewLike.setImageDrawable(likedDrawable)
         } else {
-            film.releaseDate
+            imageViewLike.setImageDrawable(notLikedDrawable)
         }
-        textViewVotes.text = String.format("%.1f", film.voteAverage)
     }
 
     override fun onClick(v: View?) {
         adapterPosition.takeIf { it >= 0 }?.let { itemPosition ->
-            onFilmClickListener?.let { it(v, films[itemPosition]) }
+            when (v?.id) {
+                R.id.imageViewLike -> onLikeClickListener?.let {
+                    it(films[itemPosition])
+                }
+                else -> onFilmClickListener?.let { it(v, films[itemPosition]) }
+            }
         }
 
     }
