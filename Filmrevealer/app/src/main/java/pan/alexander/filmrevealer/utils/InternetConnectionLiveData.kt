@@ -123,6 +123,6 @@ object InternetConnectionLiveData : LiveData<Boolean>() {
 
 
     private fun updateConnection() {
-        postValue(Utils.isInternetAvailable(App.instance))
+        postValue(ConnectionUtils.isInternetAvailable(App.instance))
     }
 }

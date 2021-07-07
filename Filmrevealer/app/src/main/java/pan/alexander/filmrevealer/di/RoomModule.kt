@@ -13,7 +13,6 @@ import javax.inject.Singleton
 class RoomModule(appContext: Application) {
     private val appDatabase = Room
         .databaseBuilder(appContext, AppDatabase::class.java, "main_database")
-        .allowMainThreadQueries()
         .fallbackToDestructiveMigration()
         .build()
 

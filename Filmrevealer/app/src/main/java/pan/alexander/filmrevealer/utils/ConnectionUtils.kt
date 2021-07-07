@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
-object Utils {
+object ConnectionUtils {
     @Suppress("deprecation")
     fun isInternetAvailable(context: Context): Boolean {
         var result = false

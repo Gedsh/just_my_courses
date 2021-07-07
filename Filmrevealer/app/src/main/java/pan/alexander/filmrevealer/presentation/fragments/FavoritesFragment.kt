@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
 import pan.alexander.filmrevealer.databinding.FragmentFavoritesBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
@@ -85,38 +86,36 @@ class FavoritesFragment : FilmsBaseFragment() {
     }
 
     private fun observeLikedFilmsImdbIds() {
-        viewModel.listOfLikedImdbIdsLiveData.observe(viewLifecycleOwner) {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
             likedFilmsAdapter?.updateLikedImdbIds(it)
             ratedFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
     private fun observeLikedFilms() {
-        viewModel.listOfLikedFilmsLiveData.observe(viewLifecycleOwner) { films ->
+        viewModel.listOfLikedFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner) { films ->
 
-            if (films.isNotEmpty() && binding.textViewLiked.visibility == View.GONE) {
-                binding.textViewLiked.visibility = View.VISIBLE
-                binding.recyclerViewLiked.visibility = View.VISIBLE
-            } else if (films.isEmpty() && binding.textViewLiked.visibility == View.VISIBLE) {
-                binding.textViewLiked.visibility = View.GONE
-                binding.recyclerViewLiked.visibility = View.GONE
+                if (films.isNotEmpty() && binding.textViewLiked.visibility == View.INVISIBLE) {
+                    binding.textViewLiked.visibility = View.VISIBLE
+                } else if (films.isEmpty() && binding.textViewLiked.visibility == View.VISIBLE) {
+                    binding.textViewLiked.visibility = View.INVISIBLE
+                }
+
+                likedFilmsAdapter?.updateItems(films)
             }
-
-            likedFilmsAdapter?.updateItems(films)
-        }
     }
 
     private fun observeRatedFilms() {
-        viewModel.listOfRatedFilmsLiveData.observe(viewLifecycleOwner) { films ->
-            if (films.isNotEmpty() && binding.textViewRated.visibility == View.GONE) {
-                binding.textViewRated.visibility = View.VISIBLE
-                binding.recyclerViewRated.visibility = View.VISIBLE
-            } else if (films.isEmpty() && binding.textViewRated.visibility == View.VISIBLE) {
-                binding.textViewRated.visibility = View.GONE
-                binding.recyclerViewRated.visibility = View.GONE
+        viewModel.listOfRatedFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner) { films ->
+                if (films.isNotEmpty() && binding.textViewRated.visibility == View.INVISIBLE) {
+                    binding.textViewRated.visibility = View.VISIBLE
+                } else if (films.isEmpty() && binding.textViewRated.visibility == View.VISIBLE) {
+                    binding.textViewRated.visibility = View.INVISIBLE
+                }
+                updateRatedFilms(films)
             }
-            updateRatedFilms(films)
-        }
     }
 
     private fun updateRatedFilms(films: List<Film>) {

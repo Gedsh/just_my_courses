@@ -7,16 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import pan.alexander.filmrevealer.*
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.databinding.FragmentRatingsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.RatingsViewModel
+import pan.alexander.filmrevealer.utils.FIRST_PAGE_NUMBER
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.MINIMUM_SCROLL_DIFFERENCE
 
 class RatingsFragment : FilmsBaseFragment() {
 
@@ -129,16 +131,17 @@ class RatingsFragment : FilmsBaseFragment() {
     }
 
     private fun observeLikedFilmsImdbIds() {
-        viewModel.listOfLikedImdbIdsLiveData.observe(viewLifecycleOwner) {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
             topRatedFilmsAdapter?.updateLikedImdbIds(it)
             popularFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
     private fun observeTopRatedFilms() {
-        viewModel.listOfTopRatedFilmsLiveData.observe(viewLifecycleOwner, { films ->
-            updateTopRatedFilms(films)
-        })
+        viewModel.listOfTopRatedFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updateTopRatedFilms(films)
+            })
     }
 
     private fun updateTopRatedFilms(films: List<Film>) {
@@ -150,7 +153,7 @@ class RatingsFragment : FilmsBaseFragment() {
 
             val layoutManager = binding.recyclerViewTopRated.layoutManager as LinearLayoutManager
             val lastVisibleFilm =
-                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
 
             if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
                 viewModel.updateTopRatedFilms(lastVisibleFilm.page)
@@ -165,9 +168,10 @@ class RatingsFragment : FilmsBaseFragment() {
     }
 
     private fun observePopularFilms() {
-        viewModel.listOfPopularFilmsLiveData.observe(viewLifecycleOwner, { films ->
-            updatePopularFilms(films)
-        })
+        viewModel.listOfPopularFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updatePopularFilms(films)
+            })
     }
 
     private fun updatePopularFilms(films: List<Film>) {
@@ -179,7 +183,7 @@ class RatingsFragment : FilmsBaseFragment() {
 
             val layoutManager = binding.recyclerViewPopular.layoutManager as LinearLayoutManager
             val lastVisibleFilm =
-                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
 
             if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
                 viewModel.updatePopularFilms(lastVisibleFilm.page)

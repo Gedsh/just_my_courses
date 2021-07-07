@@ -10,11 +10,11 @@ interface FilmDetailsDao {
     fun getFilmDetailsById(id: Int): LiveData<List<FilmDetails>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFilmDetails(details: FilmDetails)
+    suspend fun insertFilmDetails(details: FilmDetails)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateFilmDetails(details: FilmDetails)
+    suspend fun updateFilmDetails(details: FilmDetails)
 
     @Query("DELETE FROM FilmDetails WHERE timestamp < :timestamp")
-    fun deleteFilmsDetailsOlderTimestamp(timestamp: Long)
+    suspend fun deleteFilmsDetailsOlderTimestamp(timestamp: Long)
 }

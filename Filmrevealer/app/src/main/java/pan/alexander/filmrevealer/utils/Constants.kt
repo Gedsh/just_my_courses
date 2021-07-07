@@ -1,4 +1,4 @@
-package pan.alexander.filmrevealer
+package pan.alexander.filmrevealer.utils
 
 const val FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS = 5 * 60 * 1000
 const val FIRST_PAGE_NUMBER = 1

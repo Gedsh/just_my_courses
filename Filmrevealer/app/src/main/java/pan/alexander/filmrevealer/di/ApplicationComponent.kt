@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [RetrofitModule::class, RoomModule::class, RepositoryModule::class,
-        MainThreadHandler::class, DataStoreModule::class]
+        MainThreadHandler::class, DataStoreModule::class, CoroutinesModule::class]
 )
 interface ApplicationComponent {
     fun getFilmsApiService(): dagger.Lazy<FilmsApiService>

@@ -7,16 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import pan.alexander.filmrevealer.*
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.databinding.FragmentHomeBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.HomeViewModel
+import pan.alexander.filmrevealer.utils.FIRST_PAGE_NUMBER
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.MINIMUM_SCROLL_DIFFERENCE
 
 class HomeFragment : FilmsBaseFragment() {
 
@@ -130,16 +132,17 @@ class HomeFragment : FilmsBaseFragment() {
     }
 
     private fun observeLikedFilmsImdbIds() {
-        viewModel.listOfLikedImdbIdsLiveData.observe(viewLifecycleOwner) {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
             nowPlayingFilmsAdapter?.updateLikedImdbIds(it)
             upcomingFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
     private fun observeNowPlayingFilms() {
-        viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, { films ->
-            updateNowPlayingFilms(films)
-        })
+        viewModel.listOfNowPlayingFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updateNowPlayingFilms(films)
+            })
     }
 
     private fun updateNowPlayingFilms(films: List<Film>) {
@@ -151,7 +154,7 @@ class HomeFragment : FilmsBaseFragment() {
 
             val layoutManager = binding.recyclerViewNowPlaying.layoutManager as LinearLayoutManager
             val lastVisibleFilm =
-                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
 
             if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
                 viewModel.updateNowPlayingFilms(lastVisibleFilm.page)
@@ -166,9 +169,10 @@ class HomeFragment : FilmsBaseFragment() {
     }
 
     private fun observeUpcomingFilms() {
-        viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, { films ->
-            updateUpcomingFilms(films)
-        })
+        viewModel.listOfUpcomingFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updateUpcomingFilms(films)
+            })
     }
 
     private fun updateUpcomingFilms(films: List<Film>) {
@@ -180,7 +184,7 @@ class HomeFragment : FilmsBaseFragment() {
 
             val layoutManager = binding.recyclerViewUpcoming.layoutManager as LinearLayoutManager
             val lastVisibleFilm =
-                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films[0] }
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
 
             if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
                 viewModel.updateUpcomingFilms(lastVisibleFilm.page)

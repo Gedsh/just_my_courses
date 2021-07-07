@@ -1,20 +1,17 @@
 package pan.alexander.filmrevealer.domain
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
+import androidx.annotation.UiThread
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
-import pan.alexander.filmrevealer.FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
+import pan.alexander.filmrevealer.utils.FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.data.web.pojo.FilmPreciseDetailsJson
 import pan.alexander.filmrevealer.data.web.pojo.FilmsPageJson
-import pan.alexander.filmrevealer.data.web.pojo.ServerResponse
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.domain.entities.FilmDetails
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,11 +21,12 @@ private const val DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS = 3000L
 class MainInteractor @Inject constructor(
     private val localRepository: LocalRepository,
     private val remoteRepository: RemoteRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val dispatcherIO: CoroutineDispatcher
 ) {
     private val handler = App.instance.daggerComponent.getMainHandler()
 
-    var loadingNowPlayingFilms = false
+    private var loadingNowPlayingFilms = false
         set(value) {
             if (value) {
                 field = value
@@ -39,7 +37,7 @@ class MainInteractor @Inject constructor(
                 )
             }
         }
-    var loadingUpcomingFilms = false
+    private var loadingUpcomingFilms = false
         set(value) {
             if (value) {
                 field = value
@@ -50,7 +48,7 @@ class MainInteractor @Inject constructor(
                 )
             }
         }
-    var loadingTopRatedFilms = false
+    private var loadingTopRatedFilms = false
         set(value) {
             if (value) {
                 field = value
@@ -61,19 +59,7 @@ class MainInteractor @Inject constructor(
                 )
             }
         }
-    var loadingPopularFilms = false
-        set(value) {
-            if (value) {
-                field = value
-            } else {
-                handler.get().postDelayed(
-                    { field = value },
-                    DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS
-                )
-            }
-        }
-
-    var loadingFilmsRatedByUser = false
+    private var loadingPopularFilms = false
         set(value) {
             if (value) {
                 field = value
@@ -85,7 +71,20 @@ class MainInteractor @Inject constructor(
             }
         }
 
-    fun loadNowPlayingFilms(page: Int, block: (error: String) -> Unit) {
+    private var loadingFilmsRatedByUser = false
+        set(value) {
+            if (value) {
+                field = value
+            } else {
+                handler.get().postDelayed(
+                    { field = value },
+                    DELAY_BEFORE_ALLOWING_NEW_REQUEST_MILLISECONDS
+                )
+            }
+        }
+
+    @UiThread
+    suspend fun loadNowPlayingFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingNowPlayingFilms) {
             return
@@ -93,33 +92,41 @@ class MainInteractor @Inject constructor(
 
         loadingNowPlayingFilms = true
 
-        remoteRepository.loadNowPlayingFilms(page).enqueue(object : Callback<FilmsPageJson> {
-            override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
+        try {
+            kotlin.runCatching {
+                remoteRepository.loadNowPlayingFilms(page)
+            }.onSuccess { response ->
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
                         updateNowPlayingFilms(filmsPage)
                     }
+                } else {
+                    response.errorBody()?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_now_playing_films_failure)
+                                    + ": " + message
+                        )
+                    }
                 }
-                loadingNowPlayingFilms = false
-            }
 
-            override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
-                loadingNowPlayingFilms = false
-
-                t.message?.let { message ->
+            }.onFailure {
+                it.message?.let { message ->
                     block(
                         App.instance.getString(R.string.load_now_playing_films_failure)
                                 + ": " + message
                     )
                 }
 
-                Log.e(LOG_TAG, "Load Now Playing Films failure.", t)
+                Log.e(LOG_TAG, "Load Now Playing Films failure.", it)
             }
-        })
+
+        } finally {
+            loadingNowPlayingFilms = false
+        }
 
     }
 
-    private fun updateNowPlayingFilms(filmsPage: FilmsPageJson) {
+    private suspend fun updateNowPlayingFilms(filmsPage: FilmsPageJson) {
         val results = filmsPage.results
         if (results.isNotEmpty()) {
             val films = mutableListOf<Film>()
@@ -140,7 +147,8 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun loadUpcomingFilms(page: Int, block: (error: String) -> Unit) {
+    @UiThread
+    suspend fun loadUpcomingFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingUpcomingFilms) {
             return
@@ -148,32 +156,39 @@ class MainInteractor @Inject constructor(
 
         loadingUpcomingFilms = true
 
-        remoteRepository.loadUpcomingFilms(page).enqueue(object : Callback<FilmsPageJson> {
-            override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
+        try {
+            kotlin.runCatching {
+                remoteRepository.loadUpcomingFilms(page)
+            }.onSuccess { response ->
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
                         updateUpcomingFilms(filmsPage)
                     }
+                } else {
+                    response.errorBody()?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_upcoming_films_failure)
+                                    + ": " + message
+                        )
+                    }
                 }
-                loadingUpcomingFilms = false
-            }
 
-            override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
-                loadingUpcomingFilms = false
-                t.message?.let { message ->
+            }.onFailure {
+                it.message?.let { message ->
                     block(
                         App.instance.getString(R.string.load_upcoming_films_failure)
                                 + ": " + message
                     )
                 }
-                Log.e(LOG_TAG, "Load Upcoming Films failure.", t)
+                Log.e(LOG_TAG, "Load Upcoming Films failure.", it)
             }
-        })
-
+        } finally {
+            loadingUpcomingFilms = false
+        }
 
     }
 
-    private fun updateUpcomingFilms(filmsPage: FilmsPageJson) {
+    private suspend fun updateUpcomingFilms(filmsPage: FilmsPageJson) {
         val results = filmsPage.results
         if (results.isNotEmpty()) {
             val films = mutableListOf<Film>()
@@ -193,7 +208,8 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun loadTopRatedFilms(page: Int, block: (error: String) -> Unit) {
+    @UiThread
+    suspend fun loadTopRatedFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingTopRatedFilms) {
             return
@@ -201,31 +217,39 @@ class MainInteractor @Inject constructor(
 
         loadingTopRatedFilms = true
 
-        remoteRepository.loadTopRatedFilms(page).enqueue(object : Callback<FilmsPageJson> {
-            override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
+        try {
+            kotlin.runCatching {
+                remoteRepository.loadTopRatedFilms(page)
+            }.onSuccess { response ->
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
                         updateToRatedFilms(filmsPage)
                     }
+                } else {
+                    response.errorBody()?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_top_rated_films_failure)
+                                    + ": " + message
+                        )
+                    }
                 }
-                loadingTopRatedFilms = false
-            }
 
-            override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
-                loadingTopRatedFilms = false
-                t.message?.let { message ->
+            }.onFailure {
+                it.message?.let { message ->
                     block(
                         App.instance.getString(R.string.load_top_rated_films_failure)
                                 + ": " + message
                     )
                 }
-                Log.e(LOG_TAG, "Load Top Rated Films failure.", t)
+                Log.e(LOG_TAG, "Load Top Rated Films failure.", it)
             }
+        } finally {
+            loadingTopRatedFilms = false
+        }
 
-        })
     }
 
-    private fun updateToRatedFilms(filmsPage: FilmsPageJson) {
+    private suspend fun updateToRatedFilms(filmsPage: FilmsPageJson) {
         val results = filmsPage.results
         if (results.isNotEmpty()) {
             val films = mutableListOf<Film>()
@@ -245,7 +269,8 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun loadPopularFilms(page: Int, block: (error: String) -> Unit) {
+    @UiThread
+    suspend fun loadPopularFilms(page: Int, block: (error: String) -> Unit) {
 
         if (loadingPopularFilms) {
             return
@@ -253,31 +278,38 @@ class MainInteractor @Inject constructor(
 
         loadingPopularFilms = true
 
-        remoteRepository.loadPopularFilms(page).enqueue(object : Callback<FilmsPageJson> {
-            override fun onResponse(call: Call<FilmsPageJson>, response: Response<FilmsPageJson>) {
+        try {
+            kotlin.runCatching {
+                remoteRepository.loadPopularFilms(page)
+            }.onSuccess { response ->
                 if (response.isSuccessful) {
                     response.body()?.let { filmsPage ->
                         updatePopularFilms(filmsPage)
                     }
+                } else {
+                    response.errorBody()?.let { message ->
+                        block(
+                            App.instance.getString(R.string.load_popular_films_failure)
+                                    + ": " + message
+                        )
+                    }
                 }
-                loadingPopularFilms = false
-            }
-
-            override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
-                loadingPopularFilms = false
-                t.message?.let { message ->
+            }.onFailure {
+                it.message?.let { message ->
                     block(
                         App.instance.getString(R.string.load_popular_films_failure)
                                 + ": " + message
                     )
                 }
-                Log.e(LOG_TAG, "Load Popular Films failure.", t)
+                Log.e(LOG_TAG, "Load Popular Films failure.", it)
             }
+        } finally {
+            loadingPopularFilms = false
+        }
 
-        })
     }
 
-    private fun updatePopularFilms(filmsPage: FilmsPageJson) {
+    private suspend fun updatePopularFilms(filmsPage: FilmsPageJson) {
         val results = filmsPage.results
         if (results.isNotEmpty()) {
             val films = mutableListOf<Film>()
@@ -298,34 +330,35 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun loadFilmPreciseDetails(movieId: Int, block: (error: String) -> Unit) {
-        remoteRepository.loadFilmPreciseDetails(movieId)
-            .enqueue(object : Callback<FilmPreciseDetailsJson> {
-                override fun onResponse(
-                    call: Call<FilmPreciseDetailsJson>,
-                    response: Response<FilmPreciseDetailsJson>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { details ->
-                            updateFilmPreciseDetails(movieId, details)
-                        }
-                    }
-                }
+    suspend fun loadFilmPreciseDetails(movieId: Int, block: suspend (error: String) -> Unit) {
 
-                override fun onFailure(call: Call<FilmPreciseDetailsJson>, t: Throwable) {
-                    t.message?.let { message ->
-                        block(
-                            App.instance.getString(R.string.load_film_details_failure)
-                                    + ": " + message
-                        )
-                    }
-                    Log.e(LOG_TAG, "Load Film precise details failure.", t)
+        kotlin.runCatching {
+            remoteRepository.loadFilmPreciseDetails(movieId)
+        }.onSuccess { response ->
+            if (response.isSuccessful) {
+                response.body()?.let { details ->
+                    updateFilmPreciseDetails(movieId, details)
                 }
-
-            })
+            } else {
+                response.errorBody()?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_film_details_failure)
+                                + ": " + message
+                    )
+                }
+            }
+        }.onFailure {
+            it.message?.let { message ->
+                block(
+                    App.instance.getString(R.string.load_film_details_failure)
+                            + ": " + message
+                )
+            }
+            Log.e(LOG_TAG, "Load Film precise details failure.", it)
+        }
     }
 
-    private fun updateFilmPreciseDetails(movieId: Int, details: FilmPreciseDetailsJson) {
+    private suspend fun updateFilmPreciseDetails(movieId: Int, details: FilmPreciseDetailsJson) {
         if (localRepository.getFilmDetailsById(movieId).value.isNullOrEmpty()) {
             localRepository.addFilmDetails(FilmDetails(details))
         } else {
@@ -333,9 +366,9 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    suspend fun createGuestSession(block: (error: String) -> Unit) = withContext(Dispatchers.IO) {
+    suspend fun createGuestSession(block: (error: String) -> Unit) = withContext(dispatcherIO) {
         kotlin.runCatching {
-            remoteRepository.createGuestSession().execute()
+            remoteRepository.createGuestSession()
         }.onSuccess { response ->
             if (response.isSuccessful) {
                 response.body()?.let { session ->
@@ -353,7 +386,8 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun loadUserRatedFilms(guestSessionId: String, block: (error: String) -> Unit) {
+    @UiThread
+    suspend fun loadUserRatedFilms(guestSessionId: String, block: (error: String) -> Unit) {
 
         if (loadingFilmsRatedByUser) {
             return
@@ -361,35 +395,39 @@ class MainInteractor @Inject constructor(
 
         loadingFilmsRatedByUser = true
 
-        remoteRepository.getUserRatedFilms(guestSessionId)
-            .enqueue(object : Callback<FilmsPageJson> {
-                override fun onResponse(
-                    call: Call<FilmsPageJson>,
-                    response: Response<FilmsPageJson>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filmsPage ->
-                            updateUserRatedFilms(filmsPage)
-                        }
+        try {
+            kotlin.runCatching {
+                remoteRepository.getUserRatedFilms(guestSessionId)
+            }.onSuccess { response ->
+                if (response.isSuccessful) {
+                    response.body()?.let { filmsPage ->
+                        updateUserRatedFilms(filmsPage)
                     }
-                    loadingFilmsRatedByUser = false
-                }
-
-                override fun onFailure(call: Call<FilmsPageJson>, t: Throwable) {
-                    loadingFilmsRatedByUser = false
-                    t.message?.let { message ->
+                } else {
+                    response.errorBody()?.let { message ->
                         block(
                             App.instance.getString(R.string.load_film_rated_by_user_failure)
                                     + ": " + message
                         )
                     }
-                    Log.e(LOG_TAG, "Load films rated by user failure.", t)
                 }
 
-            })
+            }.onFailure {
+                it.message?.let { message ->
+                    block(
+                        App.instance.getString(R.string.load_film_rated_by_user_failure)
+                                + ": " + message
+                    )
+                }
+                Log.e(LOG_TAG, "Load films rated by user failure.", it)
+            }
+        } finally {
+            loadingFilmsRatedByUser = false
+        }
+
     }
 
-    private fun updateUserRatedFilms(filmsPage: FilmsPageJson) {
+    private suspend fun updateUserRatedFilms(filmsPage: FilmsPageJson) {
         val results = filmsPage.results
         if (results.isNotEmpty()) {
             val films = mutableListOf<Film>()
@@ -409,34 +447,35 @@ class MainInteractor @Inject constructor(
         }
     }
 
-    fun rateFilm(
+    suspend fun rateFilm(
         film: Film,
         rate: Float,
         guestSessionId: String,
         block: (error: String) -> Unit
     ) {
-        remoteRepository.rateFilm(film.movieId, rate, guestSessionId)
-            .enqueue(object : Callback<ServerResponse> {
-                override fun onResponse(
-                    call: Call<ServerResponse>,
-                    response: Response<ServerResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        localRepository.addFilm(film)
-                    }
-                }
 
-                override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
-                    t.message?.let { message ->
-                        block(
-                            App.instance.getString(R.string.rate_film_failure)
-                                    + ": " + message
-                        )
-                    }
-                    Log.e(LOG_TAG, "Failed to rate the film.", t)
+        kotlin.runCatching {
+            remoteRepository.rateFilm(film.movieId, rate, guestSessionId)
+        }.onSuccess { response ->
+            if (response.isSuccessful) {
+                localRepository.addFilm(film)
+            } else {
+                response.errorBody()?.let { message ->
+                    block(
+                        App.instance.getString(R.string.rate_film_failure)
+                                + ": " + message
+                    )
                 }
-
-            })
+            }
+        }.onFailure {
+            it.message?.let { message ->
+                block(
+                    App.instance.getString(R.string.rate_film_failure)
+                            + ": " + message
+                )
+            }
+            Log.e(LOG_TAG, "Failed to rate the film.", it)
+        }
     }
 
     fun getNowPlayingFilms() = localRepository.getNowPlayingFilms()
@@ -447,7 +486,7 @@ class MainInteractor @Inject constructor(
 
     fun getPopularFilms() = localRepository.getPopularFilms()
 
-    suspend fun getUserGuestSessionId() = withContext(Dispatchers.IO) {
+    suspend fun getUserGuestSessionId() = withContext(dispatcherIO) {
         preferencesRepository.getGuestSessionId()
     }
 
@@ -459,7 +498,7 @@ class MainInteractor @Inject constructor(
 
     fun getLikedImdbIds() = localRepository.getLikedImdbIds()
 
-    fun toggleLike(film: Film) {
+    suspend fun toggleLike(film: Film) {
         val likedFilm = localRepository.getLikedFilmById(film.movieId)
         if (likedFilm == null) {
             localRepository.addFilm(
@@ -477,7 +516,7 @@ class MainInteractor @Inject constructor(
 
     fun getFilmDetailsById(id: Int) = localRepository.getFilmDetailsById(id)
 
-    fun deleteOldFilmDetails() =
+    suspend fun deleteOldFilmDetails() =
         localRepository.deleteFilmsDetailsOlderTimestamp(
             System.currentTimeMillis() - FILM_DETAILS_EXPIRE_PERIOD_MILLISECONDS
         )

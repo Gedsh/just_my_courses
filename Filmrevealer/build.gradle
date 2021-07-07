@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.kotlin_version = '1.5.20'
     ext {
         kotlin_version = "1.5.20"
         retrofit_version = "2.9.0"
@@ -7,10 +8,12 @@ buildscript {
         vector_drowable = "1.1.0"
         navigation_version = "2.3.5"
         room_version = "2.4.0-alpha03"
+        room_ktx = "2.3.0"
         glide_version = "4.12.0"
         okhttp_version = "4.2.1"
         multidex_version = "2.0.1"
         datastore_preferences = "1.0.0-rc01"
+        preference_ktx = "1.1.1"
     }
     repositories {
         google()
