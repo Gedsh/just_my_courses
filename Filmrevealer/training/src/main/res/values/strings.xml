@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Training</string>
+    <string name="title_contacts">Contacts</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="access_to_contacts_dialog_title">Access to contacts</string>
+    <string name="access_to_contacts_rationale_dialog_message">Allow access to contacts to display them on screen?</string>
+    <string name="access_to_contacts_missing_dialog_message">The screen will remain blank as retrieving contacts is not allowed</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="close">Close</string>
+</resources>
