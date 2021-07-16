@@ -30,12 +30,13 @@ class ContactsViewHolder(
             adapterPosition.takeIf { it >= 0 }?.let { position ->
                 contacts[position].phoneNumbers.takeIf { it.isNotEmpty() }
             }?.let { numbers ->
-                Intent(
-                    Intent.ACTION_DIAL,
-                    Uri.fromParts("tel", numbers.first(), null)
-                ).let {
-                    context.startActivity(it)
+                val intent by lazy {
+                    Intent(
+                        Intent.ACTION_DIAL,
+                        Uri.fromParts("tel", numbers.first(), null)
+                    )
                 }
+                context.startActivity(intent)
             }
         }
     }

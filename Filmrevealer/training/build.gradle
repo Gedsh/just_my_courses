@@ -7,6 +7,9 @@ plugins {
 def keystorePropertiesFile = file("../../../../.local/KStore/keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def gmapsPropertiesFile = file("../../../../.local/KStore/gmaps_key.properties")
+def gmapsProperties = new Properties()
+gmapsProperties.load(new FileInputStream(gmapsPropertiesFile))
 
 android {
     compileSdkVersion 30
@@ -29,6 +32,8 @@ android {
         versionName "1.0"
 
         vectorDrawables.useSupportLibrary = true
+
+        manifestPlaceholders = [ gmapsApiKey:gmapsProperties["key"]]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -74,6 +79,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "com.google.dagger:dagger:$dagger_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

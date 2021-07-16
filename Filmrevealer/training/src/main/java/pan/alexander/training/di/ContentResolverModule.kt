@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ContentResolverModule(val context: Context) {
+class ContentResolverModule(private val context: Context) {
 
     @Provides
     fun provideContentResolver(): ContentResolver = context.contentResolver

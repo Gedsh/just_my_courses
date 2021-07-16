@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.fragments.MapsFragment">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".presentation.activities.MainActivity" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_current_location_label"
+        app:layout_constraintEnd_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationLAT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_location_lat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentLocationLON" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationLON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_location_lon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentLocationLabel" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_location_address"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewCurrentLocationAddressValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textViewCurrentLocationAddressValue" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationLonValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewCurrentLocationLON"
+        app:layout_constraintEnd_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintStart_toEndOf="@+id/textViewCurrentLocationLON"
+        app:layout_constraintTop_toTopOf="@+id/textViewCurrentLocationLON"
+        tools:text="10.20" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationLatValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewCurrentLocationLAT"
+        app:layout_constraintEnd_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintStart_toEndOf="@+id/textViewCurrentLocationLAT"
+        app:layout_constraintTop_toTopOf="@+id/textViewCurrentLocationLAT"
+        tools:text="20.30" />
+
+    <TextView
+        android:id="@+id/textViewCurrentLocationAddressValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintEnd_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintStart_toEndOf="@+id/textViewCurrentLocationAddress"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentLocationLAT"
+        tools:text="London" />
+
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_selected_location_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationLAT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:layout_marginTop="8dp"
+        android:text="@string/location_fragment_location_lat"
+        app:layout_constraintStart_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelectedLocationLON" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationLON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_location_lon"
+        app:layout_constraintStart_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelectedLocationLabel" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        android:text="@string/location_fragment_location_address"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewSelectedLocationAddressValue"
+        app:layout_constraintStart_toStartOf="@+id/VerticalGuideline"
+        app:layout_constraintTop_toTopOf="@+id/textViewSelectedLocationAddressValue" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationLonValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewSelectedLocationLON"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewSelectedLocationLON"
+        app:layout_constraintTop_toTopOf="@+id/textViewSelectedLocationLON"
+        tools:text="10.20" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationLatValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewSelectedLocationLAT"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewSelectedLocationLAT"
+        app:layout_constraintTop_toTopOf="@+id/textViewSelectedLocationLAT"
+        tools:text="20.30" />
+
+    <TextView
+        android:id="@+id/textViewSelectedLocationAddressValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/location_fragment_text_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewSelectedLocationAddress"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelectedLocationLAT"
+        tools:text="London" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupCurrentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="textViewCurrentLocationLabel,textViewCurrentLocationLAT,textViewCurrentLocationLON,textViewCurrentLocationAddress,textViewCurrentLocationLonValue,textViewCurrentLocationLatValue,textViewCurrentLocationAddressValue" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupSelectedLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="textViewSelectedLocationLabel,textViewSelectedLocationLAT,textViewSelectedLocationLON,textViewSelectedLocationAddress,textViewSelectedLocationLonValue,textViewSelectedLocationLatValue,textViewSelectedLocationAddressValue" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/VerticalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

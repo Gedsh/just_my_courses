@@ -11,7 +11,6 @@ import android.provider.ContactsContract
 import android.util.Log
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
-import pan.alexander.training.App
 import pan.alexander.training.App.Companion.LOG_TAG
 import pan.alexander.training.domain.entities.Contact
 import java.io.FileNotFoundException
@@ -19,14 +18,13 @@ import java.io.IOException
 import javax.inject.Inject
 
 class ContactsLiveData @Inject constructor(
+    private val dao: dagger.Lazy<ContactsDao>,
     private val contentResolver: ContentResolver,
     mainScope: CoroutineScope,
-    private val dispatcherIO: CoroutineDispatcher,
+    private val dispatcherIO: CoroutineDispatcher
 ) : LiveData<List<Contact>>() {
 
     private val liveDataScope = mainScope + CoroutineName("ContactsLiveData")
-
-    private var dao = App.instance.daggerComponent.getContactsDao()
 
     private val contentObserver = object : ContentObserver(null) {
         override fun onChange(selfChange: Boolean) {
@@ -97,7 +95,7 @@ class ContactsLiveData @Inject constructor(
                 while (it.moveToNext()) {
                     val id = it.getLong(idIndex)
                     val lookupKey = it.getString(lookupKeyIndex)
-                    val name = it.getString(nameIndex)
+                    val name = it.getString(nameIndex) ?: ""
                     val phoneNumbers = getNumbers(id.toString())
                     val photoUri = it.getString(photoIndex)
 

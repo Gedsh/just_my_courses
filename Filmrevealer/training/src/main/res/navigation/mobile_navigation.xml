@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_contacts" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="pan.alexander.training.presentation.fragments.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_maps"
+        android:name="pan.alexander.training.presentation.fragments.MapsFragment"
+        android:label="@string/title_maps"
+        tools:layout="@layout/fragment_maps" />
 
     <fragment
         android:id="@+id/navigation_notifications"

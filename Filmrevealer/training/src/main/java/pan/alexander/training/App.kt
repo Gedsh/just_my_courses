@@ -22,8 +22,9 @@ class App : Application() {
     private fun initDaggerComponent() {
         daggerComponent = DaggerApplicationComponent
             .builder()
-            .repositoryModule(RepositoryModule())
+            .contextModule(ContextModule(instance))
             .contentResolverModule(ContentResolverModule(instance))
+            .locationModule(LocationModule(instance))
             .build()
     }
 }
