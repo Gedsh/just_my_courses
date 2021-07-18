@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "906314097341",
+    "project_id": "rare-keep-319917",
+    "storage_bucket": "rare-keep-319917.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906314097341:android:b71580707f8c030586cdd4",
+        "android_client_info": {
+          "package_name": "pan.alexander.training"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906314097341-5tc86t8pq8bo8qsc45hnfoft1ltvaf63.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pan.alexander.training",
+            "certificate_hash": "b807dbb3025e3e4880ac0452b5521001fc6ee41c"
+          }
+        },
+        {
+          "client_id": "906314097341-c4msf9hn2entso2agpr7kq30pa9n935g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo3pv3e591N2E_f1STKDE5hhs6Um19raI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906314097341-c4msf9hn2entso2agpr7kq30pa9n935g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

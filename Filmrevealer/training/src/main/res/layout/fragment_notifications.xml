@@ -7,16 +7,28 @@
     tools:context=".presentation.fragments.NotificationsFragment">
 
     <TextView
-        android:id="@+id/text_notifications"
+        android:id="@+id/firebaseMessageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="@dimen/notifications_fragment_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/firebaseMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="@dimen/notifications_fragment_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/firebaseMessageTitle"
+        app:layout_constraintStart_toStartOf="@+id/firebaseMessageTitle"
+        app:layout_constraintTop_toBottomOf="@+id/firebaseMessageTitle"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="Message" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

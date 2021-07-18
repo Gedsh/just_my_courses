@@ -19,4 +19,6 @@
     <string name="location_fragment_location_lon">LON:</string>
     <string name="location_fragment_location_address">Address:</string>
     <string name="location_fragment_selected_location_label">Selected location</string>
+    <string name="firebase_channel_name">Firebase messages</string>
+    <string name="firebase_channel_description">It is required for receiving firebase messages</string>
 </resources>
