@@ -10,4 +10,5 @@
     <dimen name="recycle_item_call_image_margin">8dp</dimen>
     <dimen name="location_fragment_text_margin">8dp</dimen>
     <dimen name="notifications_fragment_text_size">20sp</dimen>
+    <dimen name="notifications_fragment_text_margin">8dp</dimen>
 </resources>

@@ -21,4 +21,8 @@
     <string name="location_fragment_selected_location_label">Selected location</string>
     <string name="firebase_channel_name">Firebase messages</string>
     <string name="firebase_channel_description">It is required for receiving firebase messages</string>
+    <string name="build_config_field">Build config field</string>
+    <string name="resource_field">Resource field</string>
+    <string name="flavor_field">Flavor</string>
+    <string name="class_field">Class field</string>
 </resources>

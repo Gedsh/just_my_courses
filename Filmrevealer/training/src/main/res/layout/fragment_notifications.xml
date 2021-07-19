@@ -28,7 +28,85 @@
         app:layout_constraintEnd_toEndOf="@+id/firebaseMessageTitle"
         app:layout_constraintStart_toStartOf="@+id/firebaseMessageTitle"
         app:layout_constraintTop_toBottomOf="@+id/firebaseMessageTitle"
-        app:layout_constraintVertical_bias="0.0"
         tools:text="Message" />
+
+    <TextView
+        android:id="@+id/textViewBuildConfigField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/build_config_field"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewBuildConfigFieldValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="DEBUG" />
+
+    <TextView
+        android:id="@+id/textViewResourceField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/resource_field"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewBuildConfigField" />
+
+    <TextView
+        android:id="@+id/textViewResourceFieldValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/resource_field_value"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewBuildConfigFieldValue" />
+
+    <TextView
+        android:id="@+id/textViewFlavorField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/flavor_field"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewResourceField" />
+
+    <TextView
+        android:id="@+id/textViewFlavorFieldValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/flavor_field_value"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewResourceFieldValue" />
+
+    <TextView
+        android:id="@+id/textViewClassField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        android:text="@string/class_field"
+        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFlavorField" />
+
+    <TextView
+        android:id="@+id/textViewClassFieldValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/notifications_fragment_text_margin"
+        app:layout_constraintStart_toStartOf="@+id/verticalGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFlavorFieldValue"
+        tools:text="MAIN" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/verticalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

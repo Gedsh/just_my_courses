@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import pan.alexander.training.BuildConfig
 import pan.alexander.training.databinding.FragmentNotificationsBinding
+import pan.alexander.training.utils.ClassField
 
 class NotificationsFragment : Fragment() {
 
@@ -49,6 +51,10 @@ class NotificationsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         registerFirebaseBroadcastReceiver()
+
+        setBuildConfigField()
+
+        setClassField()
     }
 
     private fun registerFirebaseBroadcastReceiver() {
@@ -56,6 +62,14 @@ class NotificationsFragment : Fragment() {
             LocalBroadcastManager.getInstance(it)
                 .registerReceiver(broadcastReceiver, IntentFilter(FIREBASE_ACTION))
         }
+    }
+
+    private fun setBuildConfigField() {
+        binding.textViewBuildConfigFieldValue.text = BuildConfig.TYPE
+    }
+
+    private fun setClassField() {
+        binding.textViewClassFieldValue.text = ClassField.field
     }
 
     override fun onDestroyView() {

@@ -3,13 +3,13 @@ buildscript {
     ext {
         kotlin_version = "1.5.21"
         retrofit_version = "2.9.0"
-        dagger_version = "2.36"
+        dagger_version = '2.37'
         vector_drowable = "1.1.0"
         navigation_version = "2.3.5"
         room_version = "2.4.0-alpha03"
         room_ktx = "2.3.0"
         glide_version = "4.12.0"
-        okhttp_version = "4.2.1"
+        okhttp_version = '5.0.0-alpha.2'
         multidex_version = "2.0.1"
         datastore_preferences = "1.0.0-rc01"
         preference_ktx = "1.1.1"
