@@ -1,8 +1,10 @@
 package pan.alexander.filmrevealer.data.web.pojo
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
-data class FilmDetails(
+@Keep
+data class FilmDetailsJson(
     @SerializedName("poster_path") val posterPath: String?,
     @SerializedName("adult") val adult: Boolean,
     @SerializedName("overview") val overview: String,
@@ -16,5 +18,6 @@ data class FilmDetails(
     @SerializedName("popularity") val popularity: Float,
     @SerializedName("vote_count") val voteCount: Int,
     @SerializedName("video") val video: Boolean,
-    @SerializedName("vote_average") val voteAverage: Float
+    @SerializedName("vote_average") val voteAverage: Float,
+    @SerializedName("rating") val rating: Int?
 )

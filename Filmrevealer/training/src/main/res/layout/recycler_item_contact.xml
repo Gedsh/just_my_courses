@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/recycle_item_card_corner_radius"
+        app:cardUseCompatPadding="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <QuickContactBadge
+                android:id="@+id/contactBadge"
+                android:layout_width="@dimen/recycle_item_badge_size"
+                android:layout_height="@dimen/recycle_item_badge_size"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/recycle_item_badge_margin"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/contactName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/recycle_item_text_margin"
+                android:layout_weight="1"
+                android:textSize="@dimen/recycle_item_text_size"
+                tools:text="Иванов Иванович" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewCall"
+                android:layout_width="@dimen/recycle_item_call_image_size"
+                android:layout_height="@dimen/recycle_item_call_image_size"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/recycle_item_call_image_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                app:srcCompat="@drawable/ic_baseline_call_24" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

@@ -8,6 +8,16 @@
     <dimen name="recycle_item_year_margin_start">8dp</dimen>
     <dimen name="recycle_item_year_margin_bottom">8dp</dimen>
     <dimen name="recycle_item_rating_margin_end">8dp</dimen>
-    <dimen name="recycle_item_poster_image_width">150dp</dimen>
+    <dimen name="recycle_item_like_margins">8dp</dimen>
+    <dimen name="recycle_item_like_size">30dp</dimen>
+    <dimen name="recycle_item_card_width">120dp</dimen>
+    <dimen name="recycle_item_card_height">210dp</dimen>
     <dimen name="fragment_titles_margins">8dp</dimen>
+    <dimen name="fragment_titles_text_size">18sp</dimen>
+    <dimen name="fragment_film_details_title_text_size">24sp</dimen>
+    <dimen name="fragment_film_details_original_title_text_size">18sp</dimen>
+    <dimen name="fragment_film_details_text_size">16sp</dimen>
+    <dimen name="fragment_film_details_text_margins">4dp</dimen>
+    <dimen name="fragment_film_details_vertical_guideline_guide_begin">150dp</dimen>
+    <dimen name="fragment_film_details_horizontal_guideline_guide_begin">270dp</dimen>
 </resources>

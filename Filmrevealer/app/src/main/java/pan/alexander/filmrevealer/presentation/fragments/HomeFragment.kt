@@ -1,71 +1,226 @@
 package pan.alexander.filmrevealer.presentation.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.databinding.FragmentHomeBinding
+import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
+import pan.alexander.filmrevealer.presentation.recycler.OnRecyclerScrolledListener
 import pan.alexander.filmrevealer.presentation.viewmodels.HomeViewModel
+import pan.alexander.filmrevealer.utils.FIRST_PAGE_NUMBER
+import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
+import pan.alexander.filmrevealer.utils.MINIMUM_SCROLL_DIFFERENCE
 
-class HomeFragment : Fragment() {
+class HomeFragment : FilmsBaseFragment() {
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel by lazy { ViewModelProvider(this).get(HomeViewModel::class.java) }
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var nowPlayingFilmsAdapter: FilmsAdapter
-    private lateinit var upcomingFilmsAdapter: FilmsAdapter
+    private var nowPlayingFilmsAdapter: FilmsAdapter? = null
+    private var upcomingFilmsAdapter: FilmsAdapter? = null
+
+    private var nowPlayingRecycleViewState: Parcelable? = null
+    private var upcomingRecycleViewState: Parcelable? = null
+
+    private val onDataRequiredListener by lazy {
+        fun(section: Film.Section, page: Int) {
+            when (section) {
+                Film.Section.NOW_PLAYING -> viewModel.updateNowPlayingFilms(page)
+                Film.Section.UPCOMING -> viewModel.updateUpcomingFilms(page)
+                else -> Log.e(LOG_TAG, "Section $section is not supported in HomeFragment")
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        initRecyclers()
+        initNowPlayingFilmsRecycler()
 
-        return root
+        initUpcomingFilmsRecycler()
+
+        nowPlayingRecycleViewState?.let {
+            binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(it)
+        }
+
+        upcomingRecycleViewState?.let {
+            binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(it)
+        }
+
+        return binding.root
     }
 
-    private fun initRecyclers() = with(binding) {
-        nowPlayingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
-
+    private fun initNowPlayingFilmsRecycler() = with(binding) {
+        recyclerViewNowPlaying.setHasFixedSize(true)
+        nowPlayingFilmsAdapter = context?.let { FilmsAdapter(it) }?.also {
+            it.setHasStableIds(true)
+            it.onDataRequiredListener = onDataRequiredListener
+            it.onFilmClickListener = onFilmClickListener
+            it.onLikeClickListener = onLikeClickListener
+        }
         recyclerViewNowPlaying.adapter = nowPlayingFilmsAdapter
 
-        upcomingFilmsAdapter = context?.let { FilmsAdapter(it) }!!
+        val layoutManager = recyclerViewNowPlaying.layoutManager as? LinearLayoutManager
+        val recyclerScrolledListener = nowPlayingFilmsAdapter as? OnRecyclerScrolledListener
+        recyclerViewNowPlaying.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dx > MINIMUM_SCROLL_DIFFERENCE) {
+                    layoutManager?.findLastVisibleItemPosition()?.let {
+                        recyclerScrolledListener?.onRecyclerScrolled(it)
+                    }
+                }
+            }
+        })
+    }
 
+    private fun initUpcomingFilmsRecycler() = with(binding) {
+        recyclerViewUpcoming.setHasFixedSize(true)
+        upcomingFilmsAdapter = context?.let { FilmsAdapter(it) }?.also {
+            it.setHasStableIds(true)
+            it.onDataRequiredListener = onDataRequiredListener
+            it.onFilmClickListener = onFilmClickListener
+            it.onLikeClickListener = onLikeClickListener
+        }
         recyclerViewUpcoming.adapter = upcomingFilmsAdapter
+
+        val layoutManager = recyclerViewUpcoming.layoutManager as? LinearLayoutManager
+        val recyclerScrolledListener = upcomingFilmsAdapter as? OnRecyclerScrolledListener
+        recyclerViewUpcoming.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dx > MINIMUM_SCROLL_DIFFERENCE) {
+                    layoutManager?.findLastVisibleItemPosition()?.let {
+                        recyclerScrolledListener?.onRecyclerScrolled(it)
+                    }
+                }
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.listOfNowPlayingFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                nowPlayingFilmsAdapter.updateItems(it)
-            }
-        })
+        lifecycle.addObserver(viewModel)
 
-        viewModel.listOfUpcomingFilmsLiveData.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                upcomingFilmsAdapter.updateItems(it)
-            }
-        })
+        binding.recyclerViewNowPlaying.requestFocus()
 
-        viewModel.updateNowPlayingFilms(1)
-        viewModel.updateUpcomingFilms(1)
+        observeLikedFilmsImdbIds()
+
+        observeNowPlayingFilms()
+
+        observeUpcomingFilms()
+
+        observeLoadingFailure(viewModel, binding.root)
+
+        observeInternetConnectionAvailable()
+    }
+
+    private fun observeLikedFilmsImdbIds() {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
+            nowPlayingFilmsAdapter?.updateLikedImdbIds(it)
+            upcomingFilmsAdapter?.updateLikedImdbIds(it)
+        }
+    }
+
+    private fun observeNowPlayingFilms() {
+        viewModel.listOfNowPlayingFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updateNowPlayingFilms(films)
+            })
+    }
+
+    private fun updateNowPlayingFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
+
+            nowPlayingFilmsAdapter?.updateItems(films)
+
+            val layoutManager = binding.recyclerViewNowPlaying.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
+
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updateNowPlayingFilms(lastVisibleFilm.page)
+            }
+
+            binding.recyclerViewNowPlaying.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updateNowPlayingFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun observeUpcomingFilms() {
+        viewModel.listOfUpcomingFilmsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner, { films ->
+                updateUpcomingFilms(films)
+            })
+    }
+
+    private fun updateUpcomingFilms(films: List<Film>) {
+        if (films.isNotEmpty()) {
+            val recycleViewState =
+                binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
+
+            upcomingFilmsAdapter?.updateItems(films)
+
+            val layoutManager = binding.recyclerViewUpcoming.layoutManager as LinearLayoutManager
+            val lastVisibleFilm =
+                films.getOrElse(layoutManager.findLastVisibleItemPosition()) { films.first() }
+
+            if (isUpdateRequired(lastVisibleFilm.timeStamp)) {
+                viewModel.updateUpcomingFilms(lastVisibleFilm.page)
+            }
+
+            binding.recyclerViewUpcoming.layoutManager?.onRestoreInstanceState(
+                recycleViewState
+            )
+        } else {
+            viewModel.updateUpcomingFilms(FIRST_PAGE_NUMBER)
+        }
+    }
+
+    private fun observeInternetConnectionAvailable() {
+        context?.let {
+            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+                if (connected) {
+                    viewModel.listOfNowPlayingFilmsLiveData.value?.let { updateNowPlayingFilms(it) }
+                    viewModel.listOfUpcomingFilmsLiveData.value?.let { updateUpcomingFilms(it) }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        nowPlayingRecycleViewState =
+            binding.recyclerViewNowPlaying.layoutManager?.onSaveInstanceState()
+        upcomingRecycleViewState = binding.recyclerViewUpcoming.layoutManager?.onSaveInstanceState()
+
+        nowPlayingFilmsAdapter?.onDataRequiredListener = null
+        nowPlayingFilmsAdapter?.onFilmClickListener = null
+        upcomingFilmsAdapter?.onDataRequiredListener = null
+        upcomingFilmsAdapter?.onFilmClickListener = null
         _binding = null
     }
+
 }

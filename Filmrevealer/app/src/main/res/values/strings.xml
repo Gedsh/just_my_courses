@@ -5,4 +5,26 @@
     <string name="title_ratings">Ratings</string>
     <string name="now_playing">Now Playing</string>
     <string name="upcoming">Upcoming</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="popular">Popular</string>
+    <string name="liked">Liked</string>
+    <string name="rated">Rated</string>
+    <string name="budget">Budget:</string>
+    <string name="revenue">Revenue:</string>
+    <string name="release_date">Release date:</string>
+    <string name="minutes">min.</string>
+    <string name="loading">Loading…</string>
+    <string name="retry">RETRY</string>
+    <string name="load_now_playing_films_failure">Failed to load now playing films</string>
+    <string name="load_upcoming_films_failure">Failed to load upcoming films</string>
+    <string name="load_top_rated_films_failure">Failed to load top rated films</string>
+    <string name="load_popular_films_failure">Failed to load popular films</string>
+    <string name="load_film_details_failure">Failed to load film details</string>
+    <string name="create_guest_session_failure">Failed to create guest session</string>
+    <string name="load_film_rated_by_user_failure">Failed to load user rated films</string>
+    <string name="rate_film_failure">Failed to rate the film</string>
+    <string name="internet_not_available">Internet connection not available. You cannot rate films.</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="menu_settings">Settings</string>
+    <string name="allow_adult_content_pref">Allow adult content</string>
 </resources>

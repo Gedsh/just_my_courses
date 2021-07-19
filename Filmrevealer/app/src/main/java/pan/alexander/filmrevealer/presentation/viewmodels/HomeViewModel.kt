@@ -1,24 +1,40 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import pan.alexander.filmrevealer.App
-import pan.alexander.filmrevealer.domain.entities.Film
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import pan.alexander.filmrevealer.presentation.Failure
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : BaseViewModel() {
 
-    private val mainInteractor = App.instance.daggerComponent.getMainInteractor()
-    private val mListOfNowPlayingFilmsLiveData by lazy { mainInteractor.get().getNowPlayingFilms() }
-    private val mListOfUpcomingFilmsLiveData by lazy { mainInteractor.get().getUpcomingFilms() }
+    val listOfNowPlayingFilmsLiveData by lazy { mainInteractor.get().getNowPlayingFilms() }
+    val listOfUpcomingFilmsLiveData by lazy { mainInteractor.get().getUpcomingFilms() }
 
-    val listOfNowPlayingFilmsLiveData: LiveData<List<Film>> = mListOfNowPlayingFilmsLiveData
-    val listOfUpcomingFilmsLiveData: LiveData<List<Film>> = mListOfUpcomingFilmsLiveData
-
-    fun updateNowPlayingFilms(page: Int) {
-        mainInteractor.get().loadNowPlayingFilms(page)
+    fun updateNowPlayingFilms(page: Int) = with(viewModelScope) {
+        launch {
+            mainInteractor.get().loadNowPlayingFilms(page) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    launch {
+                        mainInteractor.get().loadNowPlayingFilms(page) {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    fun updateUpcomingFilms(page: Int) {
-        mainInteractor.get().loadUpcomingFilms(page)
+
+    fun updateUpcomingFilms(page: Int) = with(viewModelScope) {
+        launch {
+            mainInteractor.get().loadUpcomingFilms(page) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    launch {
+                        mainInteractor.get().loadUpcomingFilms(page) {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

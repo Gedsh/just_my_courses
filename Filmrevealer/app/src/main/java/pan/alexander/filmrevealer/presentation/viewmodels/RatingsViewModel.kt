@@ -1,13 +1,39 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import pan.alexander.filmrevealer.presentation.Failure
 
-class RatingsViewModel : ViewModel() {
+class RatingsViewModel : BaseViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is ratings Fragment"
+    val listOfTopRatedFilmsLiveData by lazy { mainInteractor.get().getTopRatedFilms() }
+    val listOfPopularFilmsLiveData by lazy { mainInteractor.get().getPopularFilms() }
+
+    fun updateTopRatedFilms(page: Int) = with(viewModelScope) {
+        launch {
+            mainInteractor.get().loadTopRatedFilms(page) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    launch {
+                        mainInteractor.get().loadTopRatedFilms(page) {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                    }
+                }
+            }
+        }
     }
-    val text: LiveData<String> = _text
+
+    fun updatePopularFilms(page: Int) = with(viewModelScope) {
+        launch {
+            mainInteractor.get().loadPopularFilms(page) { message ->
+                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
+                    launch {
+                        mainInteractor.get().loadPopularFilms(page) {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

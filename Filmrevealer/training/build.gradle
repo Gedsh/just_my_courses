@@ -1,0 +1,118 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+}
+
+def keystorePropertiesFile = file("../../../../.local/KStore/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def gmapsPropertiesFile = file("../../../../.local/KStore/gmaps_key.properties")
+def gmapsProperties = new Properties()
+gmapsProperties.load(new FileInputStream(gmapsPropertiesFile))
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        releasesign {
+            storeFile file("../../../../.local/KStore/pan_alexander.jks")
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyBAlias']
+            keyPassword keystoreProperties['keyBPassword']
+        }
+    }
+
+    defaultConfig {
+        applicationId "pan.alexander.training"
+        minSdkVersion 19
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        vectorDrawables.useSupportLibrary = true
+
+        manifestPlaceholders = [gmapsApiKey: gmapsProperties["key"]]
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions 'version'
+
+    productFlavors {
+        free {
+            dimension 'version'
+            versionNameSuffix '.free'
+        }
+        paid {
+            dimension 'version'
+            versionNameSuffix '.paid'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
+            versionNameSuffix "-release"
+            buildConfigField "String", "TYPE", '"RELEASE"'
+        }
+
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releasesign
+            versionNameSuffix "-debug"
+            buildConfigField "String", "TYPE", '"DEBUG"'
+        }
+
+        staging {
+            initWith debug
+            versionNameSuffix "-staging"
+            buildConfigField "String", "TYPE", '"STAGING"'
+        }
+
+        beta {
+            initWith debug
+            versionNameSuffix "-beta"
+            buildConfigField "String", "TYPE", '"BETA"'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:22.0.0'
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}

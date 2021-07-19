@@ -2,13 +2,11 @@ package pan.alexander.filmrevealer.data
 
 import android.os.Build
 import android.util.Base64
-import android.util.Log
 import pan.alexander.filmrevealer.App
-import pan.alexander.filmrevealer.App.Companion.LOG_TAG
-import pan.alexander.filmrevealer.R
-import pan.alexander.filmrevealer.data.web.pojo.FilmsPage
+import pan.alexander.filmrevealer.BuildConfig
+import pan.alexander.filmrevealer.data.web.pojo.*
 import pan.alexander.filmrevealer.domain.RemoteRepository
-import retrofit2.Call
+import retrofit2.Response
 
 class RemoteRepositoryImplementation : RemoteRepository {
     private val api = App.instance.daggerComponent.getFilmsApiService()
@@ -20,43 +18,80 @@ class RemoteRepositoryImplementation : RemoteRepository {
         App.instance.resources.configuration.locale
     }
 
-    private val key = Base64.decode("${App.instance.getString(R.string.api)}=", Base64.DEFAULT)
+    var region: String = locale.country.uppercase()
+
+    private val key = Base64.decode("${BuildConfig.API_KEY}=", Base64.DEFAULT)
         .toString(charset("UTF-8"))
 
-    override fun loadNowPlayingFilms(page: Int): Call<FilmsPage> {
-        Log.e(LOG_TAG, "$")
+    override suspend fun loadNowPlayingFilms(page: Int): Response<FilmsPageJson> {
         return api.get().getNowPlaying(
             apiKey = key,
             language = "${locale.language}-${locale.country}",
             page = page,
-            region = locale.country
+            region = region
         )
     }
 
-    override fun loadUpcomingFilms(page: Int): Call<FilmsPage> {
+    override suspend fun loadUpcomingFilms(page: Int): Response<FilmsPageJson> {
         return api.get().getUpcoming(
             apiKey = key,
-            language = locale.language,
+            language = "${locale.language}-${locale.country}",
             page = page,
-            region = locale.country
+            region = region
         )
     }
 
-    override fun loadTopRatedFilms(page: Int): Call<FilmsPage> {
+    override suspend fun loadTopRatedFilms(page: Int): Response<FilmsPageJson> {
         return api.get().getTopRated(
             apiKey = key,
-            language = locale.language,
+            language = "${locale.language}-${locale.country}",
             page = page,
-            region = locale.country
+            region = region
         )
     }
 
-    override fun loadPopularFilms(page: Int): Call<FilmsPage> {
+    override suspend fun loadPopularFilms(page: Int): Response<FilmsPageJson> {
         return api.get().getPopular(
             apiKey = key,
-            language = locale.language,
+            language = "${locale.language}-${locale.country}",
             page = page,
-            region = locale.country
+            region = region
         )
     }
+
+    override suspend fun loadFilmPreciseDetails(movieId: Int): Response<FilmPreciseDetailsJson> {
+        return api.get().getPreciseDetails(
+            movieId = movieId,
+            apiKey = key,
+            language = "${locale.language}-${locale.country}"
+        )
+    }
+
+    override suspend fun createGuestSession(): Response<GuestSession> {
+        return api.get().createGuestSession(
+            apiKey = key
+        )
+    }
+
+    override suspend fun getUserRatedFilms(guestSessionId: String): Response<FilmsPageJson> {
+        return api.get().getRatedByUser(
+            guestSessionId = guestSessionId,
+            apiKey = key,
+            language = "${locale.language}-${locale.country}"
+        )
+    }
+
+    override suspend fun rateFilm(
+        movieId: Int,
+        rate: Float,
+        guestSessionId: String
+    ): Response<ServerResponse> {
+        return api.get().rateFilm(
+            movieId = movieId,
+            body = RateBody(rate),
+            apiKey = key,
+            guestSessionId = guestSessionId
+        )
+    }
+
 }

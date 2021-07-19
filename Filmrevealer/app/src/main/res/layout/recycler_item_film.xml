@@ -6,8 +6,9 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:id="@+id/cardViewFilm"
+        android:layout_width="@dimen/recycle_item_card_width"
+        android:layout_height="@dimen/recycle_item_card_height"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="@dimen/recycle_item_card_radius"
@@ -20,7 +21,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageViewFilmPoster"
-                android:layout_width="@dimen/recycle_item_poster_image_width"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/recycle_item_image_margin_bottom"
                 android:scaleType="center"
@@ -30,13 +31,20 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/ic_baseline_warning_24" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageViewLike"
+                android:layout_width="@dimen/recycle_item_like_size"
+                android:layout_height="@dimen/recycle_item_like_size"
+                android:layout_margin="@dimen/recycle_item_like_margins"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_outline_like_border_24" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textViewTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/recycle_item_title_margin"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:singleLine="false"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:layout_constraintBottom_toTopOf="@+id/textViewYear"
@@ -59,12 +67,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewYear"
-                app:layout_constraintEnd_toStartOf="@+id/textViewRating"
+                app:layout_constraintEnd_toStartOf="@+id/textViewVotes"
                 app:layout_constraintTop_toTopOf="@+id/textViewYear"
                 app:srcCompat="@drawable/ic_baseline_star_rate_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/textViewRating"
+                android:id="@+id/textViewVotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/recycle_item_rating_margin_end"

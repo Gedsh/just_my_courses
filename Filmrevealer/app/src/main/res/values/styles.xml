@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.AppCompat.Body1.fragment_film_details_side_text_style">
+        <item name="android:layout_margin">@dimen/fragment_film_details_text_margins</item>
+        <item name="android:textSize">@dimen/fragment_film_details_text_size</item>
+    </style>
+</resources>
