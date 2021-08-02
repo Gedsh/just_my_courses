@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main Fragment -->
+    <dimen name="main_fragment_constraint_padding">10dp</dimen>
+    <dimen name="main_fragment_pod_image_padding">8dp</dimen>
+    <dimen name="main_fragment_image_selection_chip_group_padding">8dp</dimen>
+    <integer name="main_fragment_wiki_search_counter_max_length">20</integer>
+
+    <!-- Main Fragment Bottom Sheet -->
+    <dimen name="main_fragment_bottom_sheet_peak_height">150dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_line_width">25dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_line_height">1dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_line_margin_top">5dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_header_margin_top">5dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_header_padding_side">10dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_description_padding_side">10dp</dimen>
+
+    <!-- Bottom Navigation Layout -->
+    <dimen name="bottom_navigation_layout_margin">8dp</dimen>
+</resources>
