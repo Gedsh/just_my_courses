@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App Common -->
+    <dimen name="chips_text_size">14sp</dimen>
+
     <!-- Main Fragment -->
     <dimen name="main_fragment_constraint_padding">10dp</dimen>
     <dimen name="main_fragment_pod_image_padding">8dp</dimen>
@@ -17,4 +20,8 @@
 
     <!-- Bottom Navigation Layout -->
     <dimen name="bottom_navigation_layout_margin">8dp</dimen>
+
+    <!-- Settings Fragment -->
+    <dimen name="settings_fragment_heading_text_padding">8dp</dimen>
+    <dimen name="settings_fragment_content_padding">8dp</dimen>
 </resources>

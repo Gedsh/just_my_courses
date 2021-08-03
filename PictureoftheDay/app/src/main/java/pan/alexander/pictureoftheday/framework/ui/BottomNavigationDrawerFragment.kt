@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.BottomNavigationLayoutBinding
@@ -28,9 +29,10 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
 
         binding.bottomNavigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigationOne -> Toast.makeText(context, "1", Toast.LENGTH_SHORT).show()
+                R.id.navigationOne -> findNavController().navigate(R.id.to_main_screen)
                 R.id.navigationTwo -> Toast.makeText(context, "2", Toast.LENGTH_SHORT).show()
             }
+            dismiss()
             true
         }
     }

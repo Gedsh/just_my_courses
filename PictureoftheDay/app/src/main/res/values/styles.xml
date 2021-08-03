@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppShapeAppearance.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerRadius">5dp</item>
+    </style>
+
+    <style name="AppShapeAppearance.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="AppTextField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/text_field_background</item>
+    </style>
+
+    <style name="AppChips" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chips_background</item>
+        <item name="android:textColor">?colorAccent</item>
+        <item name="android:textSize">@dimen/chips_text_size</item>
+    </style>
+
+    <style name="Settings.TitleText" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:padding">@dimen/settings_fragment_heading_text_padding</item>
+    </style>
+
+    <style name="Settings.ChipGroupStyle" parent="Widget.MaterialComponents.ChipGroup">
+        <item name="selectionRequired">true</item>
+        <item name="singleSelection">true</item>
+    </style>
+
+    <style name="Settings.CardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="backgroundColor">?colorSurface</item>
+    </style>
+</resources>

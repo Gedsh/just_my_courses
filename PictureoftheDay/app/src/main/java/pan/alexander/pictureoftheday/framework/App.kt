@@ -1,10 +1,7 @@
 package pan.alexander.pictureoftheday.framework
 
 import android.app.Application
-import pan.alexander.pictureoftheday.di.ApplicationComponent
-import pan.alexander.pictureoftheday.di.CoroutinesModule
-import pan.alexander.pictureoftheday.di.DaggerApplicationComponent
-import pan.alexander.pictureoftheday.di.RetrofitModule
+import pan.alexander.pictureoftheday.di.*
 
 class App : Application() {
     companion object {
@@ -27,6 +24,7 @@ class App : Application() {
             .builder()
             .coroutinesModule(CoroutinesModule())
             .retrofitModule(RetrofitModule())
+            .preferencesModule(PreferencesModule(instance))
             .build()
     }
 }

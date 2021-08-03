@@ -20,9 +20,6 @@ import pan.alexander.pictureoftheday.framework.App.Companion.LOG_TAG
 import pan.alexander.pictureoftheday.framework.ui.MainActivityViewModel
 import java.util.*
 
-private const val DELAY_BEFORE_LISTENING_CHIPS_CHECKING_CHANGE = 1000L
-private const val DELAY_BEFORE_REQUESTING_PICTURE_ON_APP_START = 500L
-
 class MainFragment : Fragment() {
 
     private val mainFragmentViewModel by lazy {
@@ -54,6 +51,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setBottomSheetBehavior(view.findViewById(R.id.bottom_sheet_container))
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         initWikiSearchListener()
 
@@ -78,11 +79,9 @@ class MainFragment : Fragment() {
     }
 
     private fun initPictureDaySelectionListener() {
-        bindingMainFragment.chipGroupDaySelection.postDelayed({
-            bindingMainFragment.chipGroupDaySelection.setOnCheckedChangeListener { _, checkedId ->
-                requestPicture(checkedId)
-            }
-        }, DELAY_BEFORE_LISTENING_CHIPS_CHECKING_CHANGE)
+        bindingMainFragment.chipGroupDaySelection.setOnCheckedChangeListener { _, checkedId ->
+            requestPicture(checkedId)
+        }
     }
 
     private fun observePictureLiveData() {
@@ -90,10 +89,7 @@ class MainFragment : Fragment() {
             renderData(it)
         }
 
-        bindingMainFragment.chipGroupDaySelection.postDelayed({
-            requestPicture(bindingMainFragment.chipGroupDaySelection.checkedChipId)
-        }, DELAY_BEFORE_REQUESTING_PICTURE_ON_APP_START)
-
+        requestPicture(bindingMainFragment.chipGroupDaySelection.checkedChipId)
     }
 
     private fun requestPicture(checkedChipId: Int) {
@@ -164,5 +160,12 @@ class MainFragment : Fragment() {
 
     private fun showError(message: String) {
         mainActivityViewModel?.showErrorMessage(message)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _bindingBottomSheet = null
+        _bindingMainFragment = null
     }
 }

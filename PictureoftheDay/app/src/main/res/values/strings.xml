@@ -17,6 +17,16 @@
     <string name="search">Search</string>
 
     <!-- Menu Bottom Navigation -->
-    <string name="to_screen_one">To screen 1</string>
+    <string name="to_main_screen">To main screen</string>
     <string name="to_screen_two">To screen 2</string>
+
+    <!-- Settings Fragment -->
+    <string name="select_theme">Select theme</string>
+    <string name="purple_theme">Purple</string>
+    <string name="pink_theme">Pink</string>
+    <string name="indigo_theme">Indigo</string>
+    <string name="select_day_night">Select day/night mode</string>
+    <string name="auto_mode">Auto</string>
+    <string name="day_mode">Day</string>
+    <string name="night_mode">Night</string>
 </resources>

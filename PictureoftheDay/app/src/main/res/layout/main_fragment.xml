@@ -19,7 +19,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/wikiSearchInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/search_wiki"
@@ -79,21 +78,18 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipToday"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_today" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipYesterday"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_yesterday" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipBeforeYesterday"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_before_yesterday" />

@@ -5,9 +5,24 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@id/navigation_main">
 
+    <action
+        android:id="@+id/to_main_screen"
+        app:destination="@id/navigation_main"
+        app:popUpTo="@id/navigation_main"
+        app:popUpToInclusive="true" />
+
     <fragment
         android:id="@+id/navigation_main"
         android:name="pan.alexander.pictureoftheday.framework.ui.main.MainFragment"
-        tools:layout="@layout/main_fragment" />
+        tools:layout="@layout/main_fragment">
+        <action
+            android:id="@+id/main_fragment_to_settings_fragment"
+            app:destination="@id/navigation_settings" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="pan.alexander.pictureoftheday.framework.ui.settings.SettingsFragment"
+        tools:layout="@layout/settings_fragment" />
 
 </navigation>

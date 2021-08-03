@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main Fragment Bottom Sheet -->
+    <color name="bottom_sheet_background_color">#3B3B3D</color>
+    <color name="bottom_sheet_line_background_color">#66DADBDD</color>
+    <color name="bottom_sheet_header_text_color">#FFFFFF</color>
+</resources>

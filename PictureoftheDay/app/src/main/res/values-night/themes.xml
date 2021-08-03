@@ -2,15 +2,49 @@
     <!-- Base application theme. -->
     <style name="Theme.PictureOfTheDay" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">?themeColorPrimary</item>
+        <item name="colorPrimaryVariant">?themeColorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">?themeColorSecondary</item>
+        <item name="colorSecondaryVariant">?themeColorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <!-- General font. -->
+        <item name="fontFamily">@font/marcellus</item>
+        <item name="android:fontFamily">@font/marcellus</item>
+
+        <!-- General shape appearance. -->
+        <item name="shapeAppearanceSmallComponent">@style/AppShapeAppearance.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/AppShapeAppearance.MediumComponent</item>
+
+        <!-- Text input style. -->
+        <item name="textInputStyle">@style/AppTextField</item>
+
+        <!-- Chips style. -->
+        <item name="chipStyle">@style/AppChips</item>
+    </style>
+
+    <style name="Theme.PictureOfTheDay.Purple">
+        <item name="themeColorPrimary">@color/purple_200</item>
+        <item name="themeColorPrimaryVariant">@color/purple_700</item>
+        <item name="themeColorSecondary">@color/teal_200</item>
+        <item name="themeColorSecondaryVariant">@color/teal_200</item>
+    </style>
+
+    <style name="Theme.PictureOfTheDay.Pink">
+        <item name="themeColorPrimary">@color/pink_200</item>
+        <item name="themeColorPrimaryVariant">@color/pink_700</item>
+        <item name="themeColorSecondary">@color/cyan_200</item>
+        <item name="themeColorSecondaryVariant">@color/cyan_200</item>
+    </style>
+
+    <style name="Theme.PictureOfTheDay.Indigo">
+        <item name="themeColorPrimary">@color/indigo_500</item>
+        <item name="themeColorPrimaryVariant">@color/indigo_700</item>
+        <item name="themeColorSecondary">@color/red_200</item>
+        <item name="themeColorSecondaryVariant">@color/red_700</item>
     </style>
 </resources>

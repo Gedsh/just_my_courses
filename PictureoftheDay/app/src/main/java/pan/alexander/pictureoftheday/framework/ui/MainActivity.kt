@@ -5,31 +5,50 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.snackbar.Snackbar
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.MainActivityBinding
+import pan.alexander.pictureoftheday.domain.settings.AppTheme
+import pan.alexander.pictureoftheday.domain.settings.AppUiMode
+import pan.alexander.pictureoftheday.domain.settings.SettingsAction
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by lazy { ViewModelProvider(this).get(MainActivityViewModel::class.java) }
     private lateinit var binding: MainActivityBinding
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        setAppUiMode(viewModel.getAppUiMode())
+
+        setAppTheme(viewModel.getAppTheme())
+
         super.onCreate(savedInstanceState)
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
 
-        appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.navigation_main)
-        )
+    private fun setAppTheme(appTheme: AppTheme) {
+        when (appTheme) {
+            AppTheme.PURPLE -> setTheme(R.style.Theme_PictureOfTheDay_Purple)
+            AppTheme.PINK -> setTheme(R.style.Theme_PictureOfTheDay_Pink)
+            AppTheme.INDIGO -> setTheme(R.style.Theme_PictureOfTheDay_Indigo)
+        }
+    }
+
+    private fun setAppUiMode(appUiMode: AppUiMode) {
+        when (appUiMode) {
+            AppUiMode.MODE_AUTO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            AppUiMode.MODE_DAY -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            AppUiMode.MODE_NIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -49,7 +68,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.appBarFav -> Toast.makeText(this, "Favourite", Toast.LENGTH_SHORT).show()
-            R.id.appBarSettings -> Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
+            R.id.appBarSettings -> {
+                val navController = binding.navHostFragmentActivityMain.findNavController()
+                if (navController.currentDestination == navController.graph.findNode(R.id.navigation_main)) {
+                    navController.navigate(R.id.main_fragment_to_settings_fragment)
+                }
+            }
             R.id.appBarSearch -> Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
             android.R.id.home -> {
                 BottomNavigationDrawerFragment().show(supportFragmentManager, "tag")
@@ -63,24 +87,49 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.bottomAppBar)
 
-        binding.fabMainActivity.setOnClickListener { fabClicked() }
+        setFabClickListener()
+
+        observeUiSettingChanges()
 
         observeErrorMessages()
+    }
+
+    private fun setFabClickListener() {
+        binding.fabMainActivity.setOnClickListener {
+            if (isMainScreen()) {
+                switchToSecondaryBottomAppBar()
+                setMainScreen(false)
+            } else {
+                switchToMainBottomAppBar()
+                setMainScreen(true)
+            }
+        }
+    }
+
+    private fun observeUiSettingChanges() {
+        viewModel.getSettingsChangedLiveData().distinctUntilChanged().observe(this) { action ->
+            when (action) {
+                is SettingsAction.AppThemeChanged -> {
+                    if (viewModel.currentTheme != action.appTheme) {
+                        setAppTheme(action.appTheme)
+                        viewModel.currentTheme = action.appTheme
+                        recreate()
+                    }
+                }
+                is SettingsAction.AppUiModeChanged -> {
+                    if (viewModel.currentUiMode != action.appUiMode) {
+                        setAppUiMode(action.appUiMode)
+                        viewModel.currentUiMode = action.appUiMode
+                        recreate()
+                    }
+                }
+            }
+        }
     }
 
     private fun observeErrorMessages() {
         viewModel.getErrorMessageLiveData().observe(this) {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
-        }
-    }
-
-    private fun fabClicked() {
-        if (isMainScreen()) {
-            switchToSecondaryBottomAppBar()
-            setMainScreen(false)
-        } else {
-            switchToMainBottomAppBar()
-            setMainScreen(true)
         }
     }
 
@@ -118,9 +167,4 @@ class MainActivity : AppCompatActivity() {
         bottomAppBar.replaceMenu(R.menu.menu_bottom_bar_other_screen)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.navHostFragmentActivityMain)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
 }
