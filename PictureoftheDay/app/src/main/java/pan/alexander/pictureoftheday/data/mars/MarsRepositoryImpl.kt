@@ -1,29 +1,26 @@
-package pan.alexander.pictureoftheday.data.picture
+package pan.alexander.pictureoftheday.data.mars
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
-import pan.alexander.pictureoftheday.data.DateStringMapper
-import pan.alexander.pictureoftheday.domain.pod.PictureRepository
-import pan.alexander.pictureoftheday.domain.pod.entities.NasaPicture
+import pan.alexander.pictureoftheday.domain.mars.MarsRepository
+import pan.alexander.pictureoftheday.domain.mars.entities.MarsPhoto
 import java.lang.RuntimeException
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class PictureRepositoryImpl @Inject constructor(
-    private val pictureDataSource: PictureDataSource,
-    private val dateStringMapper: DateStringMapper,
-    private val serverResponseToPictureMapper: ServerResponseToPictureMapper,
+class MarsRepositoryImpl @Inject constructor(
+    private val marsPhotosDataSource: MarsPhotosDataSource,
+    private val marsPhotoApiToMarsPhotoMapper: MarsPhotoApiToMarsPhotoMapper,
     private val dispatcherIO: CoroutineContext
-) : PictureRepository {
-    override suspend fun getPhotoByDate(date: Date): Flow<NasaPicture> {
+) : MarsRepository {
+    override fun getCuriosityPhotoBySol(sol: Int): Flow<MarsPhoto> {
         return flow {
-            pictureDataSource.getPhotoByDate(dateStringMapper.map(date)).let {
+            marsPhotosDataSource.getCuriosityPhotosBySol(sol).let {
                 if (it.isSuccessful && it.body() != null) {
                     it.body()?.let { serverResponse ->
-                        emit(serverResponseToPictureMapper.map(serverResponse))
+                        emit(marsPhotoApiToMarsPhotoMapper.map(serverResponse.photos.random()))
                     }
                 } else {
                     it.errorBody()?.let { responseBody ->

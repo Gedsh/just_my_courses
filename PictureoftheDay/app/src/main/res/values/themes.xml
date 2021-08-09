@@ -47,4 +47,7 @@
         <item name="themeColorSecondary">@color/red_200</item>
         <item name="themeColorSecondaryVariant">@color/red_700</item>
     </style>
+
+    <style name="Theme.PictureOfTheDay.Purple.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
 </resources>

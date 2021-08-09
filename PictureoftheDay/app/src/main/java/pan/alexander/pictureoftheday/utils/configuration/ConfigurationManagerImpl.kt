@@ -6,5 +6,7 @@ import javax.inject.Inject
 class ConfigurationManagerImpl @Inject constructor() : ConfigurationManager {
     override fun getApiKey() = BuildConfig.API_KEY
 
-    override fun getBaseUrl() = BuildConfig.API_BASE_URL
+    override fun getNasaBaseUrl() = BuildConfig.API_NASA_BASE_URL
+
+    override fun getEpicBaseUrl() = BuildConfig.API_EPIC_BASE_URL
 }

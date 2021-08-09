@@ -13,7 +13,7 @@ import java.util.*
 
 class MainViewModel : ViewModel() {
 
-    private val pictureInteractor by lazy { App.instance.daggerComponent.getMainInteractor() }
+    private val pictureInteractor = App.instance.daggerComponent.getMainInteractor()
 
     private val pictureLiveData by lazy { MutableLiveData<PictureActionData>() }
 

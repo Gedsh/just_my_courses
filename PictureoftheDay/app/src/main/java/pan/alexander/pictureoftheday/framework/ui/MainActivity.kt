@@ -67,12 +67,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.appBarFav -> Toast.makeText(this, "Favourite", Toast.LENGTH_SHORT).show()
+            R.id.appBarFav -> {
+                val navController = binding.navHostFragmentActivityMain.findNavController()
+                navController.navigate(R.id.navigation_viewpager)
+            }
             R.id.appBarSettings -> {
                 val navController = binding.navHostFragmentActivityMain.findNavController()
-                if (navController.currentDestination == navController.graph.findNode(R.id.navigation_main)) {
-                    navController.navigate(R.id.main_fragment_to_settings_fragment)
-                }
+                navController.navigate(R.id.navigation_settings)
             }
             R.id.appBarSearch -> Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
             android.R.id.home -> {

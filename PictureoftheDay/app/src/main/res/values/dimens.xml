@@ -24,4 +24,7 @@
     <!-- Settings Fragment -->
     <dimen name="settings_fragment_heading_text_padding">8dp</dimen>
     <dimen name="settings_fragment_content_padding">8dp</dimen>
+
+    <!-- Earth Fragment -->
+    <dimen name="earth_fragment_nasa_image_padding">8dp</dimen>
 </resources>

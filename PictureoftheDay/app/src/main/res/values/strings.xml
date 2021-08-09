@@ -29,4 +29,11 @@
     <string name="auto_mode">Auto</string>
     <string name="day_mode">Day</string>
     <string name="night_mode">Night</string>
+
+    <!-- View Pager -->
+    <string name="tab_text_earth">Earth</string>
+    <string name="tab_text_mars">Mars</string>
+    <string name="tab_text_weather">Weather</string>
+    <string name="image_stub">Image</string>
+
 </resources>

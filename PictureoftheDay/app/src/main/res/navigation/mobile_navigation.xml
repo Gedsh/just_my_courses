@@ -14,11 +14,12 @@
     <fragment
         android:id="@+id/navigation_main"
         android:name="pan.alexander.pictureoftheday.framework.ui.main.MainFragment"
-        tools:layout="@layout/main_fragment">
-        <action
-            android:id="@+id/main_fragment_to_settings_fragment"
-            app:destination="@id/navigation_settings" />
-    </fragment>
+        tools:layout="@layout/main_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_viewpager"
+        android:name="pan.alexander.pictureoftheday.framework.ui.viewpager.PlaceholderFragment"
+        tools:layout="@layout/fragment_view_pager" />
 
     <fragment
         android:id="@+id/navigation_settings"

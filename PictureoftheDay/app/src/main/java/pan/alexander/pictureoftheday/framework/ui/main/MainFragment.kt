@@ -15,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.MainFragmentBinding
 import pan.alexander.pictureoftheday.databinding.MainFragmentBottomSheetBinding
-import pan.alexander.pictureoftheday.domain.picture.entities.NasaPicture
+import pan.alexander.pictureoftheday.domain.pod.entities.NasaPicture
 import pan.alexander.pictureoftheday.framework.App.Companion.LOG_TAG
 import pan.alexander.pictureoftheday.framework.ui.MainActivityViewModel
 import java.util.*

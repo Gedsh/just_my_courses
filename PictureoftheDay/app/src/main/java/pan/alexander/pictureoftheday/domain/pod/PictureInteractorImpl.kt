@@ -1,7 +1,7 @@
-package pan.alexander.pictureoftheday.domain.picture
+package pan.alexander.pictureoftheday.domain.pod
 
 import kotlinx.coroutines.flow.Flow
-import pan.alexander.pictureoftheday.domain.picture.entities.NasaPicture
+import pan.alexander.pictureoftheday.domain.pod.entities.NasaPicture
 import java.util.*
 import javax.inject.Inject
 

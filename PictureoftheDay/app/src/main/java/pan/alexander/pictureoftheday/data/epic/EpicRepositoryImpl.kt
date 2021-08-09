@@ -1,29 +1,26 @@
-package pan.alexander.pictureoftheday.data.picture
+package pan.alexander.pictureoftheday.data.epic
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
-import pan.alexander.pictureoftheday.data.DateStringMapper
-import pan.alexander.pictureoftheday.domain.pod.PictureRepository
-import pan.alexander.pictureoftheday.domain.pod.entities.NasaPicture
+import pan.alexander.pictureoftheday.domain.epic.EpicRepository
+import pan.alexander.pictureoftheday.domain.epic.entities.EpicImage
 import java.lang.RuntimeException
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class PictureRepositoryImpl @Inject constructor(
-    private val pictureDataSource: PictureDataSource,
-    private val dateStringMapper: DateStringMapper,
-    private val serverResponseToPictureMapper: ServerResponseToPictureMapper,
+class EpicRepositoryImpl @Inject constructor(
+    private val epicDataSource: EpicDataSource,
+    private val serverResponseToEpicImageMapper: ServerResponseToEpicImageMapper,
     private val dispatcherIO: CoroutineContext
-) : PictureRepository {
-    override suspend fun getPhotoByDate(date: Date): Flow<NasaPicture> {
+) : EpicRepository {
+    override suspend fun getRecentEnhancedColorImage(): Flow<EpicImage> {
         return flow {
-            pictureDataSource.getPhotoByDate(dateStringMapper.map(date)).let {
+            epicDataSource.getRecentEnhancedColorImage().let {
                 if (it.isSuccessful && it.body() != null) {
-                    it.body()?.let { serverResponse ->
-                        emit(serverResponseToPictureMapper.map(serverResponse))
+                    it.body()?.takeIf { body -> body.isNotEmpty() }?.let { serverResponse ->
+                        emit(serverResponseToEpicImageMapper.map(serverResponse.random()))
                     }
                 } else {
                     it.errorBody()?.let { responseBody ->

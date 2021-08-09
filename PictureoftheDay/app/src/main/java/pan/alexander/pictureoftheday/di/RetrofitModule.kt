@@ -5,11 +5,13 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pan.alexander.pictureoftheday.BuildConfig
-import pan.alexander.pictureoftheday.framework.web.nasapicture.NasaPodApiService
+import pan.alexander.pictureoftheday.framework.web.epic.NasaEpicApiService
+import pan.alexander.pictureoftheday.framework.web.nasaimage.NasaApiService
 import pan.alexander.pictureoftheday.utils.configuration.ConfigurationManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 private const val CALL_TIMEOUT_SEC = 10L
@@ -19,17 +21,40 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideServiceApi(retrofit: Retrofit): NasaPodApiService =
-        retrofit.create(NasaPodApiService::class.java)
+    fun provideNasaServiceApi(
+        @Named("NASA") retrofit: Retrofit
+    ): NasaApiService =
+        retrofit.create(NasaApiService::class.java)
 
     @Provides
     @Singleton
-    fun provideRetrofit(
+    fun provideEpicServiceApi(
+        @Named("EPIC") retrofit: Retrofit
+    ): NasaEpicApiService =
+        retrofit.create(NasaEpicApiService::class.java)
+
+    @Named("EPIC")
+    @Provides
+    @Singleton
+    fun provideEpicRetrofit(
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory,
         configurationManager: ConfigurationManager
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(configurationManager.getBaseUrl())
+        .baseUrl(configurationManager.getEpicBaseUrl())
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
+        .build()
+
+    @Named("NASA")
+    @Provides
+    @Singleton
+    fun provideNasaRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory,
+        configurationManager: ConfigurationManager
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(configurationManager.getNasaBaseUrl())
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()
