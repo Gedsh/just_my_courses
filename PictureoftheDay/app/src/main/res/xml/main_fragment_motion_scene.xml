@@ -26,6 +26,32 @@
             app:helperText="@string/wiki_helper_text"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <Constraint
+            android:id="@+id/podImageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.0"
+            android:contentDescription="@string/photo_of_the_day_stub"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupDaySelection"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintWidth_percent="@fraction/main_fragment_pod_image_width_percent"
+            app:srcCompat="@drawable/ic_no_photo_vector"
+            app:visibilityMode="ignore" />
+        <Constraint
+            android:id="@+id/podLoadingProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chipGroupDaySelection"
+            app:visibilityMode="ignore" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -44,12 +70,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <Constraint
-            android:id="@+id/wikiButton"
+            android:id="@+id/podImageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.0"
+            android:contentDescription="@string/photo_of_the_day_stub"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupDaySelection"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintWidth_percent="@fraction/main_fragment_pod_image_width_percent"
+            app:srcCompat="@drawable/ic_no_photo_vector"
+            app:visibilityMode="ignore" />
+        <Constraint
+            android:id="@+id/podLoadingProgressBar"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="@+id/wikiSearchInputLayout"
-            app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/wikiSearchInputLayout" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chipGroupDaySelection"
+            app:visibilityMode="ignore" />
     </ConstraintSet>
 </MotionScene>

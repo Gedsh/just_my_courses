@@ -24,9 +24,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="10dp"
-                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/wikiSearchInputLayout"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/wikiSearchInputLayout"
                 app:layout_constraintTop_toTopOf="@+id/wikiSearchInputLayout"
                 app:srcCompat="@drawable/ic_wikipedia" />
 
@@ -41,7 +40,6 @@
                 app:endIconDrawable="@drawable/ic_wikipedia"
                 app:endIconMode="custom"
                 app:helperText="@string/wiki_helper_text"
-                app:layout_constraintStart_toEndOf="@+id/wikiButton"
                 tools:layout_editor_absoluteY="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -58,12 +56,6 @@
                 android:layout_gravity="center"
                 android:alpha="0.0"
                 android:contentDescription="@string/photo_of_the_day_stub"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chipGroupDaySelection"
-                app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintWidth_percent="@fraction/main_fragment_pod_image_width_percent"
                 app:srcCompat="@drawable/ic_no_photo_vector" />
 
             <ProgressBar
@@ -71,11 +63,7 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/wikiSearchInputLayout" />
+                android:visibility="gone" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupDaySelection"
