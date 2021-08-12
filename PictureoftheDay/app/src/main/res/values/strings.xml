@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Picture of the Day</string>
+
+    <!-- Main Fragment -->
+    <string name="photo_of_the_day_stub">Photo of the day</string>
+    <string name="search_wiki">Search on Wiki</string>
+    <string name="wiki_helper_text">Search for the term on Wikipedia</string>
+    <string name="error_empty_link">Link is empty</string>
+    <string name="chip_today">Today</string>
+    <string name="chip_yesterday">Yesterday</string>
+    <string name="chip_before_yesterday">Before yesterday</string>
+    <string name="fab_description">Switch bottom app bar</string>
+
+    <!-- Menu Bottom Bar -->
+    <string name="favourite">favourite</string>
+    <string name="settings">settings</string>
+    <string name="search">Search</string>
+
+    <!-- Menu Bottom Navigation -->
+    <string name="to_screen_one">To screen 1</string>
+    <string name="to_screen_two">To screen 2</string>
+</resources>

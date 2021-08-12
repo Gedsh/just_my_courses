@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/appBarFav"
+        android:icon="@drawable/ic_favourite_menu"
+        android:title="@string/favourite"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/appBarSettings"
+        android:icon="@drawable/ic_settings_menu"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
+</menu>

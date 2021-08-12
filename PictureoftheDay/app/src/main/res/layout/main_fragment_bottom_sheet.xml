@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bottom_sheet_background_color"
+    android:visibility="gone"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="@dimen/main_fragment_bottom_sheet_peak_height"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:id="@+id/bottomSheetLine"
+        android:layout_width="@dimen/main_fragment_bottom_sheet_line_width"
+        android:layout_height="@dimen/main_fragment_bottom_sheet_line_height"
+        android:layout_marginTop="@dimen/main_fragment_bottom_sheet_line_margin_top"
+        android:background="@color/bottom_sheet_line_background_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/bottomSheetDescriptionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/main_fragment_bottom_sheet_header_margin_top"
+        android:paddingStart="@dimen/main_fragment_bottom_sheet_header_padding_side"
+        android:paddingEnd="@dimen/main_fragment_bottom_sheet_header_padding_side"
+        android:textColor="@color/bottom_sheet_header_text_color"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomSheetLine"
+        tools:text="Two Clusters and a Comet" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/bottomSheetDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/main_fragment_bottom_sheet_description_padding_side"
+        android:paddingEnd="@dimen/main_fragment_bottom_sheet_description_padding_side"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomSheetDescriptionHeader"
+        tools:text="This lovely starfield spans some four full moons (about 2 degrees) across
+        the heroic northern constellation of Perseus. In telescopic exposures made during the
+         nights of January 24, 26, and 28 it holds the famous pair of open or galactic star
+          clusters h and Chi Persei with comet PanSTARRS (C/2017 T2) captured each night as
+           it swept left to right across the field of view. Also cataloged as NGC 869 (right)
+            and NGC 884, both star clusters are about 7,000 light-years away and contain stars
+             much younger and hotter than the Sun. Separated by only a few hundred light-years,
+              the clusters are both 13 million years young based on the ages of their individual
+               stars, evidence that they were likely a product of the same star-forming region.
+               Discovered in 2017 while still beyond the orbit of Saturn, Comet PanSTARRs is a new
+                visitor to the inner solar system and just over 13 light-minutes from planet Earth.
+                 Always a rewarding sight in binoculars, the Double Cluster is even visible to the
+                  unaided eye from dark locations. C/2017 T2 could remain a telescopic comet though.
+                   One of the brightest comets anticipated in 2020 it makes its closest approach
+                    to the Sun in early May." />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
