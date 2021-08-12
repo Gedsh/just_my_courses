@@ -35,13 +35,13 @@ class EarthFragment : BaseViewPagerFragment() {
     private fun renderData(data: EpicActionData) {
         when (data) {
             is EpicActionData.Success -> {
-                hideLoadingIndicator()
                 val epicImage = data.epicImage
                 val url = epicImage.url
                 if (url.isNullOrEmpty()) {
                     context?.let { showError(it.getString(R.string.error_empty_link)) }
+                    hideLoadingIndicator()
                 } else {
-                    loadImage(url)
+                    context?.let { loadImage(it, url) }
                 }
             }
             is EpicActionData.Loading -> {

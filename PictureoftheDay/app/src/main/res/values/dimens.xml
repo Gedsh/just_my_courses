@@ -5,7 +5,7 @@
 
     <!-- Main Fragment -->
     <dimen name="main_fragment_constraint_padding">10dp</dimen>
-    <dimen name="main_fragment_pod_image_padding">8dp</dimen>
+    <fraction name="main_fragment_pod_image_width_percent">0.9</fraction>
     <dimen name="main_fragment_image_selection_chip_group_padding">8dp</dimen>
     <integer name="main_fragment_wiki_search_counter_max_length">20</integer>
 
@@ -25,6 +25,6 @@
     <dimen name="settings_fragment_heading_text_padding">8dp</dimen>
     <dimen name="settings_fragment_content_padding">8dp</dimen>
 
-    <!-- Earth Fragment -->
-    <dimen name="earth_fragment_nasa_image_padding">8dp</dimen>
+    <!-- Common View Pager Fragment -->
+    <dimen name="common_fragment_nasa_image_padding">8dp</dimen>
 </resources>

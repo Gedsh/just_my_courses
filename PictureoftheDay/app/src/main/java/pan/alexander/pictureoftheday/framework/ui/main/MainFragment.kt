@@ -1,5 +1,7 @@
 package pan.alexander.pictureoftheday.framework.ui.main
 
+import android.animation.*
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +12,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import coil.load
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.MainFragmentBinding
@@ -113,14 +116,14 @@ class MainFragment : Fragment() {
     private fun renderData(data: PictureActionData) {
         when (data) {
             is PictureActionData.Success -> {
-                hideLoadingIndicator()
                 val nasaPicture = data.nasaPicture
                 val url = nasaPicture.url
                 if (url.isNullOrEmpty()) {
                     context?.let { showError(it.getString(R.string.error_empty_link)) }
+                    hideLoadingIndicator()
                 } else {
                     fillBottomSheet(nasaPicture)
-                    loadImage(url)
+                    context?.let { loadImage(it, url) }
                 }
             }
             is PictureActionData.Loading -> {
@@ -140,12 +143,35 @@ class MainFragment : Fragment() {
         bindingBottomSheet.root.visibility = View.VISIBLE
     }
 
-    private fun loadImage(url: String) {
-        bindingMainFragment.podImageView.load(url) {
-            lifecycle(this@MainFragment)
-            error(R.drawable.ic_load_error_vector)
-            placeholder(R.drawable.ic_no_photo_vector)
-        }
+    private fun loadImage(context: Context, url: String) {
+        val request = ImageRequest.Builder(context)
+            .data(url)
+            .lifecycle(this@MainFragment)
+            .error(R.drawable.ic_load_error_vector)
+            .placeholder(R.drawable.ic_no_photo_vector)
+            .target(
+                onSuccess = { result ->
+                    hideLoadingIndicator()
+                    bindingMainFragment.podImageView.setImageDrawable(result)
+                    showInPodImage(context)
+
+                },
+                onError = { error ->
+                    hideLoadingIndicator()
+                    bindingMainFragment.podImageView.setImageDrawable(error)
+                    bindingMainFragment.podImageView.alpha = 1.0f
+                }
+            )
+            .build()
+        context.imageLoader.enqueue(request)
+    }
+
+    private fun showInPodImage(context: Context) {
+        AnimatorInflater.loadAnimator(context, R.animator.pod_image_animate)
+            .apply {
+                setTarget(bindingMainFragment.podImageView)
+                start()
+            }
     }
 
     private fun showLoadingIndicator() = with(bindingMainFragment) {

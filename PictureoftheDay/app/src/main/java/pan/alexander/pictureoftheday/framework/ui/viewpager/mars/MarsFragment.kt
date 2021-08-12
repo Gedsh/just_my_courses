@@ -34,13 +34,13 @@ class MarsFragment : BaseViewPagerFragment() {
     private fun renderData(data: MarsActionData) {
         when (data) {
             is MarsActionData.Success -> {
-                hideLoadingIndicator()
                 val marsPhoto = data.marsPhoto
                 val url = marsPhoto.url
                 if (url.isNullOrEmpty()) {
                     context?.let { showError(it.getString(R.string.error_empty_link)) }
+                    hideLoadingIndicator()
                 } else {
-                    loadImage(url)
+                    context?.let { loadImage(it, url) }
                 }
             }
             is MarsActionData.Loading -> {
