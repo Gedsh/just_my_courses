@@ -18,7 +18,7 @@
 
     <!-- Menu Bottom Navigation -->
     <string name="to_main_screen">To main screen</string>
-    <string name="to_screen_two">To screen 2</string>
+    <string name="to_screen_two">To animation screen</string>
 
     <!-- Settings Fragment -->
     <string name="select_theme">Select theme</string>
@@ -35,5 +35,8 @@
     <string name="tab_text_mars">Mars</string>
     <string name="tab_text_weather">Weather</string>
     <string name="image_stub">Image</string>
+
+    <!--  Animation Activity  -->
+    <string name="animation_activity_shared_transition" translatable="false">Shared Element Transition</string>
 
 </resources>

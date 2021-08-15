@@ -1,11 +1,16 @@
 package pan.alexander.pictureoftheday.framework.ui.settings
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnticipateOvershootInterpolator
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.Slide
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.SettingsFragmentBinding
 import pan.alexander.pictureoftheday.domain.settings.AppUiMode
@@ -52,6 +57,7 @@ class SettingsFragment : Fragment() {
 
         initThemeChangedListener()
         initAppModeChangedListener()
+        animateChips()
     }
 
     private fun initThemeChangedListener() {
@@ -80,6 +86,18 @@ class SettingsFragment : Fragment() {
 
     private fun setAppMode(appUiMode: AppUiMode) {
         viewModel.setAppMode(appUiMode)
+    }
+
+    private fun animateChips() {
+        binding.root.post {
+            TransitionManager.beginDelayedTransition(
+                binding.root, TransitionSet()
+                    .addTransition(Slide(Gravity.END))
+                    .setInterpolator(AnticipateOvershootInterpolator(1f))
+            )
+            binding.chipGroupAppTheme.visibility = View.VISIBLE
+            binding.chipGroupAppMode.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {

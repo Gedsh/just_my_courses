@@ -9,9 +9,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeImageTransform
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -154,7 +160,7 @@ class MainFragment : Fragment() {
                     hideLoadingIndicator()
                     bindingMainFragment.podImageView.setImageDrawable(result)
                     showInPodImage(context)
-
+                    expandImageOnClick()
                 },
                 onError = { error ->
                     hideLoadingIndicator()
@@ -174,9 +180,67 @@ class MainFragment : Fragment() {
             }
     }
 
+    private fun expandImageOnClick() {
+        val animation = animateImageOnClick()
+        bindingMainFragment.podImageView.setOnClickListener {
+            animation()
+        }
+    }
+
+    private fun animateImageOnClick(): () -> Unit {
+        var expanded = false
+
+        return {
+            expanded = !expanded
+            TransitionManager.beginDelayedTransition(
+                bindingMainFragment.root, TransitionSet()
+                    .addTransition(ChangeBounds())
+                    .addTransition(ChangeImageTransform())
+            )
+
+            if (expanded) {
+                bindingMainFragment.podImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                expandImageUsingConstraints(R.id.start)
+                expandImageUsingConstraints(R.id.end)
+            } else {
+                bindingMainFragment.podImageView.scaleType = ImageView.ScaleType.FIT_CENTER
+                collapseImageUsingConstraints(R.id.start)
+                collapseImageUsingConstraints(R.id.end)
+            }
+        }
+    }
+
+    private fun expandImageUsingConstraints(stateId: Int) {
+        bindingMainFragment.mainConstraint.getConstraintSet(stateId).apply {
+            constrainHeight(R.id.podImageView, ConstraintSet.MATCH_CONSTRAINT)
+            constrainPercentWidth(R.id.podImageView, 1f)
+            connect(
+                R.id.podImageView,
+                ConstraintSet.TOP,
+                R.id.mainConstraint,
+                ConstraintSet.TOP
+            )
+        }
+    }
+
+    private fun collapseImageUsingConstraints(stateId: Int) {
+        bindingMainFragment.mainConstraint.getConstraintSet(stateId).apply {
+            constrainHeight(R.id.podImageView, ConstraintSet.WRAP_CONTENT)
+            constrainPercentWidth(R.id.podImageView, .9f)
+            connect(
+                R.id.podImageView,
+                ConstraintSet.TOP,
+                R.id.chipGroupDaySelection,
+                ConstraintSet.BOTTOM
+            )
+        }
+    }
+
     private fun showLoadingIndicator() = with(bindingMainFragment) {
         podLoadingProgressBar.visibility = View.VISIBLE
         podImageView.visibility = View.GONE
+
+
     }
 
     private fun hideLoadingIndicator() = with(bindingMainFragment) {

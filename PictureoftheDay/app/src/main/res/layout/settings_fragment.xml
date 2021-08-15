@@ -27,6 +27,7 @@
                 style="@style/Settings.ChipGroupStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:checkedChip="@+id/chipSettingsThemePurple">
 
                 <com.google.android.material.chip.Chip
@@ -66,6 +67,7 @@
                 style="@style/Settings.ChipGroupStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:checkedChip="@+id/chipSettingsModeAuto">
 
                 <com.google.android.material.chip.Chip
