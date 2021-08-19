@@ -27,4 +27,8 @@
 
     <!-- Common View Pager Fragment -->
     <dimen name="common_fragment_nasa_image_padding">8dp</dimen>
+
+    <!--  Notes Fragment  -->
+    <dimen name="notes_recycle_item_min_height">50dp</dimen>
+    <dimen name="notes_recycle_item_divider_height">1dp</dimen>
 </resources>

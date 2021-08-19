@@ -15,6 +15,7 @@
     <string name="favourite">favourite</string>
     <string name="settings">settings</string>
     <string name="search">Search</string>
+    <string name="notes">Notes</string>
 
     <!-- Menu Bottom Navigation -->
     <string name="to_main_screen">To main screen</string>
@@ -38,5 +39,11 @@
 
     <!--  Animation Activity  -->
     <string name="animation_activity_shared_transition" translatable="false">Shared Element Transition</string>
+
+    <!--  Notes Fragment  -->
+    <string name="notes_select_priority">Select priority:</string>
+    <string name="notes_priority_low">Low</string>
+    <string name="notes_priority_normal">Normal</string>
+    <string name="notes_priority_high">High</string>
 
 </resources>

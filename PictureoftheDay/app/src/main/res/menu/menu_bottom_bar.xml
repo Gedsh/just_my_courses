@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/appBarNotes"
+        android:icon="@drawable/ic_notes_icon"
+        android:title="@string/notes"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/appBarFav"
         android:icon="@drawable/ic_favourite_menu"
         android:title="@string/favourite"

@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.appBarNotes -> {
+                val navController = binding.navHostFragmentActivityMain.findNavController()
+                navController.navigate(R.id.to_notes)
+            }
             R.id.appBarFav -> {
                 val navController = binding.navHostFragmentActivityMain.findNavController()
                 navController.navigate(R.id.navigation_viewpager)

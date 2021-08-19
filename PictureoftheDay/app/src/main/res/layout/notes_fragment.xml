@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notesConstraintContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".framework.ui.notes.NotesFragment">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewNotesFilterHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/notes_select_priority"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupNotesFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNotesFilterHeader">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPriorityLow"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/notes_priority_low"
+            app:chipBackgroundColor="@color/cyan_200" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPriorityNormal"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/notes_priority_normal" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPriorityHigh"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/notes_priority_high"
+            app:chipBackgroundColor="@color/pink_200" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewNotes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupNotesFilter" />
+</androidx.constraintlayout.widget.ConstraintLayout>

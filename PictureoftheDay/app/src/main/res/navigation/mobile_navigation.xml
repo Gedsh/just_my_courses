@@ -11,6 +11,16 @@
         app:popUpTo="@id/navigation_main"
         app:popUpToInclusive="true" />
 
+    <action
+        android:id="@+id/to_notes"
+        app:destination="@id/navigation_notes"
+        app:popUpTo="@id/navigation_main" />
+
+    <fragment
+        android:id="@+id/navigation_notes"
+        android:name="pan.alexander.pictureoftheday.framework.ui.notes.NotesFragment"
+        tools:layout="@layout/notes_fragment" />
+
     <fragment
         android:id="@+id/navigation_main"
         android:name="pan.alexander.pictureoftheday.framework.ui.main.MainFragment"
