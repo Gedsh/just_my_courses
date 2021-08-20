@@ -21,24 +21,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textview.MaterialTextView
+    <pan.alexander.pictureoftheday.framework.ui.main.ArcTextView
         android:id="@+id/bottomSheetDescriptionHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/main_fragment_bottom_sheet_header_margin_top"
         android:paddingStart="@dimen/main_fragment_bottom_sheet_header_padding_side"
         android:paddingEnd="@dimen/main_fragment_bottom_sheet_header_padding_side"
-        android:textColor="@color/bottom_sheet_header_text_color"
-        android:textStyle="bold"
+        app:arcFontFamily="@font/edge_of_the_galaxy_italic"
+        app:centerAngle="@integer/main_fragment_bottom_sheet_arc_center_angle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottomSheetLine"
+        app:radius="@dimen/main_fragment_bottom_sheet_arc_radius"
+        app:textColor="@color/bottom_sheet_header_text_color"
+        app:textSize="@dimen/main_fragment_bottom_sheet_arc_text_size"
         tools:text="Two Clusters and a Comet" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/bottomSheetDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/edge_of_the_galaxy_regular"
         android:paddingStart="@dimen/main_fragment_bottom_sheet_description_padding_side"
         android:paddingEnd="@dimen/main_fragment_bottom_sheet_description_padding_side"
         app:layout_constraintEnd_toEndOf="parent"

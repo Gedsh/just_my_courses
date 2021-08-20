@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="themeColorPrimary" format="reference" />
+    <attr name="themeColorPrimaryVariant" format="reference" />
+    <attr name="themeColorSecondary" format="reference" />
+    <attr name="themeColorSecondaryVariant" format="reference" />
+
+    <declare-styleable name="ArcTextView">
+        <attr name="radius" format="dimension" />
+        <attr name="centerAngle" format="integer" />
+        <attr name="textSize" format="dimension" />
+        <attr name="textColor" format="color" />
+        <attr name="arcFontFamily" format="reference" />
+    </declare-styleable>
+</resources>

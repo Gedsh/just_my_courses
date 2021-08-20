@@ -17,6 +17,9 @@
     <dimen name="main_fragment_bottom_sheet_header_margin_top">5dp</dimen>
     <dimen name="main_fragment_bottom_sheet_header_padding_side">10dp</dimen>
     <dimen name="main_fragment_bottom_sheet_description_padding_side">10dp</dimen>
+    <integer name="main_fragment_bottom_sheet_arc_center_angle">-90</integer>
+    <dimen name="main_fragment_bottom_sheet_arc_radius">75dp</dimen>
+    <dimen name="main_fragment_bottom_sheet_arc_text_size">28sp</dimen>
 
     <!-- Bottom Navigation Layout -->
     <dimen name="bottom_navigation_layout_margin">8dp</dimen>

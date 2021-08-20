@@ -2,5 +2,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/marcellus</item>
+        <item>@font/orbitron_medium</item>
     </array>
 </resources>

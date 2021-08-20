@@ -5,6 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.DynamicDrawableSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
@@ -28,6 +35,8 @@ import pan.alexander.pictureoftheday.domain.pod.entities.NasaPicture
 import pan.alexander.pictureoftheday.framework.App.Companion.LOG_TAG
 import pan.alexander.pictureoftheday.framework.ui.MainActivityViewModel
 import java.util.*
+import kotlin.random.Random
+
 
 class MainFragment : Fragment() {
 
@@ -144,8 +153,40 @@ class MainFragment : Fragment() {
     }
 
     private fun fillBottomSheet(nasaPicture: NasaPicture) = with(bindingBottomSheet) {
-        bindingBottomSheet.bottomSheetDescriptionHeader.text = nasaPicture.title
-        bindingBottomSheet.bottomSheetDescription.text = nasaPicture.explanation
+        context?.let {
+            val spannableTitle = SpannableString(" ${nasaPicture.title}   ")
+            spannableTitle.setSpan(
+                ImageSpan(it, R.drawable.ic_favourite_menu),
+                0,
+                1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannableTitle.setSpan(
+                ImageSpan(it, R.drawable.ic_favourite_menu, DynamicDrawableSpan.ALIGN_BASELINE),
+                spannableTitle.length - 1,
+                spannableTitle.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            bindingBottomSheet.bottomSheetDescriptionHeader.text = spannableTitle.toString()
+
+            val spannableDescription = SpannableStringBuilder(nasaPicture.explanation)
+            spannableDescription.forEachIndexed { index, _ ->
+                spannableDescription.setSpan(
+                    ForegroundColorSpan(
+                        ColorUtils.XYZToColor(
+                            Random.nextDouble(90.0),
+                            Random.nextDouble(90.0),
+                            Random.nextDouble(90.0)
+                        )
+                    ),
+                    index,
+                    index + 1,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            bindingBottomSheet.bottomSheetDescription.text = spannableDescription
+        }
         bindingBottomSheet.root.visibility = View.VISIBLE
     }
 
