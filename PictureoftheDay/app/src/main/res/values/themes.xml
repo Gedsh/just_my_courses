@@ -49,4 +49,9 @@
 
     <style name="Theme.PictureOfTheDay.Purple.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="Theme.PictureOfTheDay.Purple.Splash">
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/splash_background_drawable</item>
+    </style>
+
 </resources>

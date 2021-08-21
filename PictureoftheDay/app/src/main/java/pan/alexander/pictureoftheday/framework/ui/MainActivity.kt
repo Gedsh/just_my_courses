@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
@@ -14,9 +13,8 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.snackbar.Snackbar
 import pan.alexander.pictureoftheday.R
 import pan.alexander.pictureoftheday.databinding.MainActivityBinding
-import pan.alexander.pictureoftheday.domain.settings.AppTheme
-import pan.alexander.pictureoftheday.domain.settings.AppUiMode
 import pan.alexander.pictureoftheday.domain.settings.SettingsAction
+import pan.alexander.pictureoftheday.utils.ThemeUtils
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,30 +23,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        setAppUiMode(viewModel.getAppUiMode())
+        ThemeUtils.setAppUiMode(viewModel.getAppUiMode())
 
-        setAppTheme(viewModel.getAppTheme())
+        ThemeUtils.setAppTheme(this, viewModel.getAppTheme())
 
         super.onCreate(savedInstanceState)
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-    }
-
-    private fun setAppTheme(appTheme: AppTheme) {
-        when (appTheme) {
-            AppTheme.PURPLE -> setTheme(R.style.Theme_PictureOfTheDay_Purple)
-            AppTheme.PINK -> setTheme(R.style.Theme_PictureOfTheDay_Pink)
-            AppTheme.INDIGO -> setTheme(R.style.Theme_PictureOfTheDay_Indigo)
-        }
-    }
-
-    private fun setAppUiMode(appUiMode: AppUiMode) {
-        when (appUiMode) {
-            AppUiMode.MODE_AUTO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            AppUiMode.MODE_DAY -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            AppUiMode.MODE_NIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -116,14 +98,14 @@ class MainActivity : AppCompatActivity() {
             when (action) {
                 is SettingsAction.AppThemeChanged -> {
                     if (viewModel.currentTheme != action.appTheme) {
-                        setAppTheme(action.appTheme)
+                        ThemeUtils.setAppTheme(this, action.appTheme)
                         viewModel.currentTheme = action.appTheme
                         recreate()
                     }
                 }
                 is SettingsAction.AppUiModeChanged -> {
                     if (viewModel.currentUiMode != action.appUiMode) {
-                        setAppUiMode(action.appUiMode)
+                        ThemeUtils.setAppUiMode(action.appUiMode)
                         viewModel.currentUiMode = action.appUiMode
                         recreate()
                     }

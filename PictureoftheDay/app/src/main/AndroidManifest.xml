@@ -12,14 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PictureOfTheDay.Purple">
-        <activity android:name=".framework.ui.AnimationActivity" />
-        <activity android:name=".framework.ui.MainActivity">
+        <activity
+            android:name=".framework.ui.SplashActivity"
+            android:theme="@style/Theme.PictureOfTheDay.Purple.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".framework.ui.AnimationActivity" />
+        <activity android:name=".framework.ui.MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
