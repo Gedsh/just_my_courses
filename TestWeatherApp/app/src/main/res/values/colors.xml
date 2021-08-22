@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  Application Theme  -->
+    <color name="primaryColor">#616161</color>
+    <color name="primaryLightColor">#8e8e8e</color>
+    <color name="primaryDarkColor">#373737</color>
+    <color name="secondaryColor">#00897b</color>
+    <color name="secondaryLightColor">#4ebaaa</color>
+    <color name="secondaryDarkColor">#005b4f</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#000000</color>
+
+    <!--  Toolbar  -->
+    <color name="toolbarBackgroundColor">#FFFFFFFF</color>
+    <color name="toolbarTitleTextColor">#FF000000</color>
+</resources>
