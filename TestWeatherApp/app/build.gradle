@@ -4,25 +4,9 @@ plugins {
     id 'kotlin-kapt'
 }
 
-def keystorePropertiesFile = file("../../../../.local/KStore/keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-def owmPropertiesFile = file("../../../../.local/KStore/owm_key.properties")
-def owmProperties = new Properties()
-owmProperties.load(new FileInputStream(owmPropertiesFile))
-
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
-    signingConfigs {
-        releasesign {
-            storeFile file("../../../../.local/KStore/pan_alexander.jks")
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyBAlias']
-            keyPassword keystoreProperties['keyBPassword']
-        }
-    }
 
     defaultConfig {
         applicationId "pan.alexander.testweatherapp"
@@ -31,7 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField "String", "API_KEY", owmProperties["key"]
+        buildConfigField "String", "API_KEY", '"NDU1NzU4MjBmYWIwZTkyNTU1YmUwZDQyZTg1MWUxMTc="'
         buildConfigField "String", "API_OWM_BASE_URL", '"https://api.openweathermap.org/"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -42,14 +26,12 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releasesign
         }
 
         debug {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.releasesign
         }
     }
     compileOptions {
@@ -73,9 +55,25 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_ktx"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_ktx"
+    implementation "androidx.legacy:legacy-support-v4:$legacy_support"
 
     //Google material
     implementation "com.google.android.material:material:$google_material"
+
+    //DI
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-android-compat:$koin_version"
+
+    // Retrofit + Gson + OkHttp
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    //Room
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_ktx"
+    kapt "androidx.room:room-compiler:$room_version"
 
     //Test
     testImplementation 'junit:junit:4.13.2'

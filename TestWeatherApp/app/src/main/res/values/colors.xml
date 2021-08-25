@@ -13,4 +13,8 @@
     <!--  Toolbar  -->
     <color name="toolbarBackgroundColor">#FFFFFFFF</color>
     <color name="toolbarTitleTextColor">#FF000000</color>
+
+    <!--  Weather Fragment  -->
+    <color name="weatherFragmentSearchCardBackgroundColor">#616161</color>
+    <color name="weatherFragmentSearchCardTextColor">#ffffff</color>
 </resources>

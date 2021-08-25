@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">TestWeatherApp</string>
+    <string name="search_by_zip_code">Search by Zip Code</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="get_weather">Get Weather</string>
+    <string name="location">Location</string>
+    <string name="temperature">Temperature</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="humidity">Humidity</string>
+    <string name="visibility">Visibility</string>
+    <string name="sunrise_time">Time of Sunrise</string>
+    <string name="sunset_time">Time of Sunset</string>
+    <string name="wrong_zip">Wrong Zip Code</string>
 </resources>

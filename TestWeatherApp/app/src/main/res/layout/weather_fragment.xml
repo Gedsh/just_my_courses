@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".framework.ui.main.WeatherFragment"
+    tools:ignore="RtlSymmetry">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/zipSearchCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/weatherFragmentSearchCardBackgroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textViewSearchZipCodeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+                    android:text="@string/search_by_zip_code"
+                    android:textColor="@color/weatherFragmentSearchCardTextColor"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textViewSearchZipCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+                    android:text="@string/zip_code"
+                    android:textColor="@color/weatherFragmentSearchCardTextColor"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewSearchZipCodeTitle" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/zipSearchInputEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:padding="@dimen/weatherFragmentSearchCardEditTextPadding"
+                    android:textColor="@color/weatherFragmentSearchCardTextColor"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/zipSearchButton"
+                    app:layout_constraintTop_toBottomOf="@id/textViewSearchZipCode" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/zipSearchButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/get_weather"
+                    app:layout_constraintBottom_toBottomOf="@id/zipSearchInputEditText"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewLocationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/zipSearchCard" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewLocationValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLocationTitle"
+            tools:text="Mountain View" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewTemperatureTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/temperature"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLocationValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewTemperatureValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTemperatureTitle"
+            tools:text="55.58F" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewWindTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/wind_speed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTemperatureValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewWindValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWindTitle"
+            tools:text="10.29 mph" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewHumidityTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/humidity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWindValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewHumidityValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewHumidityTitle"
+            tools:text="54 %" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewVisibilityTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/visibility"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewHumidityValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewVisibilityValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVisibilityTitle"
+            tools:text="Clear" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewSunriseTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/sunrise_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVisibilityValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewSunriseValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSunriseTitle"
+            tools:text="3/26/2018 2:01:27 PM UTC" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewSunsetTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentTitlesTextStartPadding"
+            android:text="@string/sunset_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSunriseValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewSunsetValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/weatherFragmentValuesTextStartPadding"
+            android:paddingBottom="@dimen/weatherFragmentValuesTextBottomPadding"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSunsetTitle"
+            tools:text="3/26/2018 2:26:26 AM UTC" />
+
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/weatherFieldsGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="textViewLocationTitle, textViewLocationValue,
+         textViewTemperatureTitle, textViewTemperatureValue,
+          textViewWindTitle, textViewWindValue,
+          textViewHumidityTitle, textViewHumidityValue,
+           textViewVisibilityTitle, textViewVisibilityValue,
+            textViewSunriseTitle, textViewSunriseValue,
+             textViewSunsetTitle, textViewSunsetValue" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
