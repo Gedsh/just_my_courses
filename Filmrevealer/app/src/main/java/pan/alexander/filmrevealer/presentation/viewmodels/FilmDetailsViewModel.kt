@@ -1,27 +1,68 @@
 package pan.alexander.filmrevealer.presentation.viewmodels
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import pan.alexander.filmrevealer.App.Companion.LOG_TAG
+import pan.alexander.filmrevealer.domain.entities.Film
+import pan.alexander.filmrevealer.domain.entities.FilmDetails
 import pan.alexander.filmrevealer.presentation.Failure
 
 class FilmDetailsViewModel : BaseViewModel() {
 
-    fun getFilmDetailsLiveData(filmId: Int) = mainInteractor.get().getFilmDetailsById(filmId)
+    private var filmDetailsMutableLiveData: MutableLiveData<List<FilmDetails>>? = null
+    private var ratedFilmMutableLiveData: MutableLiveData<List<Film>>? = null
 
-    fun getRatedFilmLiveData(filmId: Int) = mainInteractor.get().getRatedFilmById(filmId)
+    fun getFilmDetailsLiveData(filmId: Int): LiveData<List<FilmDetails>> {
+        if (filmDetailsMutableLiveData == null) {
+            filmDetailsMutableLiveData = MutableLiveData()
 
-    fun loadFilmDetails(filmId: Int) = with(viewModelScope) {
-        launch {
-            mainInteractor.get().loadFilmPreciseDetails(filmId) { message ->
-                mFailureLiveData.value = Failure.WithMessageAndAction(message) {
-                    launch {
-                        mainInteractor.get().loadFilmPreciseDetails(filmId) {
+            disposables += mainInteractor.get().getFilmDetailsById(filmId)
+                .distinctUntilChanged()
+                .subscribeBy(
+                    onNext = { filmDetailsMutableLiveData?.value = it },
+                    onError = { throwable ->
+                        throwable.message?.let {
                             mFailureLiveData.value = Failure.WithMessage(it)
                         }
+                        Log.e(LOG_TAG, "Get film details fault", throwable)
                     }
-                }
-            }
+                )
         }
+        return filmDetailsMutableLiveData ?: MutableLiveData()
+    }
+
+    fun getRatedFilmLiveData(filmId: Int): LiveData<List<Film>> {
+        if (ratedFilmMutableLiveData == null) {
+            ratedFilmMutableLiveData = MutableLiveData()
+
+            disposables += mainInteractor.get().getRatedFilmById(filmId)
+                .distinctUntilChanged()
+                .subscribeBy(
+                    onNext = { ratedFilmMutableLiveData?.value = it },
+                    onError = { throwable ->
+                        throwable.message?.let {
+                            mFailureLiveData.value = Failure.WithMessage(it)
+                        }
+                        Log.e(LOG_TAG, "Get film rating fault", throwable)
+                    }
+                )
+        }
+        return ratedFilmMutableLiveData ?: MutableLiveData()
+    }
+
+    fun loadFilmDetails(filmId: Int) {
+        disposables += mainInteractor.get().loadFilmPreciseDetails(filmId)
+            .subscribeBy(
+                onError = { throwable ->
+                    throwable.message?.let {
+                        mFailureLiveData.value = Failure.WithMessage(it)
+                    }
+                    Log.e(LOG_TAG, "Load film precise details fault", throwable)
+                }
+            )
     }
 
 }

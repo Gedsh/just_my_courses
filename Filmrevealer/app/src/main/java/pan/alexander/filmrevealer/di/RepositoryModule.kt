@@ -1,23 +1,22 @@
 package pan.alexander.filmrevealer.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import pan.alexander.filmrevealer.data.LocalRepositoryImplementation
-import pan.alexander.filmrevealer.data.PreferenceRepositoryImplementation
-import pan.alexander.filmrevealer.data.RemoteRepositoryImplementation
-import pan.alexander.filmrevealer.domain.LocalRepository
-import pan.alexander.filmrevealer.domain.PreferencesRepository
-import pan.alexander.filmrevealer.domain.RemoteRepository
+import pan.alexander.filmrevealer.data.local.LocalRepositoryImpl
+import pan.alexander.filmrevealer.data.preferences.PreferenceRepositoryImpl
+import pan.alexander.filmrevealer.data.remote.RemoteRepositoryImpl
+import pan.alexander.filmrevealer.domain.local.LocalRepository
+import pan.alexander.filmrevealer.domain.preferences.PreferencesRepository
+import pan.alexander.filmrevealer.domain.remote.RemoteRepository
 
 @Module
-class RepositoryModule {
+abstract class RepositoryModule {
+    @Binds
+    abstract fun provideLocalRepository(localRepository: LocalRepositoryImpl): LocalRepository
 
-    @Provides
-    fun provideLocalRepository(): LocalRepository = LocalRepositoryImplementation()
+    @Binds
+    abstract fun provideRemoteRepository(remoteRepository: RemoteRepositoryImpl): RemoteRepository
 
-    @Provides
-    fun provideRemoteRepository(): RemoteRepository = RemoteRepositoryImplementation()
-
-    @Provides
-    fun providePreferencesRepository(): PreferencesRepository = PreferenceRepositoryImplementation()
+    @Binds
+    abstract fun providePreferencesRepository(preferencesRepository: PreferenceRepositoryImpl): PreferencesRepository
 }

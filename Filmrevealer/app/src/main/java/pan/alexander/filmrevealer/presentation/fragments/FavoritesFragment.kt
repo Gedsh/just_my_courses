@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pan.alexander.filmrevealer.databinding.FragmentFavoritesBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.recycler.FilmsAdapter
 import pan.alexander.filmrevealer.presentation.viewmodels.FavoritesViewModel
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
 
+@ExperimentalCoroutinesApi
 class FavoritesFragment : FilmsBaseFragment() {
 
     private val viewModel by lazy { ViewModelProvider(this).get(FavoritesViewModel::class.java) }
@@ -139,7 +141,7 @@ class FavoritesFragment : FilmsBaseFragment() {
 
     private fun observeInternetConnectionAvailable() {
         context?.let {
-            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+            InternetConnectionLiveData.distinctUntilChanged().observe(viewLifecycleOwner) { connected ->
                 if (connected) {
                     viewModel.listOfRatedFilmsLiveData.value?.let { updateRatedFilms(it) }
                 }

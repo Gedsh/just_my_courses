@@ -7,6 +7,7 @@ import pan.alexander.filmrevealer.presentation.Failure
 import pan.alexander.filmrevealer.presentation.viewmodels.BaseViewModel
 import pan.alexander.filmrevealer.utils.showSnackBar
 import pan.alexander.filmrevealer.utils.ConnectionUtils
+import pan.alexander.filmrevealer.utils.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
 
 abstract class BaseFragment : Fragment() {
 
@@ -31,5 +32,9 @@ abstract class BaseFragment : Fragment() {
                 }
             }
         })
+    }
+
+    protected fun isUpdateRequired(filmTimestamp: Long): Boolean {
+        return System.currentTimeMillis() - filmTimestamp > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS.toLong()
     }
 }

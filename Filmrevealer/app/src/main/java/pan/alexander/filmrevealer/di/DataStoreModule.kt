@@ -3,6 +3,7 @@ package pan.alexander.filmrevealer.di
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -17,4 +18,8 @@ class DataStoreModule(val context: Context) {
     fun provideDataStore() = PreferenceDataStoreFactory.create {
         context.preferencesDataStoreFile(USER_PREFERENCES_NAME)
     }
+
+    @Provides
+    @Singleton
+    fun provideRxDataStore() = RxPreferenceDataStoreBuilder(context, USER_PREFERENCES_NAME).build()
 }

@@ -1,0 +1,9 @@
+package pan.alexander.filmrevealer.data.remote.pojo
+
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
+data class RateBody(
+    @SerializedName("value") val rate: Float
+)

@@ -132,14 +132,15 @@ class HomeFragment : FilmsBaseFragment() {
     }
 
     private fun observeLikedFilmsImdbIds() {
-        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner) {
             nowPlayingFilmsAdapter?.updateLikedImdbIds(it)
             upcomingFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
     private fun observeNowPlayingFilms() {
-        viewModel.listOfNowPlayingFilmsLiveData.distinctUntilChanged()
+        viewModel.listOfNowPlayingFilmsLiveData
             .observe(viewLifecycleOwner, { films ->
                 updateNowPlayingFilms(films)
             })
@@ -169,7 +170,7 @@ class HomeFragment : FilmsBaseFragment() {
     }
 
     private fun observeUpcomingFilms() {
-        viewModel.listOfUpcomingFilmsLiveData.distinctUntilChanged()
+        viewModel.listOfUpcomingFilmsLiveData
             .observe(viewLifecycleOwner, { films ->
                 updateUpcomingFilms(films)
             })
@@ -200,7 +201,8 @@ class HomeFragment : FilmsBaseFragment() {
 
     private fun observeInternetConnectionAvailable() {
         context?.let {
-            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+            InternetConnectionLiveData.distinctUntilChanged()
+                .observe(viewLifecycleOwner) { connected ->
                 if (connected) {
                     viewModel.listOfNowPlayingFilmsLiveData.value?.let { updateNowPlayingFilms(it) }
                     viewModel.listOfUpcomingFilmsLiveData.value?.let { updateUpcomingFilms(it) }

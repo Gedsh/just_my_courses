@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = "1.5.21"
+        kotlin_version = "1.5.30"
         retrofit_version = "2.9.0"
         dagger_version = '2.37'
         vector_drowable = "1.1.0"
@@ -11,8 +11,11 @@ buildscript {
         glide_version = "4.12.0"
         okhttp_version = '5.0.0-alpha.2'
         multidex_version = "2.0.1"
-        datastore_preferences = "1.0.0-rc01"
+        datastore_preferences = "1.0.0"
         preference_ktx = "1.1.1"
+        room_version = "2.3.0"
+        rx_kotlin = "3.0.1"
+        rx_android = "3.0.0"
     }
     repositories {
         google()
@@ -21,7 +24,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.8'
+        //classpath 'com.google.gms:google-services:4.3.10'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

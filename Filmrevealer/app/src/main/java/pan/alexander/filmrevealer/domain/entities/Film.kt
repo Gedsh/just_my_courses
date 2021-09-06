@@ -7,7 +7,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import pan.alexander.filmrevealer.data.web.pojo.FilmDetailsJson
+import pan.alexander.filmrevealer.data.remote.pojo.FilmDetailsJson
 
 @Keep
 @Parcelize

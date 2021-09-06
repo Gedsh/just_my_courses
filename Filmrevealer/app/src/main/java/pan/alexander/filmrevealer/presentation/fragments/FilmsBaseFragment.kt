@@ -4,7 +4,6 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import pan.alexander.filmrevealer.utils.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
 import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.viewmodels.BaseViewModel
@@ -25,9 +24,5 @@ abstract class FilmsBaseFragment : BaseFragment() {
         fun(film: Film) {
             baseViewModel.toggleFilmLike(film)
         }
-    }
-
-    protected fun isUpdateRequired(filmTimestamp: Long): Boolean {
-        return (System.currentTimeMillis() - filmTimestamp).toInt() > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
     }
 }

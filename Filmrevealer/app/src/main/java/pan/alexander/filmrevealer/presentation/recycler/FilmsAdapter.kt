@@ -12,19 +12,15 @@ import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.databinding.RecyclerItemFilmBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.utils.ALLOW_ADULT_CONTENT_PREFERENCE
+import pan.alexander.filmrevealer.utils.LOAD_NEXT_PAGE_GUESS
 
 class FilmsAdapter(
     private val context: Context
 ) : RecyclerView.Adapter<FilmsViewHolder>(), OnRecyclerScrolledListener {
 
-    companion object {
-        const val UNDEFINED_POSITION = -1
-    }
-
     var onDataRequiredListener: ((section: Film.Section, page: Int) -> Unit)? = null
     var onFilmClickListener: ((view: View?, film: Film) -> Unit)? = null
     var onLikeClickListener: ((film: Film) -> Unit)? = null
-    private var lastVisibleFilmPosition: Int = UNDEFINED_POSITION
 
     private val items: MutableList<Film> = mutableListOf()
     private val likedImdbIds: MutableList<Int> = mutableListOf()
@@ -141,10 +137,9 @@ class FilmsAdapter(
         loadNextPageIfNecessary(lastVisibleItemPosition)
 
     private fun loadNextPageIfNecessary(position: Int) {
-        if (items.getOrNull(position + 1) != null) {
+        if (items.size > position + LOAD_NEXT_PAGE_GUESS) {
             val currentFilm = items[position]
-            lastVisibleFilmPosition = position
-            val nextFilm = items[position + 1]
+            val nextFilm = items[position + LOAD_NEXT_PAGE_GUESS]
             if (nextFilm.page != currentFilm.page && isUpdateRequired(nextFilm.timeStamp)
             ) {
                 val nextFilmSection = Film.Section.from(nextFilm.section)
@@ -152,7 +147,6 @@ class FilmsAdapter(
             }
         } else {
             val lastFilm = items[position]
-            lastVisibleFilmPosition = position
             if (lastFilm.page < lastFilm.totalPages) {
                 val lastFilmSection = Film.Section.from(lastFilm.section)
                 onDataRequiredListener?.let { it(lastFilmSection, lastFilm.page + 1) }

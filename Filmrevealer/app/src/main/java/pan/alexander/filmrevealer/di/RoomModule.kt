@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import pan.alexander.filmrevealer.data.database.AppDatabase
-import pan.alexander.filmrevealer.data.database.FilmDao
-import pan.alexander.filmrevealer.data.database.FilmDetailsDao
+import pan.alexander.filmrevealer.database.*
 import javax.inject.Singleton
 
 @Module

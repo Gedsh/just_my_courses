@@ -22,6 +22,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pan.alexander.filmrevealer.*
 import pan.alexander.filmrevealer.databinding.FragmentFilmDetailsBinding
 import pan.alexander.filmrevealer.domain.entities.Film
@@ -30,12 +31,12 @@ import pan.alexander.filmrevealer.presentation.viewmodels.FilmDetailsViewModel
 import pan.alexander.filmrevealer.services.RateFilmIntentService
 import pan.alexander.filmrevealer.utils.InternetConnectionLiveData
 import pan.alexander.filmrevealer.utils.ConnectionUtils
-import pan.alexander.filmrevealer.utils.FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
 import pan.alexander.filmrevealer.utils.showSnackBar
 import java.util.*
 
 private const val LOAD_DETAILS_RETRY_COUNT = 3
 
+@ExperimentalCoroutinesApi
 class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
     private val viewModel by lazy { ViewModelProvider(this).get(FilmDetailsViewModel::class.java) }
@@ -150,7 +151,8 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
     private fun observeInternetConnectionAvailable() {
         context?.let {
-            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+            InternetConnectionLiveData.distinctUntilChanged()
+                .observe(viewLifecycleOwner) { connected ->
                 if (connected) {
                     filmFromArguments?.let { film ->
                         viewModel.getFilmDetailsLiveData(film.movieId).value?.let { filmDetails ->
@@ -164,7 +166,7 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
 
     private fun observeFilmDetails() {
         filmFromArguments?.let { film ->
-            viewModel.getFilmDetailsLiveData(film.movieId).distinctUntilChanged()
+            viewModel.getFilmDetailsLiveData(film.movieId)
                 .observe(viewLifecycleOwner, {
                     updateFilmDetails(film, it)
                 })
@@ -176,9 +178,7 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
             displayData(filmDetails.first())
         }
 
-        if (filmDetails.isEmpty()
-            || System.currentTimeMillis() - filmDetails.first().timeStamp > FILMS_UPDATE_DEFAULT_PERIOD_MILLISECONDS
-        ) {
+        if (filmDetails.isEmpty() || isUpdateRequired(filmDetails.first().timeStamp)) {
             requestUpdates(filmFromArguments)
         }
     }
@@ -186,7 +186,7 @@ class FilmDetailsFragment : BaseFragment(), View.OnClickListener {
     private fun observeRatedFilmLiveData() {
 
         filmFromArguments?.let { film ->
-            viewModel.getRatedFilmLiveData(film.movieId).distinctUntilChanged()
+            viewModel.getRatedFilmLiveData(film.movieId)
                 .observe(viewLifecycleOwner, { ratedFilm ->
                     ratedFilm.takeIf { it.isNotEmpty() }.let {
                         val userRating = it?.first()?.userRating ?: 0

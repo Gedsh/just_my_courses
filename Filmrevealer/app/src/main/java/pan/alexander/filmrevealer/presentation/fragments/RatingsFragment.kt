@@ -131,14 +131,15 @@ class RatingsFragment : FilmsBaseFragment() {
     }
 
     private fun observeLikedFilmsImdbIds() {
-        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged().observe(viewLifecycleOwner) {
+        viewModel.listOfLikedImdbIdsLiveData.distinctUntilChanged()
+            .observe(viewLifecycleOwner) {
             topRatedFilmsAdapter?.updateLikedImdbIds(it)
             popularFilmsAdapter?.updateLikedImdbIds(it)
         }
     }
 
     private fun observeTopRatedFilms() {
-        viewModel.listOfTopRatedFilmsLiveData.distinctUntilChanged()
+        viewModel.listOfTopRatedFilmsLiveData
             .observe(viewLifecycleOwner, { films ->
                 updateTopRatedFilms(films)
             })
@@ -168,7 +169,7 @@ class RatingsFragment : FilmsBaseFragment() {
     }
 
     private fun observePopularFilms() {
-        viewModel.listOfPopularFilmsLiveData.distinctUntilChanged()
+        viewModel.listOfPopularFilmsLiveData
             .observe(viewLifecycleOwner, { films ->
                 updatePopularFilms(films)
             })
@@ -199,7 +200,7 @@ class RatingsFragment : FilmsBaseFragment() {
 
     private fun observeInternetConnectionAvailable() {
         context?.let {
-            InternetConnectionLiveData.observe(viewLifecycleOwner) { connected ->
+            InternetConnectionLiveData.distinctUntilChanged().observe(viewLifecycleOwner) { connected ->
                 if (connected) {
                     viewModel.listOfTopRatedFilmsLiveData.value?.let { updateTopRatedFilms(it) }
                     viewModel.listOfPopularFilmsLiveData.value?.let { updatePopularFilms(it) }

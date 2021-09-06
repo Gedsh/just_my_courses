@@ -5,8 +5,10 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pan.alexander.filmrevealer.BuildConfig
-import pan.alexander.filmrevealer.data.web.FilmsApiService
+import pan.alexander.filmrevealer.utils.configuration.ConfigurationManager
+import pan.alexander.filmrevealer.web.FilmsApiService
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -25,12 +27,20 @@ class RetrofitModule {
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+        rxCallAdapterFactory: RxJava3CallAdapterFactory,
+        gsonConverterFactory: GsonConverterFactory,
+        configurationManager: ConfigurationManager
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.API_BASE_URL)
+        .baseUrl(configurationManager.getBaseUrl())
+        .addCallAdapterFactory(rxCallAdapterFactory)
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideRx3CallAdapterFactory(): RxJava3CallAdapterFactory =
+        RxJava3CallAdapterFactory.createSynchronous()
 
     @Provides
     @Singleton
