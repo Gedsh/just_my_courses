@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  Weather Fragment  -->
+    <dimen name="weatherFragmentTitlesTextStartPadding">8dp</dimen>
+    <dimen name="weatherFragmentValuesTextStartPadding">16dp</dimen>
+    <dimen name="weatherFragmentValuesTextBottomPadding">8dp</dimen>
+    <dimen name="weatherFragmentSearchCardEditTextPadding">8dp</dimen>
+</resources>
