@@ -12,7 +12,7 @@ import pan.alexander.filmrevealer.R
 import pan.alexander.filmrevealer.databinding.RecyclerItemFilmBinding
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.utils.ALLOW_ADULT_CONTENT_PREFERENCE
-import pan.alexander.filmrevealer.utils.LOAD_NEXT_PAGE_GUESS
+import pan.alexander.filmrevealer.utils.UPDATE_REQUEST_PREDICTION_ITEMS
 
 class FilmsAdapter(
     private val context: Context
@@ -137,9 +137,9 @@ class FilmsAdapter(
         loadNextPageIfNecessary(lastVisibleItemPosition)
 
     private fun loadNextPageIfNecessary(position: Int) {
-        if (items.size > position + LOAD_NEXT_PAGE_GUESS) {
+        if (items.size > position + UPDATE_REQUEST_PREDICTION_ITEMS) {
             val currentFilm = items[position]
-            val nextFilm = items[position + LOAD_NEXT_PAGE_GUESS]
+            val nextFilm = items[position + UPDATE_REQUEST_PREDICTION_ITEMS]
             if (nextFilm.page != currentFilm.page && isUpdateRequired(nextFilm.timeStamp)
             ) {
                 val nextFilmSection = Film.Section.from(nextFilm.section)

@@ -4,18 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import pan.alexander.filmrevealer.App
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.Failure
+import pan.alexander.filmrevealer.utils.NETWORK_REQUEST_THROTTLE_TIME_MSEC
 import java.util.concurrent.TimeUnit
 
 class RatingsViewModel : BaseViewModel() {
-
-    private var topRatedDisposable: Disposable? = null
-    private var popularDisposable: Disposable? = null
 
     val listOfTopRatedFilmsLiveData: LiveData<List<Film>> by lazy {
         val filmsMutableLiveData = MutableLiveData<List<Film>>()
@@ -49,23 +46,21 @@ class RatingsViewModel : BaseViewModel() {
         filmsMutableLiveData
     }
 
+    fun updateTopRatedFilms(page: Int) {
+        topRatedFilmsUpdateRequest?.invoke(page)
+    }
+
     private var topRatedFilmsUpdateRequest: ((page: Int) -> Unit)? = null
 
     init {
         disposables += Observable.create<Int> { emitter ->
             topRatedFilmsUpdateRequest = { emitter.onNext(it) }
-        }.distinctUntilChanged()
-            .debounce(1, TimeUnit.SECONDS)
-            .subscribeBy(
-                onNext = { page ->
-                    sendTopRatedFilmsUpdateRequest(page)
-                }
-            )
-    }
-
-    private fun sendTopRatedFilmsUpdateRequest(page: Int) {
-        topRatedDisposable?.dispose()
-        topRatedDisposable = mainInteractor.get().loadTopRatedFilms(page)
+        }
+            .throttleFirst(NETWORK_REQUEST_THROTTLE_TIME_MSEC, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMapCompletable {
+                mainInteractor.get().loadTopRatedFilms(it)
+            }
             .subscribeBy(
                 onError = { throwable ->
                     throwable.message?.let {
@@ -76,8 +71,8 @@ class RatingsViewModel : BaseViewModel() {
             )
     }
 
-    fun updateTopRatedFilms(page: Int) {
-        topRatedFilmsUpdateRequest?.invoke(page)
+    fun updatePopularFilms(page: Int) {
+        popularFilmsUpdateRequest?.invoke(page)
     }
 
     private var popularFilmsUpdateRequest: ((page: Int) -> Unit)? = null
@@ -85,18 +80,12 @@ class RatingsViewModel : BaseViewModel() {
     init {
         disposables += Observable.create<Int> { emitter ->
             popularFilmsUpdateRequest = { emitter.onNext(it) }
-        }.distinctUntilChanged()
-            .debounce(1, TimeUnit.SECONDS)
-            .subscribeBy(
-                onNext = { page ->
-                    sendPopularFilmsUpdateRequest(page)
-                }
-            )
-    }
-
-    private fun sendPopularFilmsUpdateRequest(page: Int) {
-        popularDisposable?.dispose()
-        popularDisposable = mainInteractor.get().loadPopularFilms(page)
+        }
+            .throttleFirst(NETWORK_REQUEST_THROTTLE_TIME_MSEC, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMapCompletable {
+                mainInteractor.get().loadPopularFilms(it)
+            }
             .subscribeBy(
                 onError = { throwable ->
                     throwable.message?.let {
@@ -105,16 +94,5 @@ class RatingsViewModel : BaseViewModel() {
                     Log.e(App.LOG_TAG, "Load popular films fault", throwable)
                 }
             )
-    }
-
-    fun updatePopularFilms(page: Int) {
-        popularFilmsUpdateRequest?.invoke(page)
-    }
-
-    override fun onCleared() {
-        topRatedDisposable?.dispose()
-        popularDisposable?.dispose()
-
-        super.onCleared()
     }
 }

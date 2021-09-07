@@ -3,19 +3,17 @@ package pan.alexander.filmrevealer.presentation.viewmodels
 import android.util.Log
 import androidx.lifecycle.*
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pan.alexander.filmrevealer.App.Companion.LOG_TAG
 import pan.alexander.filmrevealer.domain.entities.Film
 import pan.alexander.filmrevealer.presentation.Failure
+import pan.alexander.filmrevealer.utils.NETWORK_REQUEST_THROTTLE_TIME_MSEC
 import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
 class FavoritesViewModel : BaseViewModel() {
-
-    private var ratedDisposable: Disposable? = null
 
     val listOfLikedFilmsLiveData: LiveData<List<Film>> by lazy {
         val filmsMutableLiveData = MutableLiveData<List<Film>>()
@@ -47,26 +45,23 @@ class FavoritesViewModel : BaseViewModel() {
         filmsMutableLiveData
     }
 
+    fun updateRatedFilms() {
+        ratedFilmsUpdateRequest?.invoke()
+    }
+
     private var ratedFilmsUpdateRequest: (() -> Unit)? = null
 
     init {
         disposables += Observable.create<Int> { emitter ->
             ratedFilmsUpdateRequest = { emitter.onNext(0) }
-        }.distinctUntilChanged()
-            .debounce(1, TimeUnit.SECONDS)
-            .subscribeBy(
-                onNext = {
-                    sendRatedFilmsUpdateRequest()
-                }
-            )
-    }
-
-    @ExperimentalCoroutinesApi
-    private fun sendRatedFilmsUpdateRequest() {
-        ratedDisposable?.dispose()
-        ratedDisposable = mainInteractor.get().getUserGuestSessionId()
-            .filter { it.isNotEmpty() }
-            .flatMapCompletable { mainInteractor.get().loadUserRatedFilms(it) }
+        }
+            .throttleFirst(NETWORK_REQUEST_THROTTLE_TIME_MSEC, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMapCompletable {
+                mainInteractor.get().getUserGuestSessionId()
+                    .filter { it.isNotEmpty() }
+                    .flatMapCompletable { mainInteractor.get().loadUserRatedFilms(it) }
+            }
             .subscribeBy(
                 onError = { throwable ->
                     throwable.message?.let {
@@ -75,15 +70,5 @@ class FavoritesViewModel : BaseViewModel() {
                     Log.e(LOG_TAG, "Load user rated films fault", throwable)
                 }
             )
-    }
-
-    fun updateRatedFilms() {
-        ratedFilmsUpdateRequest?.invoke()
-    }
-
-    override fun onCleared() {
-        ratedDisposable?.dispose()
-
-        super.onCleared()
     }
 }
