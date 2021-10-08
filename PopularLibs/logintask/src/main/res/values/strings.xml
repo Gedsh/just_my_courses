@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LoginTask</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="success">Success</string>
+    <string name="user_not_exist">Invalid user and/or password</string>
+    <string name="user_already_exist">User already exists</string>
+</resources>
