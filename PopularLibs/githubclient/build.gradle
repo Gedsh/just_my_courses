@@ -63,6 +63,10 @@ dependencies {
     //Cicerone
     implementation "com.github.terrakok:cicerone:$cicerone_version"
 
+    //RxKotlin + RxAndroid
+    implementation "io.reactivex.rxjava3:rxkotlin:$rx_kotlin"
+    implementation "io.reactivex.rxjava3:rxandroid:$rx_android"
+
     //Test
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
