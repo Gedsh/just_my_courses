@@ -50,6 +50,29 @@ class UsersFragment : BaseFragment(), UsersContract.View {
         binding.usersRecycler.adapter = adapter
     }
 
+    override fun setState(state: UsersContract.ViewState) {
+        when (state) {
+            is UsersContract.ViewState.Idle -> setIdleState()
+            is UsersContract.ViewState.Loading -> setLoadingState()
+            is UsersContract.ViewState.Success -> setSuccessState()
+        }
+    }
+
+    private fun setIdleState() = with(binding) {
+        usersRecycler.visibility = View.GONE
+        usersLoadingProgressBar.visibility = View.GONE
+    }
+
+    private fun setLoadingState() = with(binding) {
+        usersRecycler.visibility = View.GONE
+        usersLoadingProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun setSuccessState() = with(binding) {
+        usersRecycler.visibility = View.VISIBLE
+        usersLoadingProgressBar.visibility = View.GONE
+    }
+
     override fun updateUsers() {
         adapter?.notifyDataSetChanged()
     }

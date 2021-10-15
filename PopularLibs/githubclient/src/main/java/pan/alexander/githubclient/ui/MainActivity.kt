@@ -1,6 +1,7 @@
 package pan.alexander.githubclient.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity
@@ -43,6 +44,10 @@ class MainActivity : MvpAppCompatActivity(), MainContract.View {
         super.onResumeFragments()
 
         navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onPause() {

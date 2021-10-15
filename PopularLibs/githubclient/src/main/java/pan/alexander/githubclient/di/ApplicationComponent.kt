@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [RepositoryModule::class, InteractorsModule::class, CiceroneModule::class,
-        NavigationModule::class, PresentersModule::class]
+        NavigationModule::class, PresentersModule::class, EventBusModule::class]
 )
 interface ApplicationComponent {
     fun inject(mainMainActivity: MainActivity)

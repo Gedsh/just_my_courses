@@ -7,9 +7,18 @@ import pan.alexander.githubclient.ui.base.BaseView
 
 class UsersContract {
 
+    sealed class ViewState {
+        object Idle : ViewState()
+        object Loading : ViewState()
+        object Success : ViewState()
+    }
+
     interface View : BaseView {
         @AddToEndSingle
         fun initRecycler()
+
+        @AddToEndSingle
+        fun setState(state: ViewState)
 
         @AddToEndSingle
         fun updateUsers()
