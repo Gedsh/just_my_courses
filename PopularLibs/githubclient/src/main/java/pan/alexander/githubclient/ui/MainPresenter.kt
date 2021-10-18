@@ -28,7 +28,7 @@ class MainPresenter @Inject constructor(
 
     private fun initErrorListener() {
         disposables += errorEventBus.get()
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = { viewState.showError(it.message) }
             )
