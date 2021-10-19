@@ -1,0 +1,5 @@
+rootProject.name = "Popular Libs"
+include ':app'
+include ':logintask'
+include ':githubclient'
+include ':fileconverter'
