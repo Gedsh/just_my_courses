@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="login_screen_layout_padding">8dp</dimen>
+    <dimen name="login_screen_success_message_text_size">18sp</dimen>
+    <dimen name="login_screen_success_message_padding">8dp</dimen>
+</resources>
