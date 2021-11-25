@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import pan.alexander.githubclient.App.Companion.LOG_TAG
+import androidx.recyclerview.widget.RecyclerView
+import com.github.terrakok.cicerone.Router
 import pan.alexander.githubclient.domain.users.UsersInteractor
 import pan.alexander.githubclient.ui.users.adapter.AdapterContract
 import pan.alexander.githubclient.utils.navigation.Screens

@@ -10,8 +10,4 @@ import javax.inject.Inject
 class UsersInteractorImpl @Inject constructor(
     private val usersRepository: UsersRepository
 ) : UsersInteractor {
-    override fun getUsers(): Single<List<GithubUser>> =
-        usersRepository.getUsers()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 }
