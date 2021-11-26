@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Item github user-->
+    <dimen name="user_avatar_size">50dp</dimen>
+    <dimen name="user_avatar_image_margin">16dp</dimen>
+    <dimen name="user_login_text_view_side_margin">16dp</dimen>
+    <dimen name="user_login_text_view_text_size">18sp</dimen>
+    <dimen name="user_card_corner_radius">5dp</dimen>
+
+    <!--  Item user repo  -->
+    <dimen name="user_repo_text_view_side_padding">16dp</dimen>
+    <dimen name="user_repo_text_view_top_bottom_padding">8dp</dimen>
+    <dimen name="user_repo_text_view_text_size">18sp</dimen>
+    <dimen name="user_repo_card_corner_radius">5dp</dimen>
+
+    <!--  Repo details  -->
+    <dimen name="repo_details_text_padding">8dp</dimen>
+</resources>

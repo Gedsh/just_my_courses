@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/user_repo_card_corner_radius"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?attr/selectableItemBackground">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_repo_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/user_repo_text_view_side_padding"
+                android:paddingTop="@dimen/user_repo_text_view_top_bottom_padding"
+                android:paddingEnd="@dimen/user_repo_text_view_side_padding"
+                android:paddingBottom="@dimen/user_repo_text_view_top_bottom_padding"
+                android:textAlignment="center"
+                android:textSize="@dimen/user_repo_text_view_text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="repo" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_repo_description_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/user_repo_text_view_side_padding"
+                android:paddingTop="@dimen/user_repo_text_view_top_bottom_padding"
+                android:paddingEnd="@dimen/user_repo_text_view_side_padding"
+                android:paddingBottom="@dimen/user_repo_text_view_top_bottom_padding"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_repo_text_view"
+                tools:text="description" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

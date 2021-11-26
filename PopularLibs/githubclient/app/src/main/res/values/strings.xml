@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Github client</string>
+
+    <!--  Repo details  -->
+    <string name="repo_details_created_at">Created at</string>
+    <string name="repo_details_updated_at">Updated at</string>
+    <string name="repo_details_forks_count">Forks count</string>
+    <string name="repo_details_issues_count">Open issues count</string>
+    <string name="repo_details_watchers_count">Watchers count</string>
+</resources>
